@@ -8,9 +8,9 @@ from pytz import timezone
 import json
 import io
 import requests
-import numpy as np
+import numpy as np 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../config/incovid19-728c08348911.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "config/incovid19-728c08348911.json"
 
 
 # Converts source image to bytes and then to Google Vision image input format
@@ -87,7 +87,7 @@ def get_detected_text(image, col, state):
 
 
 def get_image(state, date, search_query):
-    header = json.load(io.open(r'../config/twitter.json'))
+    header = json.load(io.open(r'config/twitter.json'))
     img_count = {
         'ar': 1,
         'br': 2,
