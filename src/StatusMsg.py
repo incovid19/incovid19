@@ -1,4 +1,3 @@
-
 def StatusMsg(StateCode:str,date:str,StatusCode:str,statusMessage:str,program:str="GetSource") ->None:
     """
     Routine to write the status of Program1(or GetSource) for each state
