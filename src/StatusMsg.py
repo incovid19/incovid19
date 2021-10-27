@@ -20,9 +20,9 @@ def StatusMsg(StateCode:str,date:str,StatusCode:str,statusMessage:str,program:st
         log_message="Verify Calling program, Status Code missing!"
     elif not statusMessage:
         print("No status message!")
-        log_message="Verify Calling program, No status message missing!"
+        log_message="Verify Calling program, status message missing!"
     else:    
         log_message=StateCode+"|"+date+"|"+program+"|"+statusMessage+"\n"
-    file_name="./"+StateCode+"-log.txt"
+    file_name="../RAWCSV/"+StateCode+".log"
     f=open(file_name,"w+")
     f.write(log_message)
