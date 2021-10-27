@@ -50,6 +50,16 @@ def get_districts(text, state):
                             data.append("Lahul And Spiti")
                             start = i + 1
                             break
+                    if state == 'Jammu and Kashmir':
+                        if 'Poonch' in text[start:end]:
+                            data.append("Punch")
+                            start = i + 1
+                            break
+                    if state == 'Rajasthan':
+                        if 'JHUNUHUNU' in text[start:end]:
+                            data.append("Jhunjhunu")
+                            start = i + 1
+                            break
                     partial_comp = fuzz.partial_ratio(text[start:end].lower(), dist.lower())
                     comp = fuzz.ratio(text[start:end].lower(), dist.lower())
                     # print(text[start:end])
@@ -67,8 +77,6 @@ def get_districts(text, state):
                             start = i + 1
                             break
             text = text[:start] + text[start:i + 1].replace("\n", " ") + text[i + 1:]
-        if state == 'Rajasthan':
-            data.append("Other State/Country")
         data.append("Total")
     return data
 
@@ -105,6 +113,7 @@ def get_image(state, date, search_query):
         'HP': 2,
         'MN': 3,
         'RJ': 1,
+        'JK': 4,
     }
     query = search_query + '&expansions=attachments.media_keys&media.fields=url&tweet.fields=created_at'
     response = requests.get("https://api.twitter.com/2/tweets/search/recent?query=" + query, headers=header)
@@ -221,30 +230,41 @@ def arunachal_pradesh(state, date, query):
 
     for i in range(len(ar['districts']['data'])-1):
         ar_data.append({
+            'Date': last_updated.date(),
+            'State/UTCode': state_name,
             'District': ar['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
             'cumulativeConfirmedNumberForDistrict': ar['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': ar['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': ar['recovered']['data'][i],
-            'cumulativeTestedNumberForDistrict': ar['tested']['data'][i],
+            'cumulativeTestedNumberForDistrict': 0,
+            'last_updated': last_updated,
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
         })
 
     ar_df = pd.DataFrame(data=ar_data)
     ar_df = ar_df.groupby(ar_df['District']).aggregate(
         {
+            'Date': 'first',
+            'State/UTCode': 'first',
             'District': 'first',
+            'tested_last_updated_district': 'first',
+            'tested_source_district': 'first',
+            'notesForDistrict': 'first',
             'cumulativeConfirmedNumberForDistrict': 'sum',
             'cumulativeDeceasedNumberForDistrict': 'sum',
             'cumulativeRecoveredNumberForDistrict': 'sum',
             'cumulativeTestedNumberForDistrict': 'sum',
+            'last_updated': 'first',
+            'tested_last_updated_state': 'first',
+            'tested_source_state': 'first',
+            'notesForState': 'first',
         }
     )
-    ar_df['Date'] = last_updated.date()
-    ar_df['tested_last_updated_district'] = last_updated
-    ar_df['last_updated'] = last_updated
-    ar_df['tested_last_updated_state'] = last_updated
-    ar_df['State'] = state_name
-    ar_df['tested_source_district'] = data_source
-    ar_df['tested_source_state'] = data_source
     ar_df['cumulativeConfirmedNumberForState'] = ar['total']['data'][-1] if ar['total']['data'][-1] != ar_df['cumulativeConfirmedNumberForDistrict'][len(ar_df)-1] else sum(ar_df['cumulativeConfirmedNumberForDistrict'])
     ar_df['cumulativeDeceasedNumberForState'] = ar['dead']['data'][-1] if ar['dead']['data'][-1] != ar_df['cumulativeDeceasedNumberForDistrict'][len(ar_df)-1] else sum(ar_df['cumulativeDeceasedNumberForDistrict'])
     ar_df['cumulativeRecoveredNumberForState'] = ar['recovered']['data'][-1] if ar['recovered']['data'][-1] != ar_df['cumulativeRecoveredNumberForDistrict'][len(ar_df)-1] else sum(ar_df['cumulativeRecoveredNumberForDistrict'])
@@ -268,10 +288,18 @@ def bihar(state, date, query):
     for i, text in enumerate(page1[:-1]):
         if (text.description == '16') and (page1[i + 1].description == "."):
             p1_y = text.bounding_poly.vertices[2].y + 15
-    page2 = client.document_text_detection(image=get_bytes(image[1])).text_annotations
+            p1_x1 = text.bounding_poly.vertices[0].x - 12
+            p1_x2 = text.bounding_poly.vertices[1].x + 595
+        if text.description == 'Total':
+            p2_x2 = text.bounding_poly.vertices[1].x + 595
+    page2 = client.document_text_detection(image=get_bytes(image[1]))
+    page2 = page2.text_annotations
     for i, text in enumerate(page2[:-1]):
         if (text.description == '17') and (page2[i + 1].description == "."):
             p2_y = text.bounding_poly.vertices[0].y - 15
+            p2_x1 = text.bounding_poly.vertices[0].x - 12
+        if text.description == 'Total':
+            p2_x2 = text.bounding_poly.vertices[1].x + 595
     image = image_concat([image[0][:p1_y, :], image[1][p2_y:, :]])
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
 
@@ -312,29 +340,41 @@ def bihar(state, date, query):
 
     br_data = []
 
+    single_digit = any(x < 10 for x in br['dead']['data'])
+
+    if len(br['districts']['data']) > len(br['dead']['data']):
+        for i in range(len(br['districts']['data']) - len(br['dead']['data'])):
+            br['dead']['data'].append(0)
+            single_digit = True
+
     for i in range(len(br['districts']['data'])-1):
         br_data.append({
+            'Date': last_updated.date(),
+            'State/UTCode': state_name,
             'District': br['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
             'cumulativeConfirmedNumberForDistrict': br['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': br['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': br['recovered']['data'][i],
             'cumulativeTestedNumberForDistrict': 0,
+            'last_updated': last_updated,
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
         })
 
     br_df = pd.DataFrame(data=br_data)
-    br_df['Date'] = last_updated.date()
-    br_df['tested_last_updated_district'] = last_updated
-    br_df['last_updated'] = last_updated
-    br_df['tested_last_updated_state'] = last_updated
-    br_df['State'] = state_name
-    br_df['tested_source_district'] = data_source
-    br_df['tested_source_state'] = data_source
     br_df['cumulativeConfirmedNumberForState'] = br['total']['data'][-1]
     br_df['cumulativeDeceasedNumberForState'] = br['dead']['data'][-1]
     br_df['cumulativeRecoveredNumberForState'] = br['recovered']['data'][-1]
     br_df['cumulativeTestedNumberForState'] = int(tested)
     br_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
-    return ["OK", "Data successfully extracted for " + state]
+    added_status_message = ""
+    if single_digit:
+        added_status_message = ". Single digits present in extracted data deaths column. Needs to be manually verified"
+    return ["OK", "Data successfully extracted for " + state + added_status_message]
 
 
 # Extract data for Chhattisgarh
@@ -391,21 +431,23 @@ def chhattisgarh(state, date, query):
 
     for i in range(len(cg['districts']['data'])-1):
         cg_data.append({
+            'Date': last_updated.date(),
+            'State/UTCode': state_name,
             'District': cg['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
             'cumulativeConfirmedNumberForDistrict': cg['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': cg['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': cg['recovered']['data'][i],
             'cumulativeTestedNumberForDistrict': 0,
+            'last_updated': last_updated,
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
         })
 
     cg_df = pd.DataFrame(data=cg_data)
-    cg_df['Date'] = last_updated.date()
-    cg_df['tested_last_updated_district'] = last_updated
-    cg_df['last_updated'] = last_updated
-    cg_df['tested_last_updated_state'] = last_updated
-    cg_df['State'] = state_name
-    cg_df['tested_source_district'] = data_source
-    cg_df['tested_source_state'] = data_source
     cg_df['cumulativeConfirmedNumberForState'] = cg['total']['data'][-1]
     cg_df['cumulativeDeceasedNumberForState'] = cg['dead']['data'][-1]
     cg_df['cumulativeRecoveredNumberForState'] = cg['recovered']['data'][-1]
@@ -481,30 +523,23 @@ def himachal_pradesh(state, date, query):
 
     for i in range(len(hp['districts']['data'])-1):
         hp_data.append({
+            'Date': last_updated.date(),
+            'State/UTCode': state_name,
             'District': hp['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
             'cumulativeConfirmedNumberForDistrict': hp['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': hp['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': hp['recovered']['data'][i],
             'cumulativeTestedNumberForDistrict': hp['tested']['data'][i],
+            'last_updated': last_updated,
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
         })
 
     hp_df = pd.DataFrame(data=hp_data)
-    hp_df = hp_df.groupby(hp_df['District']).aggregate(
-        {
-            'District': 'first',
-            'cumulativeConfirmedNumberForDistrict': 'sum',
-            'cumulativeDeceasedNumberForDistrict': 'sum',
-            'cumulativeRecoveredNumberForDistrict': 'sum',
-            'cumulativeTestedNumberForDistrict': 'sum',
-        }
-    )
-    hp_df['Date'] = last_updated.date()
-    hp_df['tested_last_updated_district'] = last_updated
-    hp_df['last_updated'] = last_updated
-    hp_df['tested_last_updated_state'] = last_updated
-    hp_df['State'] = state_name
-    hp_df['tested_source_district'] = data_source
-    hp_df['tested_source_state'] = data_source
     hp_df['cumulativeConfirmedNumberForState'] = hp['total']['data'][-1]
     hp_df['cumulativeDeceasedNumberForState'] = hp['dead']['data'][-1]
     hp_df['cumulativeRecoveredNumberForState'] = hp['recovered']['data'][-1]
@@ -588,30 +623,23 @@ def manipur(state, date, query):
 
     for i in range(len(mn['districts']['data'])-1):
         mn_data.append({
+            'Date': last_updated.date(),
+            'State/UTCode': state_name,
             'District': mn['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
             'cumulativeConfirmedNumberForDistrict': mn['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': mn['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': 0,
             'cumulativeTestedNumberForDistrict': mn['tested']['data'][i],
+            'last_updated': last_updated,
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
         })
 
     mn_df = pd.DataFrame(data=mn_data)
-    mn_df = mn_df.groupby(mn_df['District']).aggregate(
-        {
-            'District': 'first',
-            'cumulativeConfirmedNumberForDistrict': 'sum',
-            'cumulativeDeceasedNumberForDistrict': 'sum',
-            'cumulativeRecoveredNumberForDistrict': 'sum',
-            'cumulativeTestedNumberForDistrict': 'sum',
-        }
-    )
-    mn_df['Date'] = last_updated.date()
-    mn_df['tested_last_updated_district'] = last_updated
-    mn_df['last_updated'] = last_updated
-    mn_df['tested_last_updated_state'] = last_updated
-    mn_df['State'] = state_name
-    mn_df['tested_source_district'] = data_source
-    mn_df['tested_source_state'] = data_source
     mn_df['cumulativeConfirmedNumberForState'] = mn['total']['data'][-1]
     mn_df['cumulativeDeceasedNumberForState'] = mn['dead']['data'][-1]
     mn_df['cumulativeRecoveredNumberForState'] = recovered
@@ -703,30 +731,23 @@ def rajasthan(state, date, query):
 
     for i in range(len(rj['districts']['data'])-1):
         rj_data.append({
+            'Date': last_updated.date(),
+            'State/UTCode': state_name,
             'District': rj['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
             'cumulativeConfirmedNumberForDistrict': rj['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': rj['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': rj['recovered']['data'][i],
             'cumulativeTestedNumberForDistrict': rj['tested']['data'][i],
+            'last_updated': last_updated,
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
         })
 
     rj_df = pd.DataFrame(data=rj_data)
-    rj_df = rj_df.groupby(rj_df['District']).aggregate(
-        {
-            'District': 'first',
-            'cumulativeConfirmedNumberForDistrict': 'sum',
-            'cumulativeDeceasedNumberForDistrict': 'sum',
-            'cumulativeRecoveredNumberForDistrict': 'sum',
-            'cumulativeTestedNumberForDistrict': 'sum',
-        }
-    )
-    rj_df['Date'] = last_updated.date()
-    rj_df['tested_last_updated_district'] = last_updated
-    rj_df['last_updated'] = last_updated
-    rj_df['tested_last_updated_state'] = last_updated
-    rj_df['State'] = state_name
-    rj_df['tested_source_district'] = data_source
-    rj_df['tested_source_state'] = data_source
     rj_df['cumulativeConfirmedNumberForState'] = rj['total']['data'][-1]
     rj_df['cumulativeDeceasedNumberForState'] = rj['dead']['data'][-1]
     rj_df['cumulativeRecoveredNumberForState'] = rj['recovered']['data'][-1]
@@ -734,6 +755,122 @@ def rajasthan(state, date, query):
 
     rj_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
     return ["OK", "Data successfully extracted for " + state + ". Images clarity may be low. Requires manual verification"]
+
+
+# Extract data for Jammu & Kashmir
+def jammu_kashmir(state, date, query):
+    state_name = "Jammu and Kashmir"
+    client = vision.ImageAnnotatorClient()
+    image = get_image(state, date, query)
+    if image is None:
+        return ['ERR', 'Source not accessible']
+
+    for img in image:
+        if "Status of Surveillance" in client.document_text_detection(image=get_bytes(img)).text_annotations[0].description:
+            test_image = img
+        elif "UT of J&K" in client.document_text_detection(image=get_bytes(img)).text_annotations[0].description:
+            image = img
+
+    # test_image = image[1]
+    # image = image[2]
+
+    test_page = client.document_text_detection(image=get_bytes(test_image)).text_annotations
+    test_text = test_page[0].description
+
+    test_status_text = "Available till date\n"
+    test_start = test_text.find(test_status_text)
+    # if test_text[test_start+1] == "\n":
+    #     test_start += 1
+    test_text = test_text.replace(test_status_text, "")
+    test_end = test_text.find("\n", test_start)
+    tested = int(test_text[test_start:test_end])
+
+    status_text = "Cumulative till "
+    date_start = test_text.find(status_text)
+    page_text = test_text.replace(status_text, "")
+    date_end = page_text.find("\n", date_start)
+
+    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(page_text[date_start:date_end], "%d %B %Y (upto %I:%M %p)"))
+
+    page = client.document_text_detection(image=get_bytes(image)).text_annotations
+    for i, text in enumerate(page[:-1]):
+        if text.description == '10':
+            if page[i + 1].description == 'Shopian':
+                p1_y = text.bounding_poly.vertices[2].y + 13
+        if text.description == '11':
+            if page[i + 1].description == 'Jammu':
+                p2_y = text.bounding_poly.vertices[0].y - 13
+        if text.description == '20':
+            if page[i + 1].description == 'Reasi':
+                p3_y = text.bounding_poly.vertices[2].y + 15
+        if text.description == 'UT':
+            if page[i + 1].description == 'of':
+                p4_y = text.bounding_poly.vertices[0].y - 12
+    image = image_concat([image[:p1_y, :], image[p2_y:p3_y, :], image[p4_y:, :]])
+
+    cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
+
+    page = client.document_text_detection(image=get_bytes(image)).text_annotations
+    page_text = page[0].description
+
+    for i, text in enumerate(page[:-1]):
+        if text.description == "Total":
+            total_x1, total_x2 = text.bounding_poly.vertices[0].x - 20, text.bounding_poly.vertices[1].x + 20
+        if text.description == "Deaths":
+            dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 5, text.bounding_poly.vertices[1].x + 5
+        if text.description == "Cumulative":
+            recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 5, text.bounding_poly.vertices[1].x + 5
+        if text.description == 'Srinagar':
+            x, x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 25
+            y = text.bounding_poly.vertices[0].y - 10
+        if text.description == "UT":
+            y2 = text.bounding_poly.vertices[2].y + 10
+
+    jk = get_dict(
+        image,
+        districts=[x, x2, y, y2],
+        total=[total_x1, total_x2, y, y2],
+        recovered=[recover_x1, recover_x2, y, y2],
+        dead=[dead_x1, dead_x2, y, y2],
+    )
+    data_source = 'https://twitter.com/diprjk'
+
+    for col in jk.keys():
+        jk[col]['image']['bytes'] = get_bytes(jk[col]['image']['source'])
+        jk[col]['data'] = get_detected_text(jk[col]['image']['bytes'], col, state_name)
+
+    jk_data = []
+
+    if len(jk['districts']['data']) > len(jk['dead']['data']):
+        for i in range(len(jk['districts']['data']) - len(jk['dead']['data'])):
+            jk['dead']['data'].append(0)
+
+    for i in range(len(jk['districts']['data'])-1):
+        jk_data.append({
+            'Date': last_updated.date(),
+            'State/UTCode': state_name,
+            'District': jk['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
+            'cumulativeConfirmedNumberForDistrict': jk['total']['data'][i],
+            'cumulativeDeceasedNumberForDistrict': jk['dead']['data'][i],
+            'cumulativeRecoveredNumberForDistrict': jk['recovered']['data'][i],
+            'cumulativeTestedNumberForDistrict': 0,
+            'last_updated': last_updated,
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
+        })
+
+    jk_df = pd.DataFrame(data=jk_data)
+    jk_df['cumulativeConfirmedNumberForState'] = jk['total']['data'][-1]
+    jk_df['cumulativeDeceasedNumberForState'] = jk['dead']['data'][-1]
+    jk_df['cumulativeRecoveredNumberForState'] = jk['recovered']['data'][-1]
+    jk_df['cumulativeTestedNumberForState'] = tested
+
+    jk_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
+    return ["OK", "Data successfully extracted for " + state]
 
 
 # Main API Call function
@@ -745,7 +882,7 @@ def ExtractDataFromImage(state, date, handle, term):
         'HP': himachal_pradesh,
         'MN': manipur,
         'RJ': rajasthan,
-        # 'JK': jammu_kashmir,
+        'JK': jammu_kashmir,
     }
     query = '(' + term.replace(" ", '%20').replace(':', '%3A').replace('#', '%23').replace('@', '%40') + ')' + '(from:' + handle + ')'
     try:
@@ -772,10 +909,11 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-10-26', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-10-26', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-# ExtractDataFromImage('CG', '2021-10-26', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-10-26', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-10-26', 'health_manipur', 'Manipur updates')
-# ExtractDataFromImage('RJ', '2021-10-25', 'dineshkumawat', '#Rajasthan Bulletin')
+# ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+ExtractDataFromImage('BR', '2021-10-24', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+ExtractDataFromImage('CG', '2021-10-24', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+# ExtractDataFromImage('HP', '2021-10-27', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
+# ExtractDataFromImage('JK', '2021-10-27', 'diprjk', 'Media Bulletin')
 
