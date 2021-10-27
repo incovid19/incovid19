@@ -910,8 +910,8 @@ def ExtractDataFromImage(state, date, handle, term):
 
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-ExtractDataFromImage('BR', '2021-10-24', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-ExtractDataFromImage('CG', '2021-10-24', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+# ExtractDataFromImage('BR', '2021-10-24', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('CG', '2021-10-24', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-10-27', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
