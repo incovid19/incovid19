@@ -47,7 +47,7 @@ def get_districts(text, state):
                             break
                     if state == 'Himachal Pradesh':
                         if 'L&Spiti' in text[start:end]:
-                            data.append("Lahul And Spiti")
+                            data.append("Lahaul And Spiti")
                             start = i + 1
                             break
                     if state == 'Jammu and Kashmir':
@@ -284,23 +284,48 @@ def bihar(state, date, query):
     image = get_image(state, date, query)
     if image is None:
         return ['ERR', 'Source not accessible']
+
+    page = client.document_text_detection(image=get_bytes(image[0])).text_annotations
+    x = 0
+    y1 = 0
+    y2 = 0
+    for i, text in enumerate(page):
+        if text.description == 'Dated':
+            last_updated = timezone("Asia/Kolkata").localize(
+                datetime.strptime(page[i + 2].description, "%d-%m-%Y").replace(hour=datetime.now().hour, minute=datetime.now().minute)
+            )
+        if text.description == 'जाँच':
+            if ((page[i - 1].description == 'कुल') and (page[i - 2].description == 'गये') and
+                    (page[i - 3].description == 'किये') and (page[i - 4].description == 'में')):
+                x = text.bounding_poly.vertices[1].x + 5
+                y1 = text.bounding_poly.vertices[0].y - 5
+                y2 = text.bounding_poly.vertices[2].y + 5
+        if (text.bounding_poly.vertices[0].x > x) and (text.bounding_poly.vertices[0].y > y1) and (text.bounding_poly.vertices[2].y < y2):
+            try:
+                tested = int(text.description)
+            except Exception:
+                pass
     page1 = client.document_text_detection(image=get_bytes(image[0])).text_annotations
     for i, text in enumerate(page1[:-1]):
         if (text.description == '16') and (page1[i + 1].description == "."):
             p1_y = text.bounding_poly.vertices[2].y + 15
-            p1_x1 = text.bounding_poly.vertices[0].x - 12
-            p1_x2 = text.bounding_poly.vertices[1].x + 595
-        if text.description == 'Total':
-            p2_x2 = text.bounding_poly.vertices[1].x + 595
+            p1_x1 = text.bounding_poly.vertices[0].x - 5
     page2 = client.document_text_detection(image=get_bytes(image[1]))
     page2 = page2.text_annotations
     for i, text in enumerate(page2[:-1]):
         if (text.description == '17') and (page2[i + 1].description == "."):
             p2_y = text.bounding_poly.vertices[0].y - 15
-            p2_x1 = text.bounding_poly.vertices[0].x - 12
-        if text.description == 'Total':
-            p2_x2 = text.bounding_poly.vertices[1].x + 595
-    image = image_concat([image[0][:p1_y, :], image[1][p2_y:, :]])
+            p2_x1 = text.bounding_poly.vertices[0].x - 5
+    x2 = min(image[0].shape[1], image[1].shape[1])
+    if p1_x1 > p2_x1:
+        p1_x = p1_x1 - p2_x1
+        p2_x = 0
+    elif p1_x1 < p2_x1:
+        p2_x = p2_x1 - p1_x1
+        p1_x = 0
+    else:
+        p1_x = p2_x = 0
+    image = image_concat([image[0][:p1_y, p1_x1:x2 + p1_x], image[1][p2_y:, p2_x1:x2 + p2_x]])
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
@@ -315,14 +340,6 @@ def bihar(state, date, query):
             x, x1, y = text.bounding_poly.vertices[0].x - 24, text.bounding_poly.vertices[1].x + 60, text.bounding_poly.vertices[2].y + 30
         if text.description == 'Total':
             y2 = text.bounding_poly.vertices[2].y + 11
-        if text.description == 'Dated':
-            last_updated = timezone("Asia/Kolkata").localize(
-                datetime.strptime(page[i + 2].description, "%d-%m-%Y").replace(hour=datetime.now().hour, minute=datetime.now().minute)
-            )
-        if text.description == 'जाँच':
-            if ((page[i - 1].description == 'कुल') and (page[i - 2].description == 'गये') and
-                    (page[i - 3].description == 'किये') and (page[i - 4].description == 'में')):
-                tested = int(page[i + 2].description)
 
     br = get_dict(
         image,
@@ -771,26 +788,21 @@ def jammu_kashmir(state, date, query):
         elif "UT of J&K" in client.document_text_detection(image=get_bytes(img)).text_annotations[0].description:
             image = img
 
-    # test_image = image[1]
-    # image = image[2]
-
     test_page = client.document_text_detection(image=get_bytes(test_image)).text_annotations
     test_text = test_page[0].description
 
     test_status_text = "Available till date\n"
     test_start = test_text.find(test_status_text)
-    # if test_text[test_start+1] == "\n":
-    #     test_start += 1
     test_text = test_text.replace(test_status_text, "")
     test_end = test_text.find("\n", test_start)
     tested = int(test_text[test_start:test_end])
 
     status_text = "Cumulative till "
     date_start = test_text.find(status_text)
-    page_text = test_text.replace(status_text, "")
-    date_end = page_text.find("\n", date_start)
+    test_text = test_text.replace(status_text, "")
+    date_end = test_text.find("\n", date_start)
 
-    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(page_text[date_start:date_end], "%d %B %Y (upto %I:%M %p)"))
+    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(test_text[date_start:date_end], "%d %B %Y (upto %I:%M %p)"))
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     for i, text in enumerate(page[:-1]):
@@ -808,7 +820,7 @@ def jammu_kashmir(state, date, query):
                 p4_y = text.bounding_poly.vertices[0].y - 12
     image = image_concat([image[:p1_y, :], image[p2_y:p3_y, :], image[p4_y:, :]])
 
-    cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
+    cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image_concat([test_image, image]))
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     page_text = page[0].description
@@ -873,7 +885,6 @@ def jammu_kashmir(state, date, query):
     return ["OK", "Data successfully extracted for " + state]
 
 
-# Main API Call function
 def ExtractDataFromImage(state, date, handle, term):
     states = {
         'AR': arunachal_pradesh,
@@ -883,6 +894,7 @@ def ExtractDataFromImage(state, date, handle, term):
         'MN': manipur,
         'RJ': rajasthan,
         'JK': jammu_kashmir,
+        # 'LA': ladakh,
     }
     query = '(' + term.replace(" ", '%20').replace(':', '%3A').replace('#', '%23').replace('@', '%40') + ')' + '(from:' + handle + ')'
     try:
@@ -910,10 +922,10 @@ def ExtractDataFromImage(state, date, handle, term):
 
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-10-24', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+ExtractDataFromImage('BR', '2021-10-25', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CG', '2021-10-24', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-10-27', 'nhm_hp', '#7PMupdate')
+ExtractDataFromImage('HP', '2021-10-24', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
-# ExtractDataFromImage('JK', '2021-10-27', 'diprjk', 'Media Bulletin')
+# ExtractDataFromImage('JK', '2021-10-24', 'diprjk', 'Media Bulletin')
 

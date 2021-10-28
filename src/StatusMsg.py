@@ -14,7 +14,7 @@ def StatusMsg(StateCode: str, date: str, StatusCode: str, statusMessage: str, pr
         log_message = "Verify Calling program, State Code missing!"
     elif not date:
         print("No date!")
-        log_message = "Verify Calling program, State Code missing!"
+        log_message = "Verify Calling program, Date missing!"
     elif not StatusCode:
         print("Status Code missing!")
         log_message = "Verify Calling program, Status Code missing!"
