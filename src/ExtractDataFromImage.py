@@ -11,7 +11,7 @@ import requests
 import numpy as np
 from StatusMsg import StatusMsg
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../config/incovid19-google-auth.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../config/incovid19-728c08348911.json"
 
 
 # Converts source image to bytes and then to Google Vision image input format
@@ -910,6 +910,7 @@ def ExtractDataFromImage(state, date, handle, term):
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
         # print(e)
+        raise
         StatusMsg(
             StateCode=state,
             date=date,
@@ -922,9 +923,9 @@ def ExtractDataFromImage(state, date, handle, term):
 
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-ExtractDataFromImage('BR', '2021-10-25', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('BR', '2021-10-25', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CG', '2021-10-24', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-ExtractDataFromImage('HP', '2021-10-24', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('HP', '2021-10-24', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-10-24', 'diprjk', 'Media Bulletin')
