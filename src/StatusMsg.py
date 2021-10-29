@@ -22,7 +22,7 @@ def StatusMsg(StateCode: str, date: str, StatusCode: str, statusMessage: str, pr
         print("No status message!")
         log_message = "Verify Calling program, status message missing!"
     else:
-        log_message = StateCode + "|" + date + "|" + program + "|" + statusMessage + "\n"
+        log_message = StatusCode + "|" + StateCode + "|" + date + "|" + program + "|" + statusMessage + "\n"
     file_name = "../LOG/" + date + "/" + StateCode + ".log"
-    f = open(file_name, "w")
+    f = open(file_name, "w+")
     f.write(log_message)

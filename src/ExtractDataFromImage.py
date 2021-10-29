@@ -11,7 +11,7 @@ import requests
 import numpy as np
 from StatusMsg import StatusMsg
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../config/incovid19-728c08348911.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../config/incovid19-google-auth.json"
 
 
 # Converts source image to bytes and then to Google Vision image input format
@@ -46,7 +46,7 @@ def get_districts(text, state):
                             start = i + 1
                             break
                     if state == 'Himachal Pradesh':
-                        if 'L&Spiti' in text[start:end]:
+                        if ('L&Spiti' in text[start:end]) or ('L &Spiti' in text[start:end]):
                             data.append("Lahaul And Spiti")
                             start = i + 1
                             break
@@ -95,6 +95,7 @@ def get_detected_text(image, col, state):
             text = text.replace('.', '')
             text = text.replace(',', '')
             text = text.replace('*', '')
+            text = text.replace('I', '1')
             text = text.split(" ")
             for i in text:
                 try:
@@ -186,7 +187,7 @@ def arunachal_pradesh(state, date, query):
     for i, text in enumerate(page[:-1]):
         if (text.description == "Person") and (page[i + 1].description == "tested"):
             test_x1, test_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
-        if (text.description == "Total") and (page[i + 1].description == "Active"):
+        if text.description == "Total":
             total_x1, total_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
         if (text.description == "Discharged") and (page[i + 1].description == "Death"):
             recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
@@ -203,7 +204,7 @@ def arunachal_pradesh(state, date, query):
         if (text.description == "Total") and total:
             y2 = text.bounding_poly.vertices[2].y + 11
         elif "Siang" in text.description:
-            y2 = text.bounding_poly.vertices[2].y + 11
+            y2 = text.bounding_poly.vertices[2].y + 31
 
     ar = get_dict(
         image,
@@ -375,7 +376,7 @@ def bihar(state, date, query):
             'cumulativeConfirmedNumberForDistrict': br['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': br['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': br['recovered']['data'][i],
-            'cumulativeTestedNumberForDistrict': 0,
+            'cumulativeTestedNumberForDistrict': None,
             'last_updated': last_updated,
             'tested_last_updated_state': last_updated,
             'tested_source_state': data_source,
@@ -457,7 +458,7 @@ def chhattisgarh(state, date, query):
             'cumulativeConfirmedNumberForDistrict': cg['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': cg['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': cg['recovered']['data'][i],
-            'cumulativeTestedNumberForDistrict': 0,
+            'cumulativeTestedNumberForDistrict': None,
             'last_updated': last_updated,
             'tested_last_updated_state': last_updated,
             'tested_source_state': data_source,
@@ -511,14 +512,14 @@ def himachal_pradesh(state, date, query):
         if text.description == "Confirmed":
             total_x1, total_x2 = text.bounding_poly.vertices[0].x, text.bounding_poly.vertices[1].x
         if text.description == "Cured":
-            if page[i + 1].description == "Deaths":
+            if page[i + 1].description in ["Deaths", "Confirmed", "Migrated"]:
                 recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 35, text.bounding_poly.vertices[1].x + 25
                 total = True
         if text.description == "Deaths":
             dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 20, text.bounding_poly.vertices[1].x + 12
-        if (text.description == 'Bilaspur') and total:
-            x, x2 = text.bounding_poly.vertices[0].x - 15, text.bounding_poly.vertices[1].x + 15
-            y = text.bounding_poly.vertices[0].y - 3
+        if text.description == 'District':
+            x, x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 20
+            y = text.bounding_poly.vertices[2].y + 60
         if (text.description == "Total") and total:
             y2 = text.bounding_poly.vertices[2].y + 15
 
@@ -648,7 +649,7 @@ def manipur(state, date, query):
             'notesForDistrict': None,
             'cumulativeConfirmedNumberForDistrict': mn['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': mn['dead']['data'][i],
-            'cumulativeRecoveredNumberForDistrict': 0,
+            'cumulativeRecoveredNumberForDistrict': None,
             'cumulativeTestedNumberForDistrict': mn['tested']['data'][i],
             'last_updated': last_updated,
             'tested_last_updated_state': last_updated,
@@ -739,12 +740,25 @@ def rajasthan(state, date, query):
     for col in rj.keys():
         rj[col]['image']['bytes'] = get_bytes(rj[col]['image']['source'])
         rj[col]['data'] = get_detected_text(rj[col]['image']['bytes'], col, state_name)
+        # print(rj[col]['data'])
 
     rj_data = []
 
     if len(rj['districts']['data']) > len(rj['dead']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['dead']['data'])):
             rj['dead']['data'].append(0)
+
+    if len(rj['districts']['data']) > len(rj['total']['data']):
+        for i in range(len(rj['districts']['data']) - len(rj['total']['data'])):
+            rj['total']['data'].append(0)
+
+    if len(rj['districts']['data']) > len(rj['recovered']['data']):
+        for i in range(len(rj['districts']['data']) - len(rj['recovered']['data'])):
+            rj['recovered']['data'].append(0)
+
+    if len(rj['districts']['data']) > len(rj['tested']['data']):
+        for i in range(len(rj['districts']['data']) - len(rj['tested']['data'])):
+            rj['tested']['data'].append(0)
 
     for i in range(len(rj['districts']['data'])-1):
         rj_data.append({
@@ -868,7 +882,7 @@ def jammu_kashmir(state, date, query):
             'cumulativeConfirmedNumberForDistrict': jk['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': jk['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': jk['recovered']['data'][i],
-            'cumulativeTestedNumberForDistrict': 0,
+            'cumulativeTestedNumberForDistrict': None,
             'last_updated': last_updated,
             'tested_last_updated_state': last_updated,
             'tested_source_state': data_source,
@@ -910,7 +924,6 @@ def ExtractDataFromImage(state, date, handle, term):
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
         # print(e)
-        raise
         StatusMsg(
             StateCode=state,
             date=date,
@@ -922,11 +935,11 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-10-25', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-# ExtractDataFromImage('CG', '2021-10-24', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-10-24', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
-# ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
-# ExtractDataFromImage('JK', '2021-10-24', 'diprjk', 'Media Bulletin')
+ExtractDataFromImage('AR', '2021-10-28', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+ExtractDataFromImage('BR', '2021-10-28', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+ExtractDataFromImage('CG', '2021-10-28', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+ExtractDataFromImage('HP', '2021-10-28', 'nhm_hp', '#7PMupdate')
+ExtractDataFromImage('MN', '2021-10-28', 'health_manipur', 'Manipur updates')
+ExtractDataFromImage('RJ', '2021-10-28', 'dineshkumawat', '#Rajasthan Bulletin')
+ExtractDataFromImage('JK', '2021-10-28', 'diprjk', 'Media Bulletin')
 
