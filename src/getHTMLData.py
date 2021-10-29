@@ -12,6 +12,7 @@ from slimit import ast
 from slimit.parser import Parser
 from slimit.visitors import nodevisitor
 import json
+import datetime
 
 def getAPData(path):
     soup = BeautifulSoup(open(path, encoding="utf8"), "html.parser")
@@ -146,7 +147,7 @@ def getTRData(path):
     return df_summary,df_districts
 
 
-def getINDData():
+def getINDData(StateCode,Date):
     URL = "https://www.mygov.in/corona-data/covid19-statewise-status/"
     file_name, headers = urllib.request.urlretrieve(URL)
 
@@ -223,7 +224,8 @@ def getINDData():
     states_data["cumulativeVaccinatedNumberForState"] = int(Vaccine[0].getText().split(":")[1][1:].replace(',',''))
 
     states_data = states_data.reindex(columns=final_df_col)
-    return states_data
+    states_data.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
+    # return states_data
 
 def GenerateRawCsv(StateCode,Date,df_districts):
     df = pd.DataFrame(columns=["Date","State/UTCode","District","tested_last_updated_district","tested_source_district","notesForDistrict",
@@ -234,18 +236,18 @@ def GenerateRawCsv(StateCode,Date,df_districts):
     df['District'] = df_districts['District']
     if "Confirmed" in df_districts.columns:
         df['cumulativeConfirmedNumberForDistrict'] = df_districts['Confirmed']
-        df['cumulativeConfirmedNumberForState'] = df['cumulativeConfirmedNumberForDistrict'].sum()
+        df['cumulativeConfirmedNumberForState'] = df['cumulativeConfirmedNumberForDistrict'].astype('int64').sum()
     if "Tested" in df_districts.columns:
         df['cumulativeTestedNumberForDistrict'] = df_districts['Tested']
-        df['cumulativeTestedNumberForState'] = df['cumulativeTestedNumberForDistrict'].sum()
+        df['cumulativeTestedNumberForState'] = df['cumulativeTestedNumberForDistrict'].astype('int64').sum()
     df['cumulativeDeceasedNumberForDistrict'] = df_districts['Deceased']
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
 
     df['Date'] = Date
     df['State/UTCode'] = StateCode
      
-    df['cumulativeRecoveredNumberForState'] = df['cumulativeRecoveredNumberForDistrict'].sum()
-    df['cumulativeDeceasedNumberForState'] = df['cumulativeDeceasedNumberForDistrict'].sum()
+    df['cumulativeRecoveredNumberForState'] = df['cumulativeRecoveredNumberForDistrict'].astype('int64').sum()
+    df['cumulativeDeceasedNumberForState'] = df['cumulativeDeceasedNumberForDistrict'].astype('int64').sum()
 
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
@@ -268,7 +270,7 @@ def ExtractFromHTML(StateCode = "AP",Date = "2021-10-26"):
         df_summary,df_districts = getTRData(filepath)
         GenerateRawCsv(StateCode,Date,df_districts)
     elif StateCode == "IN":
-        return getINDData
+        return getINDData(StateCode,Date)
     StatusMsg(StateCode,Date,"OK","COMPLETED","ExtractFromHTML")
     # except HTTPError:
     #     StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromHTML")

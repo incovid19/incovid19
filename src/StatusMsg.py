@@ -1,3 +1,4 @@
+import datetime
 def StatusMsg(StateCode: str, date: str, StatusCode: str, statusMessage: str, program: str = "GetSource") -> None:
     """
     Routine to write the status of Program1(or GetSource) for each state
@@ -22,7 +23,13 @@ def StatusMsg(StateCode: str, date: str, StatusCode: str, statusMessage: str, pr
         print("No status message!")
         log_message = "Verify Calling program, status message missing!"
     else:
+<<<<<<< Updated upstream
         log_message = StateCode + "|" + date + "|" + program + "|" + StatusCode + "|" + statusMessage + "\n"
     file_name = "../LOG/" + date + "/" + StateCode + ".log"
     f = open(file_name, "w+")
+=======
+        log_message = StateCode + "|" + str(datetime.datetime.now()) + "|" + program + "|" + statusMessage + "\n"
+    file_name = "../LOG/" + date + "/" + StateCode + ".log"
+    f = open(file_name, "a")
+>>>>>>> Stashed changes
     f.write(log_message)

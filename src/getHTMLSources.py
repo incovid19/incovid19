@@ -15,7 +15,7 @@ def downloadFile(Date,StateCode,url):
     print(response.status_code)
     if response.status_code == 200:
         try:
-            print(response.text)
+            # print(response.text)
             StatusMsg(StateCode,Date,"OK","File Downloaded",program="GetSource")
             with open(r"../INPUT/" + Date + "/" + StateCode + ".pdf", 'wb') as f:
                 f.write(response.content)
@@ -38,6 +38,7 @@ def getSources(source,date):
 #     today = datetime.datetime.now().date()
     # today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
     for idx in source.index:
+        print(source["StateCode"][idx])
         if source["myGov"][idx] != "yes":
             if source["StateDataSourceType"][idx] == "html":
                 try:
