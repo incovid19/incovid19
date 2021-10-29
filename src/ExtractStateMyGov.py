@@ -20,7 +20,6 @@ def ExtractStateMyGov(state, date):
 
     state_df = pd.DataFrame()
 
-    state_name = ind["District"][ind["District"].str.contains(state_name)].values[0]
     districts_data = json.load(io.open("../DistrictMappingMaster.json"))[state_name]
     districts = []
 
@@ -35,3 +34,6 @@ def ExtractStateMyGov(state, date):
     state_df["cumulativeRecoveredNumberForState"] = int(ind["cumulativeRecoveredNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df["last_updated"] = ind["last_updated"][ind["District"].str.contains(state_name)].values[0]
     state_df.to_csv("../RAWCSV/" + date + "/" + state + "_raw.csv", index=False)
+
+
+ExtractStateMyGov("DN", "2021-10-26")
