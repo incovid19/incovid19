@@ -110,7 +110,7 @@ def get_image(state, date, search_query):
     img_count = {
         'AR': 1,
         'BR': 2,
-        'CG': 3,
+        'CT': 3,
         'HP': 2,
         'MN': 3,
         'RJ': 1,
@@ -903,7 +903,7 @@ def ExtractDataFromImage(state, date, handle, term):
     states = {
         'AR': arunachal_pradesh,
         'BR': bihar,
-        'CG': chhattisgarh,
+        'CT': chhattisgarh,
         'HP': himachal_pradesh,
         'MN': manipur,
         'RJ': rajasthan,
@@ -937,7 +937,7 @@ def ExtractDataFromImage(state, date, handle, term):
 # API Calls - To be commented or removed from deployed code
 ExtractDataFromImage('AR', '2021-10-28', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 ExtractDataFromImage('BR', '2021-10-28', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-ExtractDataFromImage('CG', '2021-10-28', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+ExtractDataFromImage('CT', '2021-10-28', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 ExtractDataFromImage('HP', '2021-10-28', 'nhm_hp', '#7PMupdate')
 ExtractDataFromImage('MN', '2021-10-28', 'health_manipur', 'Manipur updates')
 ExtractDataFromImage('RJ', '2021-10-28', 'dineshkumawat', '#Rajasthan Bulletin')
