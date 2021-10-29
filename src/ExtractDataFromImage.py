@@ -900,6 +900,7 @@ def jammu_kashmir(state, date, query):
 
 
 def ExtractDataFromImage(state, date, handle, term):
+    print("Executing image Extract")
     states = {
         'AR': arunachal_pradesh,
         'BR': bihar,
