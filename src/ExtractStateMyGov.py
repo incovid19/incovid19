@@ -3,31 +3,39 @@ import json
 import io
 from datetime import datetime, timedelta
 
-# pd.set_option('display.max_rows', None)
-# pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 
 
-# def ExtractNoSource(df, state, date):
-#     date = date - timedelta(1)
-#     # print(df)
-#     state = pd.read_csv(
-#         "../RAWCSV/" + date.strftime("%Y-%m-%d") + "/" + state + "_raw.csv",
-#         index_col=None,
-#         usecols=[
-#             "District",
-#             "cumulativeConfirmedNumberForDistrict",
-#             "cumulativeDeceasedNumberForDistrict",
-#             "cumulativeRecoveredNumberForDistrict",
-#             "last_updated",
-#         ]
-#     )
-#     for district in list(state['District']):
-#         for col in ['']:
-#             pass
-#         # df[]
-#     print(sum(state["cumulativeConfirmedNumberForDistrict"][state['District'] != "Unknown"]))
-#     # print(state)
-#     return df
+def ExtractNoSource(df, state, date):
+    date = date + timedelta(1)
+    cols = ['cumulativeConfirmedNumberForDistrict', 'cumulativeDeceasedNumberForDistrict', 'cumulativeRecoveredNumberForDistrict']
+    try:
+        state = pd.read_csv(
+            "../RAWCSV/" + date.strftime("%Y-%m-%d") + "/" + state + "_raw.csv",
+            index_col=None,
+            usecols=[
+                "District",
+                "cumulativeConfirmedNumberForDistrict",
+                "cumulativeDeceasedNumberForDistrict",
+                "cumulativeRecoveredNumberForDistrict",
+                "cumulativeConfirmedNumberForState",
+                "cumulativeDeceasedNumberForState",
+                "cumulativeRecoveredNumberForState",
+                "last_updated",
+            ]
+        )
+        for district in list(state['District']):
+            if district != 'Unknown':
+                for col in cols:
+                    df[col][df['District'] == district] = int(state[col][state['District'] == district])
+
+        for col in cols:
+            df[col][df['District'] == "Unknown"] -= state[col.replace("District", "State")][0]
+
+    except FileNotFoundError:
+        df = ExtractNoSource(df, state, date)
+    return df
 
 
 def ExtractStateMyGov(state, date, no_source=False):
@@ -64,7 +72,7 @@ def ExtractStateMyGov(state, date, no_source=False):
     state_df['cumulativeDeceasedNumberForDistrict'] = None
     state_df['cumulativeRecoveredNumberForDistrict'] = None
     state_df['cumulativeTestedNumberForDistrict'] = None
-    state_df["last_updated"] = ind["last_updated"][ind["District"].str.contains(state_name)].values[0]
+    state_df["last_updated"] = ind["last_updated"][ind["District"] == state_name].values[0]
     state_df['tested_last_updated_state'] = None
     state_df['tested_source_state'] = None
     state_df['notesForState'] = None
@@ -73,10 +81,11 @@ def ExtractStateMyGov(state, date, no_source=False):
     state_df["cumulativeRecoveredNumberForState"] = state_df['cumulativeRecoveredNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeRecoveredNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df['cumulativeTestedNumberForState'] = None
 
-    # if no_source:
-    #     state_df = ExtractNoSource(state_df, state, datetime.strptime(date, "%Y-%m-%d"))
+    if no_source:
+        state_df = ExtractNoSource(state_df, state, datetime.strptime(date, "%Y-%m-%d"))
 
     state_df.to_csv("../RAWCSV/" + date + "/" + state + "_raw.csv", index=False)
 
 
+# ExtractStateMyGov("AR", "2021-10-29", no_source=True)
 # ExtractStateMyGov("SK", "2021-10-29")

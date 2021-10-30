@@ -232,27 +232,27 @@ def arunachal_pradesh(state, date, query):
 
     if len(ar['districts']['data']) > len(ar['dead']['data']):
         for i in range(len(ar['districts']['data']) - len(ar['dead']['data'])):
-            ar['dead']['data'].append(0)
+            ar['dead']['data'].insert(len(ar['dead']['data']) - 1, 0)
             single_digit = True
 
     if len(ar['districts']['data']) > len(ar['total']['data']):
         for i in range(len(ar['districts']['data']) - len(ar['total']['data'])):
-            ar['total']['data'].append(0)
+            ar['total']['data'].insert(len(ar['total']['data']) - 1, 0)
             single_digit = True
 
     if len(ar['districts']['data']) > len(ar['recovered']['data']):
         for i in range(len(ar['districts']['data']) - len(ar['recovered']['data'])):
-            ar['recovered']['data'].append(0)
+            ar['recovered']['data'].insert(len(ar['recovered']['data']) - 1, 0)
             single_digit = True
 
     if len(ar['districts']['data']) > len(ar['tested']['data']):
         for i in range(len(ar['districts']['data']) - len(ar['tested']['data'])):
-            ar['tested']['data'].append(0)
+            ar['tested']['data'].insert(len(ar['tested']['data']) - 1, 0)
             single_digit = True
 
     for i in range(len(ar['districts']['data'])-1):
         ar_data.append({
-            'Date': last_updated.date(),
+            'Date': date,
             'State/UTCode': state_name,
             'District': ar['districts']['data'][i],
             'tested_last_updated_district': last_updated,
@@ -385,22 +385,22 @@ def bihar(state, date, query):
 
     if len(br['districts']['data']) > len(br['dead']['data']):
         for i in range(len(br['districts']['data']) - len(br['dead']['data'])):
-            br['dead']['data'].append(0)
+            br['dead']['data'].insert(len(br['dead']['data']) - 1, 0)
             single_digit = True
 
     if len(br['districts']['data']) > len(br['total']['data']):
         for i in range(len(br['districts']['data']) - len(br['total']['data'])):
-            br['total']['data'].append(0)
+            br['total']['data'].insert(len(br['total']['data']) - 1, 0)
             single_digit = True
 
     if len(br['districts']['data']) > len(br['recovered']['data']):
         for i in range(len(br['districts']['data']) - len(br['recovered']['data'])):
-            br['recovered']['data'].append(0)
+            br['recovered']['data'].insert(len(br['recovered']['data']) - 1, 0)
             single_digit = True
 
     for i in range(len(br['districts']['data'])-1):
         br_data.append({
-            'Date': last_updated.date(),
+            'Date': date,
             'State/UTCode': state_name,
             'District': br['districts']['data'][i],
             'tested_last_updated_district': last_updated,
@@ -486,22 +486,22 @@ def chhattisgarh(state, date, query):
 
     if len(cg['districts']['data']) > len(cg['dead']['data']):
         for i in range(len(cg['districts']['data']) - len(cg['dead']['data'])):
-            cg['dead']['data'].append(0)
+            cg['dead']['data'].insert(len(cg['dead']['data']) - 1, 0)
             single_digit = True
 
     if len(cg['districts']['data']) > len(cg['total']['data']):
         for i in range(len(cg['districts']['data']) - len(cg['total']['data'])):
-            cg['total']['data'].append(0)
+            cg['total']['data'].insert(len(cg['total']['data']) - 1, 0)
             single_digit = True
 
     if len(cg['districts']['data']) > len(cg['recovered']['data']):
         for i in range(len(cg['districts']['data']) - len(cg['recovered']['data'])):
-            cg['recovered']['data'].append(0)
+            cg['recovered']['data'].insert(len(cg['recovered']['data']) - 1, 0)
             single_digit = True
 
     for i in range(len(cg['districts']['data'])-1):
         cg_data.append({
-            'Date': last_updated.date(),
+            'Date': date,
             'State/UTCode': state_name,
             'District': cg['districts']['data'][i],
             'tested_last_updated_district': last_updated,
@@ -601,27 +601,27 @@ def himachal_pradesh(state, date, query):
 
     if len(hp['districts']['data']) > len(hp['dead']['data']):
         for i in range(len(hp['districts']['data']) - len(hp['dead']['data'])):
-            hp['dead']['data'].append(0)
+            hp['dead']['data'].insert(len(hp['dead']['data']) - 1, 0)
             single_digit = True
 
     if len(hp['districts']['data']) > len(hp['total']['data']):
         for i in range(len(hp['districts']['data']) - len(hp['total']['data'])):
-            hp['total']['data'].append(0)
+            hp['total']['data'].insert(len(hp['total']['data']) - 1, 0)
             single_digit = True
 
     if len(hp['districts']['data']) > len(hp['recovered']['data']):
         for i in range(len(hp['districts']['data']) - len(hp['recovered']['data'])):
-            hp['recovered']['data'].append(0)
+            hp['recovered']['data'].insert(len(hp['recovered']['data']) - 1, 0)
             single_digit = True
 
     if len(hp['districts']['data']) > len(hp['tested']['data']):
         for i in range(len(hp['districts']['data']) - len(hp['tested']['data'])):
-            hp['tested']['data'].append(0)
+            hp['tested']['data'].insert(len(hp['tested']['data']) - 1, 0)
             single_digit = True
 
     for i in range(len(hp['districts']['data'])-1):
         hp_data.append({
-            'Date': last_updated.date(),
+            'Date': date,
             'State/UTCode': state_name,
             'District': hp['districts']['data'][i],
             'tested_last_updated_district': last_updated,
@@ -721,22 +721,22 @@ def manipur(state, date, query):
 
     if len(mn['districts']['data']) > len(mn['dead']['data']):
         for i in range(len(mn['districts']['data']) - len(mn['dead']['data'])):
-            mn['dead']['data'].append(0)
+            mn['dead']['data'].insert(len(mn['dead']['data']) - 1, 0)
             single_digit = True
 
     if len(mn['districts']['data']) > len(mn['total']['data']):
         for i in range(len(mn['districts']['data']) - len(mn['total']['data'])):
-            mn['total']['data'].append(0)
+            mn['total']['data'].insert(len(mn['total']['data']) - 1, 0)
             single_digit = True
 
     if len(mn['districts']['data']) > len(mn['tested']['data']):
         for i in range(len(mn['districts']['data']) - len(mn['tested']['data'])):
-            mn['tested']['data'].append(0)
+            mn['tested']['data'].insert(len(mn['tested']['data']) - 1, 0)
             single_digit = True
 
     for i in range(len(mn['districts']['data'])-1):
         mn_data.append({
-            'Date': last_updated.date(),
+            'Date': date,
             'State/UTCode': state_name,
             'District': mn['districts']['data'][i],
             'tested_last_updated_district': last_updated,
@@ -846,27 +846,27 @@ def rajasthan(state, date, query):
 
     if len(rj['districts']['data']) > len(rj['dead']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['dead']['data'])):
-            rj['dead']['data'].append(0)
+            rj['dead']['data'].insert(len(rj['dead']['data']) - 1, 0)
             single_digit = True
 
     if len(rj['districts']['data']) > len(rj['total']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['total']['data'])):
-            rj['total']['data'].append(0)
+            rj['total']['data'].insert(len(rj['total']['data']) - 1, 0)
             single_digit = True
 
     if len(rj['districts']['data']) > len(rj['recovered']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['recovered']['data'])):
-            rj['recovered']['data'].append(0)
+            rj['recovered']['data'].insert(len(rj['recovered']['data']) - 1, 0)
             single_digit = True
 
     if len(rj['districts']['data']) > len(rj['tested']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['tested']['data'])):
-            rj['tested']['data'].append(0)
+            rj['tested']['data'].insert(len(rj['tested']['data']) - 1, 0)
             single_digit = True
 
     for i in range(len(rj['districts']['data'])-1):
         rj_data.append({
-            'Date': last_updated.date(),
+            'Date': date,
             'State/UTCode': state_name,
             'District': rj['districts']['data'][i],
             'tested_last_updated_district': last_updated,
@@ -980,22 +980,22 @@ def jammu_kashmir(state, date, query):
 
     if len(jk['districts']['data']) > len(jk['dead']['data']):
         for i in range(len(jk['districts']['data']) - len(jk['dead']['data'])):
-            jk['dead']['data'].append(0)
+            jk['dead']['data'].insert(len(jk['dead']['data']) - 1, 0)
             single_digit = True
 
     if len(jk['districts']['data']) > len(jk['total']['data']):
         for i in range(len(jk['districts']['data']) - len(jk['total']['data'])):
-            jk['total']['data'].append(0)
+            jk['total']['data'].insert(len(jk['total']['data']) - 1, 0)
             single_digit = True
 
     if len(jk['districts']['data']) > len(jk['recovered']['data']):
         for i in range(len(jk['districts']['data']) - len(jk['recovered']['data'])):
-            jk['recovered']['data'].append(0)
+            jk['recovered']['data'].insert(len(jk['recovered']['data']) - 1, 0)
             single_digit = True
 
     for i in range(len(jk['districts']['data'])-1):
         jk_data.append({
-            'Date': last_updated.date(),
+            'Date': date,
             'State/UTCode': state_name,
             'District': jk['districts']['data'][i],
             'tested_last_updated_district': last_updated,
@@ -1061,7 +1061,7 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-10-29', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+ExtractDataFromImage('AR', '2021-10-28', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-10-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-29', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
