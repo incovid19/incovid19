@@ -231,7 +231,7 @@ def getINDData(StateCode, Date):
 
     states = []
     for val in STATES:
-        states.append(str(val.getText()).split(":")[1].lstrip())
+        states.append(str(val.getText()).split(":")[1].lstrip().replace("Telengana","Telangana"))
 
     confirmed = []
     for val in CONFIRMED:
@@ -297,6 +297,8 @@ def getINDData(StateCode, Date):
     states_data["cumulativeVaccinatedNumberForState"] = int(Vaccine[0].getText().split(":")[1][1:].replace(',', ''))
 
     states_data = states_data.reindex(columns=final_df_col)
+    print()
+    states_data.loc[states_data["District"] == "Telengana"]
     states_data.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date, StateCode))
     # return states_data
 
