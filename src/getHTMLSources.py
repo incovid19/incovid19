@@ -59,9 +59,9 @@ def getSources(source, date):
                 elif source["StateCode"][idx] == "TN":
                     url = 'https://stopcorona.tn.gov.in/wp-content/uploads/2020/03/Media-Bulletin-' + date.strftime("%d-%m-%y") + '-COVID-19.pdf'
                     downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "UK":
-                    url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d") + '_Health_Bulletin.pdf'
-                    downloadFile(str(date), source["StateCode"][idx], url)
+                # elif source["StateCode"][idx] == "UK":
+                #     url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d") + '_Health_Bulletin.pdf'
+                #     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "WB":
                     url = 'https://www.wbhealth.gov.in/uploaded_files/corona/WB_DHFW_Bulletin_' + p.ordinal(date.day).upper() + '_' + date.strftime("%b").upper() + '_REPORT_FINAL.pdf'
                     downloadFile(str(date), source["StateCode"][idx], url)

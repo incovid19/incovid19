@@ -38,7 +38,7 @@ def getAPData(path):
     print(df_districts.columns)
     df_districts = df_districts[1:-4]
     
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Andhra Pradesh'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
 
@@ -60,7 +60,7 @@ def getASData(path):
     #replacing removing - and converting them to NaN(implicit)
     df_districts.replace({"-":""},inplace =True)
 
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Assam'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
 
@@ -94,7 +94,7 @@ def getGJData(path):
     #Renaming cols name
     df_districts.rename(columns={"Active Cases":"Active", "Cases Tested for COVID19": "Tested","Patients Recovered":"Recovered","Total Deaths":"Deceased"},inplace=True)
     
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Gujarat'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
 
@@ -119,7 +119,7 @@ def getODData(path):
     df_districts.drop(columns=["intId","intDistid","intCategory","intOthDeceased","dtmCreatedOn","dtmReportedOn","intDistType"],inplace=True)
     df_districts = df_districts[:-1]
     
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Odisha'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     
@@ -151,7 +151,6 @@ def getTRData(path):
 def getKLData(path):
     soup = BeautifulSoup(open(path, encoding="utf8"), "html.parser")
     script = soup.find_all("script")[-1].string.split(";")
-    
     
     data = script[-3].split("=")[-1]#.split(")")[0]
     districts_json = data.split("datasets:")
@@ -192,7 +191,7 @@ def getKLData(path):
     # df_districts.drop(columns=["intId","intDistid","intCategory","intOthDeceased","dtmCreatedOn","dtmReportedOn","intDistType"],inplace=True)
     # df_districts = df_districts[:-1]
     
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     print(df_json)
     dist_map = df_json['Kerala'].to_dict()
     print(dist_map)
