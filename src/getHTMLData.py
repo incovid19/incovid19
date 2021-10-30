@@ -90,6 +90,8 @@ def getGJData(path):
     #getting cummulative values
     df_districts["Cases Tested for COVID19"] = df_districts["Cases Tested for COVID19"].str.split().str[-1]
     df_districts["Patients Recovered"] = df_districts["Patients Recovered"].str.split().str[-1]
+    df_districts["Cases Tested for COVID19"] = df_districts["Cases Tested for COVID19"].str.split().str[-1]
+    df_districts["Total Deaths"] = df_districts["Total Deaths"].str.split().str[-1]
     
     #Renaming cols name
     df_districts.rename(columns={"Active Cases":"Active", "Cases Tested for COVID19": "Tested","Patients Recovered":"Recovered","Total Deaths":"Deceased"},inplace=True)
@@ -374,7 +376,7 @@ def ExtractFromHTML(StateCode="AP", Date="2021-10-26"):
     elif StateCode == "GJ":
         df_summary, df_districts = getGJData(filepath)
         GenerateRawCsv(StateCode, Date, df_districts)
-    elif StateCode == "OD":
+    elif StateCode == "OR":
         df_summary, df_districts = getODData(filepath)
         GenerateRawCsv(StateCode, Date, df_districts)
     elif StateCode == "TR":

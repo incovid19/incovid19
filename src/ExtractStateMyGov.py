@@ -8,7 +8,7 @@ pd.set_option('display.max_columns', None)
 
 
 def ExtractNoSource(df, state, date):
-    date = date + timedelta(1)
+    date = date - timedelta(1)
     cols = ['cumulativeConfirmedNumberForDistrict', 'cumulativeDeceasedNumberForDistrict', 'cumulativeRecoveredNumberForDistrict']
     try:
         state = pd.read_csv(

@@ -13,9 +13,9 @@ from urllib.request import urlopen
 
 def downloadFile(Date, StateCode, url):
     response = requests.get(url)
-    print(url)
-    print(response.status_code)
-    if response.status_code == 200:
+    # print(url)
+    # print(response.status_code)
+    if (response.status_code == 200) and (response.headers['content-type'] == "application/pdf"):
         try:
             # print(response.text)
             StatusMsg(StateCode, Date, "OK", "File Downloaded", program="GetSource")

@@ -32,7 +32,7 @@ for idx in source.index:
     elif source["StateDataSourceType"][idx] == "html":
         if source["myGov"][idx] != "yes":
             fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+".html"))
-            if !fileStatus:
+            if not(fileStatus):
                 ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
             else:
                 ExtractFromHTML(StateCode = source["StateCode"][idx],Date = str(today))
@@ -40,7 +40,7 @@ for idx in source.index:
             ExtractStateMyGov(source["StateCode"][idx],str(today))
     elif source["StateDataSourceType"][idx] == "pdf":
         fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+".pdf"))
-        if !fileStatus:
+        if not(fileStatus):
             ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
         else:
-            ExtractFromPDF(StateCode = ,Date = str(today))
+            ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
