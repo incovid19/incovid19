@@ -13,6 +13,7 @@ from slimit.parser import Parser
 from slimit.visitors import nodevisitor
 import json
 import datetime
+import yaml
 
 
 def getAPData(path):
@@ -21,147 +22,189 @@ def getAPData(path):
     df_summary = pd.read_html(str(table))[0]
     df_summary = df_summary.melt().dropna()
     # new data frame with split value columns
-    new = df_summary["value"].str.rsplit(" ", n=1, expand=True)
+    new = df_summary["value"].str.rsplit(" ", n = 1, expand = True)
     # making separate first name column from new data frame
-    df_summary["var"] = new[0]
+    df_summary["var"]= new[0]
     # making separate last name column from new data frame
-    df_summary["val"] = new[1]
+    df_summary["val"]= new[1]
     # Dropping old Name columns
-    df_summary.drop(columns=["value", "variable"], inplace=True)
-
+    df_summary.drop(columns =["value","variable"], inplace = True)
+    
     df_districts = pd.read_html(str(table))[1]
     df_districts.columns = df_districts.iloc[0]
     print(df_districts.columns)
-    dist_names = {"Name of the District": "District", "Confirmed Cases": "Confirmed", "Cured/ Discharged": "Recovered",
-                  "Deceased": "Deceased"}
-    df_districts.rename(columns=dist_names, inplace=True)
+    dist_names = {"Name of the District":"District","Confirmed Cases":"Confirmed","Cured/ Discharged":"Recovered","Deceased":"Deceased"}
+    df_districts.rename(columns=dist_names,inplace=True)
     print(df_districts.columns)
     df_districts = df_districts[1:-4]
-
-    df_json = pd.read_json("../DistrictMappingMaster.json")
+    
+    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
     dist_map = df_json['Andhra Pradesh'].to_dict()
-    df_districts['District'].replace(dist_map, inplace=True)
+    df_districts['District'].replace(dist_map,inplace=True)
 
-    print("+" * 50)
+    print("+"*50)
     print(df_summary)
 
-    print("=" * 50)
+    print("="*50)
     print(df_districts)
-    return df_summary, df_districts
-
+    return df_summary,df_districts
 
 def getASData(path):
     soup = BeautifulSoup(open(path, encoding="utf8"), "html.parser")
     table = soup.find_all('table')
     # print(str(table))
-    # reading html file from districts url in sources.csv
+    #reading html file from districts url in sources.csv
     df_districts = pd.read_html(str(table))[0]
-    # dropping unwanted cols
-    df_districts.drop(columns=["View Details"], inplace=True)
-    # replacing removing - and converting them to NaN(implicit)
-    df_districts.replace({"-": ""}, inplace=True)
+    #dropping unwanted cols
+    df_districts.drop(columns =["View Details"], inplace = True)
+    #replacing removing - and converting them to NaN(implicit)
+    df_districts.replace({"-":""},inplace =True)
 
-    df_json = pd.read_json("../DistrictMappingMaster.json")
+    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
     dist_map = df_json['Assam'].to_dict()
-    df_districts['District'].replace(dist_map, inplace=True)
+    df_districts['District'].replace(dist_map,inplace=True)
 
     # converting numeric col to float
     df_districts = df_districts.apply(pd.to_numeric, errors="ignore")
     # print(df_districts.sum())
-    # creating dictionary that has summary data for state of Assam
-    dict_temp = {"var": ["Confirmed", "Active", "Recovered", "Deceased"],
-                 "val": [df_districts.sum()[1], df_districts.sum()[2], df_districts.sum()[3], df_districts.sum()[4]]}
+    #creating dictionary that has summary data for state of Assam
+    dict_temp = {"var":["Confirmed","Active","Recovered","Deceased"],"val":[df_districts.sum()[1],df_districts.sum()[2],df_districts.sum()[3],df_districts.sum()[4]]}
     df_summary = pd.DataFrame(dict_temp)
 
     # print("="*50)
     # print(df_districts)
     # print("="*50)
     # print(df_summary)
-    return df_summary, df_districts
-
+    return df_summary,df_districts
 
 def getGJData(path):
     soup = BeautifulSoup(open(path, encoding="utf8"), "html.parser")
     table = soup.find_all('table')
     # print(str(table))
-    # reading html file from districts url in sources.csv
+    #reading html file from districts url in sources.csv
     df_districts = pd.read_html(str(table))[0]
     # print(df_districts)
-    # dropping unwanted cols
-    df_districts.drop(columns=["People Under Quarantine"], inplace=True)
+    #dropping unwanted cols
+    df_districts.drop(columns =["People Under Quarantine"], inplace = True)
     df_districts = df_districts[:-1]
-    # getting cummulative values
+    #getting cummulative values
     df_districts["Cases Tested for COVID19"] = df_districts["Cases Tested for COVID19"].str.split().str[-1]
     df_districts["Patients Recovered"] = df_districts["Patients Recovered"].str.split().str[-1]
-
-    # Renaming cols name
-    df_districts.rename(
-        columns={"Active Cases": "Active", "Cases Tested for COVID19": "Tested", "Patients Recovered": "Recovered",
-                 "Total Deaths": "Deceased"}, inplace=True)
-
-    df_json = pd.read_json("../DistrictMappingMaster.json")
+    
+    #Renaming cols name
+    df_districts.rename(columns={"Active Cases":"Active", "Cases Tested for COVID19": "Tested","Patients Recovered":"Recovered","Total Deaths":"Deceased"},inplace=True)
+    
+    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
     dist_map = df_json['Gujarat'].to_dict()
-    df_districts['District'].replace(dist_map, inplace=True)
+    df_districts['District'].replace(dist_map,inplace=True)
 
     df_districts = df_districts.apply(pd.to_numeric, errors="ignore")
     # print(df_districts.sum())
-    # creating dictionary that has summary data for state of Assam
-    dict_temp = {"var": ["Tested", "Active", "Recovered", "Deceased"],
-                 "val": [df_districts.sum()[2], df_districts.sum()[1], df_districts.sum()[3], df_districts.sum()[4]]}
+    #creating dictionary that has summary data for state of Assam
+    dict_temp = {"var":["Tested","Active","Recovered","Deceased"],"val":[df_districts.sum()[2],df_districts.sum()[1],df_districts.sum()[3],df_districts.sum()[4]]}
     df_summary = pd.DataFrame(dict_temp)
 
-    print("=" * 50)
+    print("="*50)
     print(df_districts)
-    print("=" * 50)
+    print("="*50)
     print(df_summary)
-    return df_summary, df_districts
-
+    return df_summary,df_districts
 
 def getODData(path):
     soup = BeautifulSoup(open(path, encoding="utf8"), "html.parser")
     script = soup.find_all("script")[-1].string.split(";")
     data = script[40].split("(")[-1].split(")")[0]
     df_districts = pd.read_json(data)
-    df_districts.rename(columns={"vchDistrictName": "District", "intConfirmed": "Confirmed", "intActive": "Active",
-                                 "intDeceased": "Deceased", "intRecovered": "Recovered"}, inplace=True)
-    df_districts.drop(
-        columns=["intId", "intDistid", "intCategory", "intOthDeceased", "dtmCreatedOn", "dtmReportedOn", "intDistType"],
-        inplace=True)
+    df_districts.rename(columns={"vchDistrictName":"District","intConfirmed":"Confirmed","intActive":"Active","intDeceased":"Deceased","intRecovered":"Recovered"},inplace=True)
+    df_districts.drop(columns=["intId","intDistid","intCategory","intOthDeceased","dtmCreatedOn","dtmReportedOn","intDistType"],inplace=True)
     df_districts = df_districts[:-1]
-
-    df_json = pd.read_json("../DistrictMappingMaster.json")
+    
+    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
     dist_map = df_json['Odisha'].to_dict()
-    df_districts['District'].replace(dist_map, inplace=True)
-
-    dict_temp = {"var": ["Confirmed", "Active", "Recovered", "Deceased"],
-                 "val": [df_districts.sum()[1], df_districts.sum()[2], df_districts.sum()[4], df_districts.sum()[3]]}
+    df_districts['District'].replace(dist_map,inplace=True)
+    
+    dict_temp = {"var":["Confirmed","Active","Recovered","Deceased"],"val":[df_districts.sum()[1],df_districts.sum()[2],df_districts.sum()[4],df_districts.sum()[3]]}
     df_summary = pd.DataFrame(dict_temp)
-    print("=" * 50)
+    print("="*50)
     print(df_districts)
-    print("=" * 50)
+    print("="*50)
     print(df_summary)
-    return df_summary, df_districts
-
+    return df_summary,df_districts
 
 def getTRData(path):
     soup = BeautifulSoup(open(path, encoding="utf8"), "html.parser")
     table = soup.find_all('table')
-    df_districts = pd.read_html(str(table), skiprows=0)[0]
-    df_districts.columns = [i[1] for i in df_districts.columns]
-    df_districts = df_districts.drop(
-        ["SN", "Total Person Under Surveillance (Cumulative)", "No. of Persons Completed Observation Period (14 Days)",
-         "Facility Surveillance", "Home Surveillance", "Total Persons Under Surveillance", "Sample Negative",
-         "Patient Went Out of State"], axis=1).drop(8, axis=0)
-    df_districts.rename(columns={"Sample Collected & Tested": "Tested", "Sample Positive": "Confirmed",
-                                 "Patient Recovered": "Recovered", "Death": "Deceased"}, inplace=True)
-    dict_temp = {"var": ["Confirmed", "Tested", "Recovered", "Deceased"],
-                 "val": [df_districts.sum()[2], df_districts.sum()[1], df_districts.sum()[3], df_districts.sum()[4]]}
+    df_districts = pd.read_html(str(table),skiprows=0)[0]
+    df_districts.columns =  [i[1] for i in df_districts.columns]
+    df_districts = df_districts.drop(["SN","Total Person Under Surveillance (Cumulative)","No. of Persons Completed Observation Period (14 Days)",
+    "Facility Surveillance","Home Surveillance","Total Persons Under Surveillance","Sample Negative","Patient Went Out of State"],axis=1).drop(8,axis=0)
+    df_districts.rename(columns= {"Sample Collected & Tested":"Tested","Sample Positive":"Confirmed",
+    "Patient Recovered":"Recovered","Death":"Deceased"}, inplace = True)
+    dict_temp = {"var":["Confirmed","Tested","Recovered","Deceased"],"val":[df_districts.sum()[2],df_districts.sum()[1],df_districts.sum()[3],df_districts.sum()[4]]}
     df_summary = pd.DataFrame(dict_temp)
-    print("=" * 50)
+    print("="*50)
     print(df_districts)
-    print("=" * 50)
+    print("="*50)
     print(df_summary)
-    return df_summary, df_districts
+    return df_summary,df_districts
+
+def getKLData(path):
+    soup = BeautifulSoup(open(path, encoding="utf8"), "html.parser")
+    script = soup.find_all("script")[-1].string.split(";")
+    
+    
+    data = script[-3].split("=")[-1]#.split(")")[0]
+    districts_json = data.split("datasets:")
+    districts = districts_json[0]
+    districts = districts.replace(",],","]}")
+    districts = districts.replace("labels","\"District\"")
+    dist = pd.read_json(districts)
+    data = districts_json[1][:-1]
+    
+    # print("="*50)
+    text_rep = {"labels":"District","datasets":"dsets"}
+    for k,v in text_rep.items():
+        data = data.replace(k,v)
+
+    # print(data)
+    # print("+"*50)
+    text_dict = {"District":"\"District\"","dsets":"\"dsets\"","label":"\"label\"","fillColor":"\"fillColor\"","strokeColor":"\"strokeColor\"",
+    "pointColor":"\"pointColor\"","pointStrokeColor":"\"pointStrokeColor\"","pointHighlightFill":"\"pointHighlightFill\"",
+    "pointHighlightStroke":"\"pointHighlightStroke\"","data":"\"data\""}
+    
+    for k,v in text_dict.items():
+        data = data.replace(k,v)
+
+    data = data.replace(",]","]")
+    # print(data)
+    # print("-"*50)
+    
+    df_districts = pd.read_json(data)
+
+    Confirmed = df_districts['data'][0]
+    Recovered = df_districts['data'][1]
+    Deceased = df_districts['data'][2]
+    Active = df_districts['data'][3]
+
+    df_district = pd.DataFrame(list(zip(dist['District'].tolist(),Confirmed, Recovered,Deceased,Active)),columns =['District','Confirmed',  'Recovered','Deceased','Active'])
+    
+    # df_districts.rename(columns={"vchDistrictName":"District","intConfirmed":"Confirmed","intActive":"Active","intDeceased":"Deceased","intRecovered":"Recovered"},inplace=True)
+    # df_districts.drop(columns=["intId","intDistid","intCategory","intOthDeceased","dtmCreatedOn","dtmReportedOn","intDistType"],inplace=True)
+    # df_districts = df_districts[:-1]
+    
+    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    print(df_json)
+    dist_map = df_json['Kerala'].to_dict()
+    print(dist_map)
+    df_district['District'].replace(dist_map,inplace=True)
+    print(df_district)
+    dict_temp = {"var":["Confirmed","Active","Recovered","Deceased"],"val":[df_district.sum()[1],df_district.sum()[4],df_district.sum()[2],df_district.sum()[3]]}
+    df_summary = pd.DataFrame(dict_temp)
+    print("="*50)
+    print(df_district)
+    print("="*50)
+    print(df_summary)
+    return df_summary,df_district
 
 
 def getINDData(StateCode, Date):
@@ -269,7 +312,7 @@ def GenerateRawCsv(StateCode, Date, df_districts):
                  "notesForDistrict",
                  "cumulativeConfirmedNumberForDistrict", "cumulativeDeceasedNumberForDistrict",
                  "cumulativeRecoveredNumberForDistrict",
-                 "cumulativeTestedNumberForDistrict", "last_updated", "tested_last_updated_statetested_source_state",
+                 "cumulativeTestedNumberForDistrict", "last_updated", "tested_last_updated_state","tested_source_state",
                  "notesForState",
                  "cumulativeConfirmedNumberForState", "cumulativeDeceasedNumberForState",
                  "cumulativeRecoveredNumberForState", "cumulativeTestedNumberForState"])
@@ -336,6 +379,9 @@ def ExtractFromHTML(StateCode="AP", Date="2021-10-26"):
     elif StateCode == "TR":
         df_summary, df_districts = getTRData(filepath)
         GenerateRawCsv(StateCode, Date, df_districts)
+    elif StateCode == "KL":
+            df_summary,df_districts = getKLData(filepath)
+            GenerateRawCsv(StateCode,Date,df_districts)
     elif StateCode == "IN":
         return getINDData(StateCode, Date)
     StatusMsg(StateCode, Date, "OK", "COMPLETED", "ExtractFromHTML")
