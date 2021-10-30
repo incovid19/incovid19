@@ -29,11 +29,14 @@ def get_districts(text, state):
     data = []
     if state in ['Bihar', 'Chhattisgarh']:
         for dist in text.split("\n"):
-            if dist == "Total":
+            if "Total" in dist:
                 data.append("Total")
             elif dist == "":
                 continue
             else:
+                dist = dist.replace("|", "")
+                if dist[0] == " ":
+                    dist = dist[1:]
                 data.append(hindi_dist[state][dist])
     else:
         for i, char in enumerate(text):
@@ -223,10 +226,28 @@ def arunachal_pradesh(state, date, query):
     ar_data = []
 
     single_digit = any(x < 10 for x in ar['dead']['data'])
+    single_digit = any(x < 10 for x in ar['total']['data'])
+    single_digit = any(x < 10 for x in ar['recovered']['data'])
+    single_digit = any(x < 10 for x in ar['tested']['data'])
 
     if len(ar['districts']['data']) > len(ar['dead']['data']):
         for i in range(len(ar['districts']['data']) - len(ar['dead']['data'])):
             ar['dead']['data'].append(0)
+            single_digit = True
+
+    if len(ar['districts']['data']) > len(ar['total']['data']):
+        for i in range(len(ar['districts']['data']) - len(ar['total']['data'])):
+            ar['total']['data'].append(0)
+            single_digit = True
+
+    if len(ar['districts']['data']) > len(ar['recovered']['data']):
+        for i in range(len(ar['districts']['data']) - len(ar['recovered']['data'])):
+            ar['recovered']['data'].append(0)
+            single_digit = True
+
+    if len(ar['districts']['data']) > len(ar['tested']['data']):
+        for i in range(len(ar['districts']['data']) - len(ar['tested']['data'])):
+            ar['tested']['data'].append(0)
             single_digit = True
 
     for i in range(len(ar['districts']['data'])-1):
@@ -359,10 +380,22 @@ def bihar(state, date, query):
     br_data = []
 
     single_digit = any(x < 10 for x in br['dead']['data'])
+    single_digit = any(x < 10 for x in br['total']['data'])
+    single_digit = any(x < 10 for x in br['recovered']['data'])
 
     if len(br['districts']['data']) > len(br['dead']['data']):
         for i in range(len(br['districts']['data']) - len(br['dead']['data'])):
             br['dead']['data'].append(0)
+            single_digit = True
+
+    if len(br['districts']['data']) > len(br['total']['data']):
+        for i in range(len(br['districts']['data']) - len(br['total']['data'])):
+            br['total']['data'].append(0)
+            single_digit = True
+
+    if len(br['districts']['data']) > len(br['recovered']['data']):
+        for i in range(len(br['districts']['data']) - len(br['recovered']['data'])):
+            br['recovered']['data'].append(0)
             single_digit = True
 
     for i in range(len(br['districts']['data'])-1):
@@ -447,6 +480,25 @@ def chhattisgarh(state, date, query):
 
     cg_data = []
 
+    single_digit = any(x < 10 for x in cg['dead']['data'])
+    single_digit = any(x < 10 for x in cg['total']['data'])
+    single_digit = any(x < 10 for x in cg['recovered']['data'])
+
+    if len(cg['districts']['data']) > len(cg['dead']['data']):
+        for i in range(len(cg['districts']['data']) - len(cg['dead']['data'])):
+            cg['dead']['data'].append(0)
+            single_digit = True
+
+    if len(cg['districts']['data']) > len(cg['total']['data']):
+        for i in range(len(cg['districts']['data']) - len(cg['total']['data'])):
+            cg['total']['data'].append(0)
+            single_digit = True
+
+    if len(cg['districts']['data']) > len(cg['recovered']['data']):
+        for i in range(len(cg['districts']['data']) - len(cg['recovered']['data'])):
+            cg['recovered']['data'].append(0)
+            single_digit = True
+
     for i in range(len(cg['districts']['data'])-1):
         cg_data.append({
             'Date': last_updated.date(),
@@ -471,7 +523,10 @@ def chhattisgarh(state, date, query):
     cg_df['cumulativeRecoveredNumberForState'] = cg['recovered']['data'][-1]
     cg_df['cumulativeTestedNumberForState'] = tested
     cg_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
-    return ["OK", "Data successfully extracted for " + state]
+    added_status_message = ""
+    if single_digit:
+        added_status_message = ". Single digits present in extracted data deaths column. Needs to be manually verified"
+    return ["OK", "Data successfully extracted for " + state + added_status_message]
 
 
 # Extract data for Himachal Pradesh
@@ -539,6 +594,31 @@ def himachal_pradesh(state, date, query):
 
     hp_data = []
 
+    single_digit = any(x < 10 for x in hp['dead']['data'])
+    single_digit = any(x < 10 for x in hp['total']['data'])
+    single_digit = any(x < 10 for x in hp['recovered']['data'])
+    single_digit = any(x < 10 for x in hp['tested']['data'])
+
+    if len(hp['districts']['data']) > len(hp['dead']['data']):
+        for i in range(len(hp['districts']['data']) - len(hp['dead']['data'])):
+            hp['dead']['data'].append(0)
+            single_digit = True
+
+    if len(hp['districts']['data']) > len(hp['total']['data']):
+        for i in range(len(hp['districts']['data']) - len(hp['total']['data'])):
+            hp['total']['data'].append(0)
+            single_digit = True
+
+    if len(hp['districts']['data']) > len(hp['recovered']['data']):
+        for i in range(len(hp['districts']['data']) - len(hp['recovered']['data'])):
+            hp['recovered']['data'].append(0)
+            single_digit = True
+
+    if len(hp['districts']['data']) > len(hp['tested']['data']):
+        for i in range(len(hp['districts']['data']) - len(hp['tested']['data'])):
+            hp['tested']['data'].append(0)
+            single_digit = True
+
     for i in range(len(hp['districts']['data'])-1):
         hp_data.append({
             'Date': last_updated.date(),
@@ -563,8 +643,11 @@ def himachal_pradesh(state, date, query):
     hp_df['cumulativeRecoveredNumberForState'] = hp['recovered']['data'][-1]
     hp_df['cumulativeTestedNumberForState'] = hp['tested']['data'][-1]
 
+    added_status_message = ""
     hp_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
-    return ["OK", "Data successfully extracted for " + state]
+    if single_digit:
+        added_status_message = ". Single digits present in extracted data deaths column. Needs to be manually verified"
+    return ["OK", "Data successfully extracted for " + state + added_status_message]
 
 
 # Extract data for Manipur
@@ -633,10 +716,22 @@ def manipur(state, date, query):
     mn_data = []
 
     single_digit = any(x < 10 for x in mn['dead']['data'])
+    single_digit = any(x < 10 for x in mn['total']['data'])
+    single_digit = any(x < 10 for x in mn['total']['data'])
 
     if len(mn['districts']['data']) > len(mn['dead']['data']):
         for i in range(len(mn['districts']['data']) - len(mn['dead']['data'])):
             mn['dead']['data'].append(0)
+            single_digit = True
+
+    if len(mn['districts']['data']) > len(mn['total']['data']):
+        for i in range(len(mn['districts']['data']) - len(mn['total']['data'])):
+            mn['total']['data'].append(0)
+            single_digit = True
+
+    if len(mn['districts']['data']) > len(mn['tested']['data']):
+        for i in range(len(mn['districts']['data']) - len(mn['tested']['data'])):
+            mn['tested']['data'].append(0)
             single_digit = True
 
     for i in range(len(mn['districts']['data'])-1):
@@ -744,21 +839,30 @@ def rajasthan(state, date, query):
 
     rj_data = []
 
+    single_digit = any(x < 10 for x in rj['dead']['data'])
+    single_digit = any(x < 10 for x in rj['total']['data'])
+    single_digit = any(x < 10 for x in rj['recovered']['data'])
+    single_digit = any(x < 10 for x in rj['tested']['data'])
+
     if len(rj['districts']['data']) > len(rj['dead']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['dead']['data'])):
             rj['dead']['data'].append(0)
+            single_digit = True
 
     if len(rj['districts']['data']) > len(rj['total']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['total']['data'])):
             rj['total']['data'].append(0)
+            single_digit = True
 
     if len(rj['districts']['data']) > len(rj['recovered']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['recovered']['data'])):
             rj['recovered']['data'].append(0)
+            single_digit = True
 
     if len(rj['districts']['data']) > len(rj['tested']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['tested']['data'])):
             rj['tested']['data'].append(0)
+            single_digit = True
 
     for i in range(len(rj['districts']['data'])-1):
         rj_data.append({
@@ -784,8 +888,11 @@ def rajasthan(state, date, query):
     rj_df['cumulativeRecoveredNumberForState'] = rj['recovered']['data'][-1]
     rj_df['cumulativeTestedNumberForState'] = rj['tested']['data'][-1]
 
+    added_status_message = ""
     rj_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
-    return ["OK", "Data successfully extracted for " + state + ". Images clarity may be low. Requires manual verification"]
+    if single_digit:
+        added_status_message = ". Single digits present in extracted data deaths column. Needs to be manually verified"
+    return ["OK", "Data successfully extracted for " + state + ". Images clarity may be low. Requires manual verification" + added_status_message]
 
 
 # Extract data for Jammu & Kashmir
@@ -820,15 +927,15 @@ def jammu_kashmir(state, date, query):
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     for i, text in enumerate(page[:-1]):
-        if text.description == '10':
-            if page[i + 1].description == 'Shopian':
-                p1_y = text.bounding_poly.vertices[2].y + 13
-        if text.description == '11':
-            if page[i + 1].description == 'Jammu':
-                p2_y = text.bounding_poly.vertices[0].y - 13
-        if text.description == '20':
-            if page[i + 1].description == 'Reasi':
-                p3_y = text.bounding_poly.vertices[2].y + 15
+        if (text.description == '10') and (text.bounding_poly.vertices[1].x <= 100):
+            # if page[i + 1].description == 'Shopian':
+            p1_y = text.bounding_poly.vertices[2].y + 13
+        if (text.description == '11') and (text.bounding_poly.vertices[1].x <= 100):
+            # if page[i + 1].description == 'Jammu':
+            p2_y = text.bounding_poly.vertices[0].y - 13
+        if (text.description == '20') and (text.bounding_poly.vertices[1].x <= 100):
+            # if page[i + 1].description == 'Reasi':
+            p3_y = text.bounding_poly.vertices[2].y + 15
         if text.description == 'UT':
             if page[i + 1].description == 'of':
                 p4_y = text.bounding_poly.vertices[0].y - 12
@@ -867,9 +974,24 @@ def jammu_kashmir(state, date, query):
 
     jk_data = []
 
+    single_digit = any(x < 10 for x in jk['dead']['data'])
+    single_digit = any(x < 10 for x in jk['total']['data'])
+    single_digit = any(x < 10 for x in jk['recovered']['data'])
+
     if len(jk['districts']['data']) > len(jk['dead']['data']):
         for i in range(len(jk['districts']['data']) - len(jk['dead']['data'])):
             jk['dead']['data'].append(0)
+            single_digit = True
+
+    if len(jk['districts']['data']) > len(jk['total']['data']):
+        for i in range(len(jk['districts']['data']) - len(jk['total']['data'])):
+            jk['total']['data'].append(0)
+            single_digit = True
+
+    if len(jk['districts']['data']) > len(jk['recovered']['data']):
+        for i in range(len(jk['districts']['data']) - len(jk['recovered']['data'])):
+            jk['recovered']['data'].append(0)
+            single_digit = True
 
     for i in range(len(jk['districts']['data'])-1):
         jk_data.append({
@@ -895,8 +1017,11 @@ def jammu_kashmir(state, date, query):
     jk_df['cumulativeRecoveredNumberForState'] = jk['recovered']['data'][-1]
     jk_df['cumulativeTestedNumberForState'] = tested
 
+    added_status_message = ""
     jk_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
-    return ["OK", "Data successfully extracted for " + state]
+    if single_digit:
+        added_status_message = ". Single digits present in extracted data deaths column. Needs to be manually verified"
+    return ["OK", "Data successfully extracted for " + state + added_status_message]
 
 
 def ExtractDataFromImage(state, date, handle, term):
@@ -936,11 +1061,11 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-ExtractDataFromImage('AR', '2021-10-28', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-ExtractDataFromImage('BR', '2021-10-28', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-ExtractDataFromImage('CT', '2021-10-28', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-ExtractDataFromImage('HP', '2021-10-28', 'nhm_hp', '#7PMupdate')
-ExtractDataFromImage('MN', '2021-10-28', 'health_manipur', 'Manipur updates')
-ExtractDataFromImage('RJ', '2021-10-28', 'dineshkumawat', '#Rajasthan Bulletin')
-ExtractDataFromImage('JK', '2021-10-28', 'diprjk', 'Media Bulletin')
+# ExtractDataFromImage('AR', '2021-10-29', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('BR', '2021-10-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('CT', '2021-10-29', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+# ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('MN', '2021-10-29', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('RJ', '2021-10-29', 'dineshkumawat', '#Rajasthan Bulletin')
+# ExtractDataFromImage('JK', '2021-10-28', 'diprjk', 'Media Bulletin')
 

@@ -69,7 +69,7 @@ def getSources(source, date):
                     url = 'https://dhs.kerala.gov.in/wp-content/uploads/' + date.strftime("%Y/%m/Bulletin-HFWD-English-%B-%d.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "MH":
-                    url = 'https://arogya.maharashtra.gov.in/pdf/ncovidmpressnote' + date.strftime("%B%d.pdf").lower()
+                    url = 'https://arogya.maharashtra.gov.in/pdf/ncovidepressnote' + date.strftime("%B%d.pdf").lower()
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "ML":
                     url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%d_%b_%Y.pdf")
@@ -87,7 +87,11 @@ def getSources(source, date):
                         if tr.findAll('td')[-1].getText() == date.strftime("%d %b %Y"):
                             url = base_url + tr.findAll("a", {"target": "_blank"})[0]['href']
                             downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "MZ":
-                    base_url = "https://health.mizoram.gov.in"
-                    url = base_url + BeautifulSoup(urlopen(base_url + "/post/status-of-covid-19-mizoram-261021").read(), features="html.parser").findAll("a", {"class": "attachment-link"})[0]['href']
-                    downloadFile(str(date), source["StateCode"][idx], url)
+                # elif source["StateCode"][idx] == "MZ":
+                #     base_url = "https://health.mizoram.gov.in"
+                #     url = base_url + BeautifulSoup(urlopen(base_url + "/post/covid-19-bulletin-" + date.strftime("%d%m%Y")).read(), features="html.parser").findAll("a", {"class": "attachment-link"})[0]['href']
+                #     downloadFile(str(date), source["StateCode"][idx], url)
+
+
+# df = pd.read_csv("../sources.csv")
+# getSources(df, (datetime.today() - timedelta(1)).date())

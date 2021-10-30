@@ -392,6 +392,6 @@ def ExtractFromHTML(StateCode="AP", Date="2021-10-26"):
 
 # dfsummary,dfdistricts = ExtractFromHTML(StateCode = "AP",Date = "2021-10-24")
 
-ExtractFromHTML(StateCode = "IN",Date = "2021-10-29")
+# ExtractFromHTML(StateCode = "IN",Date = "2021-10-29")
 
 
