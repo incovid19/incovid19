@@ -231,7 +231,7 @@ def getINDData(StateCode, Date):
 
     states = []
     for val in STATES:
-        states.append(str(val.getText()).split(":")[1].lstrip().replace("Telengana","Telangana"))
+        states.append(str(val.getText()).split(":")[1].lstrip().replace("Telengana","Telangana").replace("Andaman and Nicobar","Andaman and Nicobar Islands"))
 
     confirmed = []
     for val in CONFIRMED:
