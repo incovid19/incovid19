@@ -33,7 +33,7 @@ def getKAData(file_path,date,StateCode):
     print(df_districts)
     # df = df[]
 
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Karnataka'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
 
@@ -58,7 +58,7 @@ def getTNData(file_path,date,StateCode):
     print(df_districts)
     # df = df[]
 
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Tamil Nadu'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
 
@@ -85,7 +85,7 @@ def getHRData(file_path,date,StateCode):
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
 
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Haryana'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
 
@@ -116,7 +116,7 @@ def getWBData(file_path,date,StateCode):
     df_districts["Deceased"] = df_districts["Deceased"].str.replace(",","")
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['West Bengal'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_districts #testcode needs to be updated later
@@ -140,7 +140,7 @@ def getMHData(file_path,date,StateCode):
     df_districts.drop(columns=['Sr. No.','Deaths due to other causes',  'Active cases'],inplace=True)
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Maharashtra'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_districts #testcode needs to be updated later
@@ -163,7 +163,7 @@ def getPBData(file_path,date,StateCode):
     print(df_districts)
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Punjab'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_districts #testcode needs to be updated later
@@ -184,7 +184,7 @@ def getUKData(file_path,date,StateCode):
     df_districts.drop(columns=['Active Cases','Migrated/ Others'],inplace=True)
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Uttarakhand'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_districts #testcode needs to be updated later
@@ -204,7 +204,7 @@ def getNLData(file_path,date,StateCode):
     df_districts.drop(columns=list(string.ascii_lowercase[:10]),inplace=True)
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Nagaland'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_districts #testcode needs to be updated later
@@ -224,7 +224,7 @@ def getLAData(file_path,date,StateCode):
     # col_dict = {"b":"District"}
     # df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=list(string.ascii_lowercase[:12]),inplace=True)
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Ladakh'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_districts #testcode needs to be updated later
@@ -246,7 +246,7 @@ def getMZData(file_path,date,StateCode):
     # col_dict = {"b":"District"}
     # df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=list(string.ascii_lowercase[:12]),inplace=True)
-    df_json = pd.read_json("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Ladakh'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_districts #testcode needs to be updated later
@@ -278,12 +278,12 @@ def GenerateRawCsv(StateCode,Date,df_districts):
     IST = pytz.timezone('Asia/Kolkata')
     df['last_updated'] = utc_dt.astimezone(IST).isoformat()
 
-    df.to_csv("/mnt/c/Users/gopis/Desktop/django/pdf-incovid19/incovid19/RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
+    df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
 def ExtractFromPDF(StateCode = "LA",Date = "2021-10-28"):
     try:
-        filepath = "/mnt/c/users/gopis/desktop/django/pdf-incovid19/incovid19/INPUT/{0}/{1}.pdf".format(Date,StateCode)
+        filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
             df_summary,df_districts = getKAData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts)

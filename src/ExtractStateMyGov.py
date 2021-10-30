@@ -7,7 +7,7 @@ def ExtractStateMyGov(state, date):
     states = json.load(io.open("../StateCode.json"))
     state_name = states[state]
     ind = pd.read_csv(
-        "../RAWCSV/" + date + "/IND_raw.csv",
+        "../RAWCSV/" + date + "/IN_raw.csv",
         index_col=None,
         usecols=[
             "District",
@@ -48,4 +48,4 @@ def ExtractStateMyGov(state, date):
     state_df.to_csv("../RAWCSV/" + date + "/" + state + "_raw.csv", index=False)
 
 
-ExtractStateMyGov("DN", "2021-10-26")
+# ExtractStateMyGov("DN", "2021-10-26")
