@@ -31,9 +31,16 @@ for idx in source.index:
         ExtractDataFromImage(source["StateCode"][idx], str(today), source['Twitter Handle'][idx], source['Twitter Search Term'][idx])
     elif source["StateDataSourceType"][idx] == "html":
         if source["myGov"][idx] != "yes":
-            ExtractFromHTML(StateCode = source["StateCode"][idx],Date = str(today))
+            fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+".html"))
+            if !fileStatus:
+                ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
+            else:
+                ExtractFromHTML(StateCode = source["StateCode"][idx],Date = str(today))
         else:
             ExtractStateMyGov(source["StateCode"][idx],str(today))
     elif source["StateDataSourceType"][idx] == "pdf":
-        pass
-        # ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
+        fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+".pdf"))
+        if !fileStatus:
+            ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
+        else:
+            ExtractFromPDF(StateCode = ,Date = str(today))
