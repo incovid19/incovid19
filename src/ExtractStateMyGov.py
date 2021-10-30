@@ -27,12 +27,24 @@ def ExtractStateMyGov(state, date):
         if dist not in districts:
             districts.append(dist)
 
+    state_df["Date"] = [date] * len(districts)
     state_df["State/UTCode"] = [state_name] * len(districts)
     state_df["District"] = districts
-    state_df["cumulativeConfirmedNumberForState"] = int(ind["cumulativeConfirmedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
-    state_df["cumulativeDeceasedNumberForState"] = int(ind["cumulativeDeceasedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
-    state_df["cumulativeRecoveredNumberForState"] = int(ind["cumulativeRecoveredNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
+    state_df['tested_last_updated_district'] = None
+    state_df['tested_source_district'] = None
+    state_df['notesForDistrict'] = None
+    state_df['cumulativeConfirmedNumberForDistrict'] = None
+    state_df['cumulativeDeceasedNumberForDistrict'] = None
+    state_df['cumulativeRecoveredNumberForDistrict'] = None
+    state_df['cumulativeTestedNumberForDistrict'] = None
     state_df["last_updated"] = ind["last_updated"][ind["District"].str.contains(state_name)].values[0]
+    state_df['tested_last_updated_state'] = None
+    state_df['tested_source_state'] = None
+    state_df['notesForState'] = None
+    state_df["cumulativeConfirmedNumberForState"] = state_df['cumulativeConfirmedNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeConfirmedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
+    state_df["cumulativeDeceasedNumberForState"] = state_df['cumulativeDeceasedNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeDeceasedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
+    state_df["cumulativeRecoveredNumberForState"] = state_df['cumulativeRecoveredNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeRecoveredNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
+    state_df['cumulativeTestedNumberForState'] = None
     state_df.to_csv("../RAWCSV/" + date + "/" + state + "_raw.csv", index=False)
 
 
