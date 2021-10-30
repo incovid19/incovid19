@@ -182,10 +182,10 @@ def arunachal_pradesh(state, date, query):
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     page_text = page[0].description
     date_start = page_text.find(status_text)
-    date_end = page_text.find("\n", date_start)
+    date_end = page_text.find("M", date_start)
 
-    date_string = page_text[date_start:date_end].replace(status_text, "").replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace(".", "")
-    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B %Y (updated at  %I%M %p)"))
+    date_string = page_text[date_start:date_end+1].replace(status_text, "").replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace(".", "")
+    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B %Y (updated at  %I%M %p"))
 
     total = False
     for i, text in enumerate(page[:-1]):
@@ -329,12 +329,16 @@ def bihar(state, date, query):
             except Exception:
                 pass
     page1 = client.document_text_detection(image=get_bytes(image[0])).text_annotations
+    p1_y = page1[-6].bounding_poly.vertices[2].y + 15
+    p1_x1 = page1[-6].bounding_poly.vertices[0].x - 5
     for i, text in enumerate(page1[:-1]):
-        if (text.description == '16') and (page1[i + 1].description == "."):
+        if ((text.description == '16') and (page1[i + 1].description == ".")) or (text.description == '16.') or (text.description == '16 .'):
             p1_y = text.bounding_poly.vertices[2].y + 15
             p1_x1 = text.bounding_poly.vertices[0].x - 5
     page2 = client.document_text_detection(image=get_bytes(image[1]))
     page2 = page2.text_annotations
+    p2_y = page2[1].bounding_poly.vertices[0].y - 15
+    p2_x1 = page2[1].bounding_poly.vertices[0].x - 5
     for i, text in enumerate(page2[:-1]):
         if (text.description == '17') and (page2[i + 1].description == "."):
             p2_y = text.bounding_poly.vertices[0].y - 15
@@ -1027,7 +1031,6 @@ def jammu_kashmir(state, date, query):
 
 def ExtractDataFromImage(state, date, handle, term):
     print("Executing image Extract")
-    print(term)
     states = {
         'AR': arunachal_pradesh,
         'BR': bihar,
@@ -1054,6 +1057,7 @@ def ExtractDataFromImage(state, date, handle, term):
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
         # print(e)
+        ExtractStateMyGov(state, date, no_source=True)
         StatusMsg(
             StateCode=state,
             date=date,
@@ -1065,9 +1069,9 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-ExtractDataFromImage('AR', '2021-10-28', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-10-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-# ExtractDataFromImage('CT', '2021-10-29', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+# ExtractDataFromImage('AR', '2021-10-30', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+ExtractDataFromImage('BR', '2021-10-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-10-29', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-29', 'dineshkumawat', '#Rajasthan Bulletin')
