@@ -35,5 +35,5 @@ for idx in source.index:
         else:
             ExtractStateMyGov(source["StateCode"][idx],str(today))
     elif source["StateDataSourceType"][idx] == "pdf":
-        # pass
-        ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
+        pass
+        # ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
