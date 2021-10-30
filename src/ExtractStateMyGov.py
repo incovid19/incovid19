@@ -72,11 +72,6 @@ def ExtractStateMyGov(state, date, no_source=False):
     state_df['cumulativeDeceasedNumberForDistrict'] = None
     state_df['cumulativeRecoveredNumberForDistrict'] = None
     state_df['cumulativeTestedNumberForDistrict'] = None
-<<<<<<< Updated upstream
-=======
-    print(ind[["last_updated","District"]])
-    print(ind["last_updated"][ind["District"].str.contains(state_name)].values)
->>>>>>> Stashed changes
     state_df["last_updated"] = ind["last_updated"][ind["District"] == state_name].values[0]
     state_df['tested_last_updated_state'] = None
     state_df['tested_source_state'] = None
