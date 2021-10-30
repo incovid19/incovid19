@@ -8,6 +8,7 @@ import pytz
 from datetime import datetime, timezone
 from tzlocal import get_localzone
 from StatusMsg import StatusMsg
+from urllib.error import HTTPError
 #programe extracts the tabels from the PDF files.
 # Need some Preprocessing to convert to RawCSV
 #Have Done for KA and HR for reference
