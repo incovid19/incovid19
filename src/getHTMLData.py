@@ -5,6 +5,7 @@ from StatusMsg import StatusMsg
 import json
 import io
 import datetime
+from ExtractStateMyGov import ExtractStateMyGov
 
 
 def andhra_pradesh(state, date, path):
@@ -335,13 +336,12 @@ def ExtractFromHTML(state, date):
         'KL': kerala,
         'IN': india,
     }
-    # try:
-    states[state](state, date, path)
-    StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
-    # except HTTPError:
-    #     StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromHTML")
-    # except Exception:
-    #     StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromHTML")
+    try:
+        states[state](state, date, path)
+        StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
+    except Exception:
+        ExtractStateMyGov(state, date, no_source=True)
+        StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
 
 
 ExtractFromHTML(state="IN", date="2021-10-29")
