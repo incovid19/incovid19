@@ -319,6 +319,7 @@ def ExtractFromPDF(StateCode = "LA",Date = "2021-10-28"):
     except HTTPError:
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
     except Exception:
+        raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
