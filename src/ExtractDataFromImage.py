@@ -10,6 +10,7 @@ import io
 import requests
 import numpy as np
 from StatusMsg import StatusMsg
+from ExtractStateMyGov import ExtractStateMyGov
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../config/incovid19-google-auth.json"
 
@@ -1040,6 +1041,8 @@ def ExtractDataFromImage(state, date, handle, term):
     try:
         response = states[state](state, date, query)
         # print(response)
+        if response[1] == 'Source not accessible':
+            ExtractStateMyGov(state, date, no_source=True)
         StatusMsg(
             StateCode=state,
             date=date,
