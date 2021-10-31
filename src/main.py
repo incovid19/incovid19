@@ -2,8 +2,8 @@ import os
 import datetime
 import timedelta
 
-today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
-# today = datetime.datetime.now().date()
+# today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
+today = datetime.datetime.now().date()
 print(today)
 
 folders = ["INPUT","RAWCSV","LOG"]
@@ -22,7 +22,7 @@ from getHTMLData import ExtractFromHTML
 import pandas as pd
 
 source = pd.read_csv(r"../sources.csv")
-# getSources(source,today)
+getSources(source,today)
 
 #*********************************************************************
 
