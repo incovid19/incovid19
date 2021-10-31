@@ -82,6 +82,7 @@ def get_detected_text(image, col, state):
             text = text.replace(',', '')
             text = text.replace('*', '')
             text = text.replace('I', '1')
+            text = text.replace('€', '6')
             text = text.split(" ")
             for i in text:
                 try:
@@ -1076,7 +1077,7 @@ def ExtractDataFromImage(state, date, handle, term):
 # ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-10-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-10-27', 'nhm_hp', '#7PMupdate')
+ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-10-27', 'diprjk', 'Media Bulletin')
