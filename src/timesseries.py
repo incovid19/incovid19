@@ -33,7 +33,7 @@ def ts_json():
             timeseries_min = json.load(fp)
             fp.close()
 
-        run_date = data_min[key]['meta']['tested']['date']
+        run_date = data_min[key]['meta']['date']
         timeseries_min[key]["dates"][run_date] = temp_dict
         # timeseries_min[key]["dates"][run_date]
 
@@ -83,7 +83,7 @@ def ts_state_all():
                 # print("="*50)
             
 
-                run_date = data_min[key]['meta']['tested']['date']
+                run_date = data_min[key]['meta']['date']
                 timeseries_min[key]['districts'][dist]["dates"][run_date] = temp_dict
                 temp_dict = {}
                 # print(timeseries_min[key]['districts'][dist]["dates"][run_date])
