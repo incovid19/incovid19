@@ -3,6 +3,7 @@ import json
 import io
 from datetime import datetime, timedelta
 
+
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 
@@ -22,7 +23,6 @@ def ExtractNoSource(df, state, date):
                 "cumulativeConfirmedNumberForState",
                 "cumulativeDeceasedNumberForState",
                 "cumulativeRecoveredNumberForState",
-                "last_updated",
             ]
         )
         for district in list(state['District']):
@@ -34,6 +34,8 @@ def ExtractNoSource(df, state, date):
             df[col][df['District'] == "Unknown"] -= state[col.replace("District", "State")][0]
 
     except FileNotFoundError:
+        df = ExtractNoSource(df, state, date)
+    except ValueError:
         df = ExtractNoSource(df, state, date)
     return df
 
