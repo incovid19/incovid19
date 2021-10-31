@@ -9,6 +9,8 @@ from StatusMsg import StatusMsg
 import inflect
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+import json
+import os
 
 
 def downloadFile(Date, StateCode, url):
@@ -67,9 +69,9 @@ def getSources(source, date):
                                     outfile.write(json_object_total)
                             StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                         else:
-                            StatusMsg(state, str(date), "ERR", "File Not Found", program="GetSource")
+                            StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                     else:
-                        StatusMsg(state, str(date), "ERR", "File Not Found", program="GetSource")
+                        StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
             elif source["StateDataSourceType"][idx] == "pdf":
                 if source["StateCode"][idx] == "HR":
                     url = 'http://nhmharyana.gov.in/WriteReadData/userfiles/file/CoronaVirus/Daily%20Bulletin%20of%20COVID%2019%20as%20on%20' + date.strftime("%d-%m-%Y") + '.pdf'
