@@ -661,7 +661,7 @@ def manipur(state, date, query):
     recover_image = image[0]
     image = image[2]
 
-    recover_text = "recovered cases is "
+    recover_text = "cumulative number of recovered cases is "
     recover_page = client.document_text_detection(image=get_bytes(recover_image)).text_annotations[0].description
     recover_start = recover_page.find(recover_text)
     recover_page = recover_page.replace(recover_text, "")
@@ -1074,11 +1074,11 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-10-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('AR', '2021-10-30', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('BR', '2021-10-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
+ExtractDataFromImage('MN', '2021-10-30', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-10-27', 'diprjk', 'Media Bulletin')
 
