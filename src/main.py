@@ -22,7 +22,7 @@ from getHTMLData import ExtractFromHTML
 import pandas as pd
 
 source = pd.read_csv(r"../sources.csv")
-getSources(source,today)
+# getSources(source,today)
 
 #*********************************************************************
 
@@ -37,7 +37,7 @@ for idx in source.index:
             if not(fileStatus):
                 ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
             else:
-                ExtractFromHTML(StateCode = source["StateCode"][idx],Date = str(today))
+                ExtractFromHTML(source["StateCode"][idx],str(today))
         else:
             ExtractStateMyGov(source["StateCode"][idx],str(today))
     elif source["StateDataSourceType"][idx] == "pdf":
