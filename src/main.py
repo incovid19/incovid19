@@ -3,8 +3,9 @@ import datetime
 import timedelta
 
 today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
-print(today)
 # today = datetime.datetime.now().date()
+print(today)
+
 folders = ["INPUT","RAWCSV","LOG"]
 
 for folder in folders:
@@ -23,8 +24,9 @@ import pandas as pd
 source = pd.read_csv(r"../sources.csv")
 getSources(source,today)
 
-print("Extracting Data")
+#*********************************************************************
 
+print("Extracting Data")
 for idx in source.index:
     print("State:" + source["StateName"][idx])
     if source["StateDataSourceType"][idx] == "Image(Twitter)":

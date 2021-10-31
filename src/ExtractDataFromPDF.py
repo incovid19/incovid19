@@ -171,12 +171,12 @@ def getPBData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getUKData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'6')
+    table = camelot.read_pdf(file_path,'7')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-2.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-2.csv'.format(date,StateCode))
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     df_districts.columns = df_districts.columns.str.replace("\n","")
     df_districts = df_districts[:-1]
@@ -253,6 +253,18 @@ def getMZData(file_path,date,StateCode):
     df_summary = df_districts #testcode needs to be updated later
     return df_summary,df_districts
 
+def getMLData(file_path,date,StateCode):
+    table = camelot.read_pdf(file_path,'1')
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=[1])
+    col_dict = {"District Name":"District","Total Cases":"Confirmed","Total \nRecoveries":"Recovered","Total \nDeaths":"Deceased"}
+    df_districts = df_districts.rename(columns=col_dict)
+    df_districts = df_districts[["District","Confirmed","Recovered","Deceased"]]
+    df_districts.drop(df_districts.tail(1).index,inplace=True)
+    return df_districts
+    
 
 def GenerateRawCsv(StateCode,Date,df_districts):
     utc_dt = datetime.now(timezone.utc)
@@ -315,11 +327,14 @@ def ExtractFromPDF(StateCode = "LA",Date = "2021-10-28"):
         elif StateCode == "MZ":
             df_summary,df_districts = getMZData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts)
+        elif StateCode == "ML":
+            df_districts = getMLData(filepath,Date,StateCode)
+            GenerateRawCsv(StateCode,Date,df_districts)
         StatusMsg(StateCode,Date,"OK","COMPLETED","ExtractFromPDF")
     except HTTPError:
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
     except Exception:
-        # raise
+        raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
