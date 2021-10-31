@@ -51,7 +51,7 @@ def get_districts(text, state):
                             break
                     if state == 'Himachal Pradesh':
                         if ('L&Spiti' in text[start:end]) or ('L &Spiti' in text[start:end]):
-                            data.append("Lahaul And Spiti")
+                            data.append("Lahaul and Spiti")
                             start = i + 1
                             break
                     if state == 'Jammu and Kashmir':
@@ -191,7 +191,7 @@ def arunachal_pradesh(state, date, query):
     for i, text in enumerate(page[:-1]):
         if (text.description == "Person") and (page[i + 1].description == "tested"):
             test_x1, test_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
-        if text.description == "Total":
+        if (text.description == "Total") and not total:
             total_x1, total_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
         if (text.description == "Discharged") and (page[i + 1].description == "Death"):
             recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
@@ -1069,8 +1069,8 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-10-30', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-ExtractDataFromImage('BR', '2021-10-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+ExtractDataFromImage('AR', '2021-10-30', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('BR', '2021-10-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-10-29', 'health_manipur', 'Manipur updates')
