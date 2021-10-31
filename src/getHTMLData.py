@@ -82,6 +82,8 @@ def gujarat(state, date, path):
     # getting cummulative values
     df["Cases Tested for COVID19"] = df["Cases Tested for COVID19"].str.split().str[-1]
     df["Patients Recovered"] = df["Patients Recovered"].str.split().str[-1]
+    df["Total Deaths"] = df["Total Deaths"].str.split().str[-1]
+    # df["Active Cases"] = df["Active Cases"].str.split().str[-1]
 
     # Renaming cols name
     df.rename(
@@ -241,7 +243,7 @@ def india(state, date, path):
 
     states = []
     for val in STATES:
-        states.append(str(val.getText()).split(":")[1].lstrip().replace("Telengana", "Telangana").replace('Andaman And Nicobar', 'Andaman and Nicobar Islands'))
+        states.append(str(val.getText()).split(":")[1].lstrip().replace("Telengana", "Telangana").replace('Andaman And Nicobar', 'Andaman and Nicobar Islands').replace('Andaman and Nicobar','Andaman and Nicobar Islands'))
 
     confirmed = []
     for val in CONFIRMED:
@@ -346,6 +348,7 @@ def ExtractFromHTML(state, date):
         states[state](state, date, path)
         StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
     except Exception:
+        raise
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         ExtractStateMyGov(state, date, no_source=True)
 
