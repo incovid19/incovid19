@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urllib.request
 from StatusMsg import StatusMsg
 import json
+import os
 import io
 import datetime
 from ExtractStateMyGov import ExtractStateMyGov
@@ -86,7 +87,7 @@ def gujarat(state, date, path):
     # getting cummulative values
     df["Cases Tested for COVID19"] = df["Cases Tested for COVID19"].str.split().str[-1]
     df["Patients Recovered"] = df["Patients Recovered"].str.split().str[-1]
-    df["Total Deaths"] = df["Total Deaths"].str.split().str[-1]
+    # df["Total Deaths"] = df["Total Deaths"].str.split().str[-1]
     # df["Active Cases"] = df["Active Cases"].str.split().str[-1]
 
     # Renaming cols name
@@ -387,7 +388,6 @@ def ExtractFromHTML(state, date):
         states[state](state, date, path)
         StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
     except Exception:
-        raise
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         ExtractStateMyGov(state, date, no_source=True)
 
