@@ -35,6 +35,10 @@ def andhra_pradesh(state, date, path):
     df['StateConfirmed'] = int(df_summary['val'][df_summary['var'] == 'Confirmed Cases'])
     df['StateRecovered'] = int(df_summary['val'][df_summary['var'] == 'Cured/ Discharged'])
     df['StateDeceased'] = int(df_summary['val'][df_summary['var'] == 'Deceased'])
+    new_dict = {}
+    for key, val in df.to_dict().items():
+        new_dict[key] = list(val.values())
+    df = pd.DataFrame(new_dict)
     GenerateRawCsv(state, date, df)
 
 
@@ -317,6 +321,7 @@ def GenerateRawCsv(state, date, df_districts):
     df['Date'] = [date] * len(df_districts)
     df['State/UTCode'] = [state] * len(df_districts)
     df['District'] = df_districts['District']
+    df['last_updated'] = [datetime.datetime.now()] * len(df_districts)
 
     df['cumulativeConfirmedNumberForDistrict'] = df_districts['Confirmed']
     df['cumulativeConfirmedNumberForState'] = df_districts['StateConfirmed']
@@ -324,13 +329,15 @@ def GenerateRawCsv(state, date, df_districts):
     if "Tested" in df_districts.columns:
         df['cumulativeTestedNumberForDistrict'] = df_districts['Tested']
         df['cumulativeTestedNumberForState'] = df_districts['StateTested']
+        df['tested_last_updated_district'] = [datetime.datetime.now()] * len(df_districts)
+        df['tested_last_updated_state'] = [datetime.datetime.now()] * len(df_districts)
 
     df['cumulativeDeceasedNumberForDistrict'] = df_districts['Deceased']
     df['cumulativeDeceasedNumberForState'] = df_districts['StateDeceased']
 
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
     df['cumulativeRecoveredNumberForState'] = df_districts['StateRecovered']
-    print(df)
+
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, state))
 
 
@@ -353,4 +360,4 @@ def ExtractFromHTML(state, date):
         ExtractStateMyGov(state, date, no_source=True)
 
 
-# ExtractFromHTML(state="GJ", date="2021-10-29")
+# ExtractFromHTML(state="AP", date="2021-10-30")
