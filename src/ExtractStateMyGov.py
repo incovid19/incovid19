@@ -3,7 +3,6 @@ import json
 import io
 from datetime import datetime, timedelta
 
-
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 
@@ -35,8 +34,6 @@ def ExtractNoSource(df, state, date):
 
     except FileNotFoundError:
         df = ExtractNoSource(df, state, date)
-    except ValueError:
-        df = ExtractNoSource(df, state, date)
     return df
 
 
@@ -65,7 +62,7 @@ def ExtractStateMyGov(state, date, no_source=False):
             districts.append(dist)
 
     state_df["Date"] = [date] * len(districts)
-    state_df["State/UTCode"] = [state_name] * len(districts)
+    state_df["State/UTCode"] = [state] * len(districts)
     state_df["District"] = districts
     state_df['tested_last_updated_district'] = None
     state_df['tested_source_district'] = None

@@ -2,7 +2,7 @@ import os
 import cv2
 import pandas as pd
 from google.cloud import vision
-from fuzzywuzzy import fuzz
+from fuzzywuzzy import fuzz, process
 from datetime import datetime, timedelta
 from pytz import timezone
 import json
@@ -25,6 +25,7 @@ def get_bytes(raw_img):
 def get_districts(text, state):
     districts = pd.read_csv('../StateDistricts.csv')
     hindi_dist = json.load(io.open("../DistrictMatchingHindi.json", encoding="utf8"))
+    district_master = json.load(io.open("../DistrictMappingMaster.json"))
     districts = districts['District'][districts['State'] == state].tolist()
     start = 0
     data = []
@@ -38,49 +39,30 @@ def get_districts(text, state):
                 dist = dist.replace("|", "")
                 if dist[0] == " ":
                     dist = dist[1:]
-                data.append(hindi_dist[state][dist])
+                if dist in hindi_dist[state]:
+                    data.append(hindi_dist[state][dist])
+
     else:
         for i, char in enumerate(text):
             if char == '\n':
                 end = i
-                for j, dist in enumerate(districts):
-                    if state == 'Arunachal Pradesh':
-                        if 'Capital Com' in text[start:end]:
-                            data.append("Papum Pare")
+                text_compare = text[start:end].replace('\n', ' ').title()
+                if text_compare in district_master[state]:
+                    if (text_compare == 'Papum Pare') or (text_compare not in data):
+                        # print(text_compare)
+                        data.append(district_master[state][text_compare])
+                        start = i + 1
+                elif (state == 'Arunachal Pradesh') and (text[start:end] in ['Lower', 'Upper', 'East', 'West']):
+                    continue
+                else:
+                    token = process.extractOne(text[start:end].replace("\n", " ").lower(), districts)
+                    if (token[1] > 80) and (text[start:end] != 'Valley'):
+                        if (token[0] == 'Papum Pare') or (token[0] not in data):
+                            data.append(token[0])
                             start = i + 1
-                            break
-                    if state == 'Himachal Pradesh':
-                        if ('L&Spiti' in text[start:end]) or ('L &Spiti' in text[start:end]):
-                            data.append("Lahaul and Spiti")
-                            start = i + 1
-                            break
-                    if state == 'Jammu and Kashmir':
-                        if 'Poonch' in text[start:end]:
-                            data.append("Punch")
-                            start = i + 1
-                            break
-                    if state == 'Rajasthan':
-                        if 'JHUNUHUNU' in text[start:end]:
-                            data.append("Jhunjhunu")
-                            start = i + 1
-                            break
-                    partial_comp = fuzz.partial_ratio(text[start:end].lower(), dist.lower())
-                    comp = fuzz.ratio(text[start:end].lower(), dist.lower())
-                    # print(text[start:end])
-                    # print(dist)
-                    # print(partial_comp)
-                    # print(comp)
-                    if partial_comp >= 100:
-                        if comp >= 70:
-                            data.append(districts.pop(j))
-                            start = i + 1
-                            break
                     else:
-                        if comp >= 80:
-                            data.append(districts.pop(j))
-                            start = i + 1
-                            break
-            text = text[:start] + text[start:i + 1].replace("\n", " ") + text[i + 1:]
+                        start = i + 1
+                        continue
         data.append("Total")
     return data
 
@@ -231,6 +213,9 @@ def arunachal_pradesh(state, date, query):
     single_digit = any(x < 10 for x in ar['recovered']['data'])
     single_digit = any(x < 10 for x in ar['tested']['data'])
 
+    if len(ar['districts']['data']) < 25:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
     if len(ar['districts']['data']) > len(ar['dead']['data']):
         for i in range(len(ar['districts']['data']) - len(ar['dead']['data'])):
             ar['dead']['data'].insert(len(ar['dead']['data']) - 1, 0)
@@ -254,7 +239,7 @@ def arunachal_pradesh(state, date, query):
     for i in range(len(ar['districts']['data'])-1):
         ar_data.append({
             'Date': date,
-            'State/UTCode': state_name,
+            'State/UTCode': state,
             'District': ar['districts']['data'][i],
             'tested_last_updated_district': last_updated,
             'tested_source_district': data_source,
@@ -388,6 +373,9 @@ def bihar(state, date, query):
     single_digit = any(x < 10 for x in br['total']['data'])
     single_digit = any(x < 10 for x in br['recovered']['data'])
 
+    if len(br['districts']['data']) < 38:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
     if len(br['districts']['data']) > len(br['dead']['data']):
         for i in range(len(br['districts']['data']) - len(br['dead']['data'])):
             br['dead']['data'].insert(len(br['dead']['data']) - 1, 0)
@@ -406,7 +394,7 @@ def bihar(state, date, query):
     for i in range(len(br['districts']['data'])-1):
         br_data.append({
             'Date': date,
-            'State/UTCode': state_name,
+            'State/UTCode': state,
             'District': br['districts']['data'][i],
             'tested_last_updated_district': last_updated,
             'tested_source_district': data_source,
@@ -489,6 +477,9 @@ def chhattisgarh(state, date, query):
     single_digit = any(x < 10 for x in cg['total']['data'])
     single_digit = any(x < 10 for x in cg['recovered']['data'])
 
+    if len(cg['districts']['data']) < 29:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
     if len(cg['districts']['data']) > len(cg['dead']['data']):
         for i in range(len(cg['districts']['data']) - len(cg['dead']['data'])):
             cg['dead']['data'].insert(len(cg['dead']['data']) - 1, 0)
@@ -507,7 +498,7 @@ def chhattisgarh(state, date, query):
     for i in range(len(cg['districts']['data'])-1):
         cg_data.append({
             'Date': date,
-            'State/UTCode': state_name,
+            'State/UTCode': state,
             'District': cg['districts']['data'][i],
             'tested_last_updated_district': last_updated,
             'tested_source_district': data_source,
@@ -604,6 +595,9 @@ def himachal_pradesh(state, date, query):
     single_digit = any(x < 10 for x in hp['recovered']['data'])
     single_digit = any(x < 10 for x in hp['tested']['data'])
 
+    if len(hp['districts']['data']) < 12:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
     if len(hp['districts']['data']) > len(hp['dead']['data']):
         for i in range(len(hp['districts']['data']) - len(hp['dead']['data'])):
             hp['dead']['data'].insert(len(hp['dead']['data']) - 1, 0)
@@ -627,7 +621,7 @@ def himachal_pradesh(state, date, query):
     for i in range(len(hp['districts']['data'])-1):
         hp_data.append({
             'Date': date,
-            'State/UTCode': state_name,
+            'State/UTCode': state,
             'District': hp['districts']['data'][i],
             'tested_last_updated_district': last_updated,
             'tested_source_district': data_source,
@@ -724,6 +718,9 @@ def manipur(state, date, query):
     single_digit = any(x < 10 for x in mn['total']['data'])
     single_digit = any(x < 10 for x in mn['total']['data'])
 
+    if len(mn['districts']['data']) < 16:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
     if len(mn['districts']['data']) > len(mn['dead']['data']):
         for i in range(len(mn['districts']['data']) - len(mn['dead']['data'])):
             mn['dead']['data'].insert(len(mn['dead']['data']) - 1, 0)
@@ -742,7 +739,7 @@ def manipur(state, date, query):
     for i in range(len(mn['districts']['data'])-1):
         mn_data.append({
             'Date': date,
-            'State/UTCode': state_name,
+            'State/UTCode': state,
             'District': mn['districts']['data'][i],
             'tested_last_updated_district': last_updated,
             'tested_source_district': data_source,
@@ -849,6 +846,9 @@ def rajasthan(state, date, query):
     single_digit = any(x < 10 for x in rj['recovered']['data'])
     single_digit = any(x < 10 for x in rj['tested']['data'])
 
+    if len(rj['districts']['data']) < 34:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
     if len(rj['districts']['data']) > len(rj['dead']['data']):
         for i in range(len(rj['districts']['data']) - len(rj['dead']['data'])):
             rj['dead']['data'].insert(len(rj['dead']['data']) - 1, 0)
@@ -872,7 +872,7 @@ def rajasthan(state, date, query):
     for i in range(len(rj['districts']['data'])-1):
         rj_data.append({
             'Date': date,
-            'State/UTCode': state_name,
+            'State/UTCode': state,
             'District': rj['districts']['data'][i],
             'tested_last_updated_district': last_updated,
             'tested_source_district': data_source,
@@ -983,6 +983,9 @@ def jammu_kashmir(state, date, query):
     single_digit = any(x < 10 for x in jk['total']['data'])
     single_digit = any(x < 10 for x in jk['recovered']['data'])
 
+    if len(jk['districts']['data']) < 20:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
     if len(jk['districts']['data']) > len(jk['dead']['data']):
         for i in range(len(jk['districts']['data']) - len(jk['dead']['data'])):
             jk['dead']['data'].insert(len(jk['dead']['data']) - 1, 0)
@@ -1001,7 +1004,7 @@ def jammu_kashmir(state, date, query):
     for i in range(len(jk['districts']['data'])-1):
         jk_data.append({
             'Date': date,
-            'State/UTCode': state_name,
+            'State/UTCode': state,
             'District': jk['districts']['data'][i],
             'tested_last_updated_district': last_updated,
             'tested_source_district': data_source,
@@ -1045,7 +1048,8 @@ def ExtractDataFromImage(state, date, handle, term):
     try:
         response = states[state](state, date, query)
         # print(response)
-        if response[1] == 'Source not accessible':
+        if response[1] in ['Source not accessible', 'Data Extraction error - Districts not detected']:
+            response[1] = response[1].append(". Picking data from mygov")
             ExtractStateMyGov(state, date, no_source=True)
         StatusMsg(
             StateCode=state,
@@ -1057,23 +1061,23 @@ def ExtractDataFromImage(state, date, handle, term):
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
         # print(e)
-        ExtractStateMyGov(state, date, no_source=True)
         StatusMsg(
             StateCode=state,
             date=date,
             program="ExtractDataFromImage",
             StatusCode="ERR",
-            statusMessage="Data Extraction Error - {}".format(e)
+            statusMessage="Data Extraction Error - {}. Picking data from mygov".format(e)
         )
+        ExtractStateMyGov(state, date, no_source=True)
         # return [state, date, "ExtractDataFromImage", "ERR", "Data Extraction Error - {}".format(e)]
 
 
 # API Calls - To be commented or removed from deployed code
-ExtractDataFromImage('AR', '2021-10-30', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-10-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('AR', '2021-10-27', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('BR', '2021-10-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-10-29', 'health_manipur', 'Manipur updates')
-# ExtractDataFromImage('RJ', '2021-10-29', 'dineshkumawat', '#Rajasthan Bulletin')
-# ExtractDataFromImage('JK', '2021-10-28', 'diprjk', 'Media Bulletin')
+# ExtractDataFromImage('HP', '2021-10-27', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('MN', '2021-10-27', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
+# ExtractDataFromImage('JK', '2021-10-27', 'diprjk', 'Media Bulletin')
 

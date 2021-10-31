@@ -29,8 +29,9 @@ def andhra_pradesh(state, date, path):
     df.rename(columns=dist_names, inplace=True)
     df = df[1:-4]
 
-    dist_map = json.load(io.open("../DistrictMappingMaster.json"))
-    df['District'] = [dist_map['Andhra Pradesh'][district] for district in list(df['District'])]
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Andhra Pradesh'].to_dict()
+    df['District'].replace(dist_map, inplace=True)
     df['StateConfirmed'] = int(df_summary['val'][df_summary['var'] == 'Confirmed Cases'])
     df['StateRecovered'] = int(df_summary['val'][df_summary['var'] == 'Cured/ Discharged'])
     df['StateDeceased'] = int(df_summary['val'][df_summary['var'] == 'Deceased'])
@@ -163,6 +164,9 @@ def tripura(state, date, path):
                  "val": list(df[['Confirmed', 'Tested', 'Recovered', 'Deceased']][df['District'] == 'Total'].values.flatten())}
     df_summary = pd.DataFrame(dict_temp)
     df = df[:len(df) - 1]
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Tripura'].to_dict()
+    df['District'].replace(dist_map, inplace=True)
     GenerateRawCsv(state, date, df)
 
 
@@ -268,7 +272,7 @@ def india(state, date, path):
 
     states_data["Date"] = str(datetime.datetime.now().date())
 
-    states_data["State/UTCode"] = "India"
+    states_data["State/UTCode"] = state
 
     states_data['cumulativeConfirmedNumberForState'] = int(
         sum_soup.findAll("div", {"class": "t_case"})[0].findAll("span", {"class": "icount"})[0].getText().replace(
@@ -306,8 +310,10 @@ def GenerateRawCsv(state, date, df_districts):
         ]
     )
 
-    df['Date'] = date
-    df['State/UTCode'] = state
+    state_code = json.load(io.open('../StateCode.json'))
+
+    df['Date'] = [date] * len(df_districts)
+    df['State/UTCode'] = [state] * len(df_districts)
     df['District'] = df_districts['District']
 
     df['cumulativeConfirmedNumberForDistrict'] = df_districts['Confirmed']
@@ -322,7 +328,7 @@ def GenerateRawCsv(state, date, df_districts):
 
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
     df['cumulativeRecoveredNumberForState'] = df_districts['StateRecovered']
-
+    print(df)
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, state))
 
 
@@ -340,8 +346,8 @@ def ExtractFromHTML(state, date):
         states[state](state, date, path)
         StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
     except Exception:
-        ExtractStateMyGov(state, date, no_source=True)
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
+        ExtractStateMyGov(state, date, no_source=True)
 
 
-ExtractFromHTML(state="IN", date="2021-10-29")
+ExtractFromHTML(state="GJ", date="2021-10-29")
