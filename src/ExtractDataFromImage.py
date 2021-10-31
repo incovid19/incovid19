@@ -52,8 +52,11 @@ def get_districts(text, state):
                         # print(text_compare)
                         data.append(district_master[state][text_compare])
                         start = i + 1
-                elif (state == 'Arunachal Pradesh') and (text[start:end] in ['Lower', 'Upper', 'East', 'West']):
+                elif (state == 'Arunachal Pradesh') and (text[start:end] in ['Lower', 'Upper', 'East', 'West', 'Capital']):
                     continue
+                elif (state == 'Arunachal Pradesh') and ('Capital Com' in text[start:end]):
+                    data.append('Papum Pare')
+                    start = i + 1
                 else:
                     token = process.extractOne(text[start:end].replace("\n", " ").lower(), districts)
                     if (token[1] > 80) and (text[start:end] != 'Valley'):
@@ -248,7 +251,7 @@ def arunachal_pradesh(state, date, query):
             'cumulativeConfirmedNumberForDistrict': ar['total']['data'][i],
             'cumulativeDeceasedNumberForDistrict': ar['dead']['data'][i],
             'cumulativeRecoveredNumberForDistrict': ar['recovered']['data'][i],
-            'cumulativeTestedNumberForDistrict': 0,
+            'cumulativeTestedNumberForDistrict': ar['tested']['data'][i],
             'last_updated': last_updated,
             'tested_last_updated_state': last_updated,
             'tested_source_state': data_source,
@@ -666,7 +669,7 @@ def manipur(state, date, query):
     recover_start = recover_page.find(recover_text)
     recover_page = recover_page.replace(recover_text, "")
     recover_end = recover_page.find("(", recover_start)
-    recovered = int(recover_page[recover_start:recover_end - 1].replace(",", ""))
+    recovered = int(recover_page[recover_start:recover_end - 1].replace(",", "").replace(".", ""))
 
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
 

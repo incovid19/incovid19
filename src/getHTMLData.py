@@ -231,6 +231,37 @@ def kerala(state, date, path):
     GenerateRawCsv(state, date, df)
 
 
+def maharashtra(state, date, path):
+    path = path.replace('html', 'json')
+    mh_data = json.load(io.open(path.format(date, state)))
+    df = pd.DataFrame()
+    for data in mh_data:
+        df = df.append(data, ignore_index=True)
+    df.drop(columns=['Active Cases', 'District Code|sum', 'Date'], inplace=True)
+    df['Positive Cases'] = df['Positive Cases'].astype(int)
+    df['Recovered'] = df['Recovered'].astype(int)
+    df['Deceased'] = df['Deceased'].astype(int)
+    df.rename(columns={'Positive Cases': 'Confirmed'}, inplace=True)
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Maharashtra'].to_dict()
+    df['District'].replace(dist_map, inplace=True)
+
+    if os.path.isfile(path.format(date, state + '_total')):
+        mh_total = json.load(io.open(path.replace('.json', '_total.json').format(date, state)))
+        df['StateConfirmed'] = int(mh_total['Total Prog. Positive Patient'])
+        df['StateRecovered'] = int(mh_total['Progressive Discharged'])
+        df['StateDeceased'] = int(mh_total['Progressive Deaths Due to Corona'])
+    else:
+        df['StateConfirmed'] = sum(df['Confirmed'])
+        df['StateRecovered'] = sum(df['Recovered'])
+        df['StateDeceased'] = sum(df['Deceased'])
+
+    if os.path.isfile(path.format(date, state + '_testing')):
+        df['StateTested'] = int(json.load(io.open(path.replace('.json', '_testing.json').format(date, state)))['total'])
+
+    GenerateRawCsv(state, date, df)
+
+
 def india(state, date, path):
     URL = "https://www.mygov.in/corona-data/covid19-statewise-status/"
     file_name, headers = urllib.request.urlretrieve(URL)
@@ -328,8 +359,9 @@ def GenerateRawCsv(state, date, df_districts):
 
     if "Tested" in df_districts.columns:
         df['cumulativeTestedNumberForDistrict'] = df_districts['Tested']
-        df['cumulativeTestedNumberForState'] = df_districts['StateTested']
         df['tested_last_updated_district'] = [datetime.datetime.now()] * len(df_districts)
+    if "StateTested" in df_districts.columns:
+        df['cumulativeTestedNumberForState'] = df_districts['StateTested']
         df['tested_last_updated_state'] = [datetime.datetime.now()] * len(df_districts)
 
     df['cumulativeDeceasedNumberForDistrict'] = df_districts['Deceased']
@@ -338,7 +370,7 @@ def GenerateRawCsv(state, date, df_districts):
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
     df['cumulativeRecoveredNumberForState'] = df_districts['StateRecovered']
 
-    df.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, state))
+    df.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, state), index=False)
 
 
 def ExtractFromHTML(state, date):

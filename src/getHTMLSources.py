@@ -46,6 +46,30 @@ def getSources(source, date):
                 except Exception:
                     raise
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in Main Loop", program="GetSource")
+            elif source["StateDataSourceType"][idx] == "json":
+                if source["StateCode"][idx] == "MH":
+                    response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date')
+                    if response.status_code == 200:
+                        data = json.loads(response.content)
+                        if datetime.fromtimestamp(int(data[0]['Date']) / 1000).date() == date:
+                            json_object = json.dumps(data)
+                            with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
+                                outfile.write(json_object)
+                            response_total = requests.get(source["StateDataURL"][idx] + '/dbd-kpi')
+                            if response_total.status_code == 200:
+                                json_object_total = json.dumps(json.loads(response_total.content)[0])
+                                with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
+                                    outfile.write(json_object_total)
+                            response_total = requests.get(source["StateDataURL"][idx] + '/d_testing')
+                            if response_total.status_code == 200:
+                                json_object_total = json.dumps(json.loads(response_total.content)[0])
+                                with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
+                                    outfile.write(json_object_total)
+                            StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                        else:
+                            StatusMsg(state, str(date), "ERR", "File Not Found", program="GetSource")
+                    else:
+                        StatusMsg(state, str(date), "ERR", "File Not Found", program="GetSource")
             elif source["StateDataSourceType"][idx] == "pdf":
                 if source["StateCode"][idx] == "HR":
                     url = 'http://nhmharyana.gov.in/WriteReadData/userfiles/file/CoronaVirus/Daily%20Bulletin%20of%20COVID%2019%20as%20on%20' + date.strftime("%d-%m-%Y") + '.pdf'
