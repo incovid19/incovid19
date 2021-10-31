@@ -12,7 +12,7 @@ def ts_json():
     # TS_MIN_dict = {}
 
 
-    url = 'https://data.covid19india.org/v4/min/timeseries.min.json'
+    url = 'https://data.incovid19.org/v4/min/timeseries.min.json'
     response = requests.get(url)
     if response.status_code == 200:
         with open(r"timeseries_min.json", 'wb') as f:
@@ -52,7 +52,7 @@ def ts_state_all():
     temp_dict = {}
     for key in data_min.keys():
         print(key)
-        url = 'https://data.covid19india.org/v4/min/timeseries-{}.min.json'.format(key)
+        url = 'https://data.incovid19.org/v4/min/timeseries-{}.min.json'.format(key)
         response = requests.get(url)
         if response.status_code == 200:
             with open(r"timeseries_{}_min.json".format(key), 'wb') as f:
