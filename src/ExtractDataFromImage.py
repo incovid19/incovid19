@@ -815,7 +815,7 @@ def rajasthan(state, date, query):
             if page[i + 2].description != 'In':
                 test_x1, test_x2 = text.bounding_poly.vertices[0].x - 20, text.bounding_poly.vertices[1].x + 20
         if text.description == "Positive":
-            if page[i + 1].description != 'In':
+            if page[i + 1].description != 'In' and page[i - 1].description != "Sample":
                 total_x1, total_x2 = text.bounding_poly.vertices[0].x - 12, text.bounding_poly.vertices[1].x + 12
         if text.description == "Death":
             dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 15, text.bounding_poly.vertices[1].x + 15

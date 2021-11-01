@@ -37,18 +37,18 @@ def getSources(source, date):
     for idx in source.index:
         print(source["StateCode"][idx])
         if source["myGov"][idx] != "yes":
-            if source["StateDataSourceType"][idx] == "html":
-                try:
-                    file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
-                    copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
-                    StatusMsg(source["StateCode"][idx], str(date), "OK",
-                              "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
-                except HTTPError:
-                    StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
-                except Exception:
-                    raise
-                    StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in Main Loop", program="GetSource")
-            elif source["StateDataSourceType"][idx] == "json":
+            # if source["StateDataSourceType"][idx] == "html":
+            #     try:
+            #         file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
+            #         copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
+            #         StatusMsg(source["StateCode"][idx], str(date), "OK",
+            #                   "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+            #     except HTTPError:
+            #         StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
+            #     except Exception:
+            #         raise
+            #         StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in Main Loop", program="GetSource")
+            if source["StateDataSourceType"][idx] == "json":
                 if source["StateCode"][idx] == "MH":
                     response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date')
                     if response.status_code == 200:
@@ -94,13 +94,10 @@ def getSources(source, date):
                 elif source["StateCode"][idx] == "KL":
                     url = 'https://dhs.kerala.gov.in/wp-content/uploads/' + date.strftime("%Y/%m/Bulletin-HFWD-English-%B-%d.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "MH":
-                    url = 'https://arogya.maharashtra.gov.in/pdf/ncovidepressnote' + date.strftime("%B%d.pdf").lower()
-                    downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "ML":
                     url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%d_%b_%Y.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "UK":
+                elif source["StateCode"][idx] == "UT":
                     url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "LA":
