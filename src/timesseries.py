@@ -20,6 +20,10 @@ def ts_json():
     #     with open(r"..//timeseries_min.json", 'wb') as f:
     #         f.write(response.content)
 
+    with open('../timeSeries/timeseries.min.json') as fp:
+            timeseries_min = json.load(fp)
+            fp.close()
+
     for key in data_min.keys():
         print(key)
         # TS_MIN_dict[key] = {}
@@ -31,9 +35,7 @@ def ts_json():
                 temp_dict[i] = temp[i]
         # temp_dict = {"delta":temp['delta'],"delta7":temp['delta7'],'total':temp['total']}
         # print(temp_dict)
-        with open('../timeSeries/timeseries.min.json') as fp:
-            timeseries_min = json.load(fp)
-            fp.close()
+        
 
         run_date = data_min[key]['meta']['date']
         timeseries_min[key]['dates'][run_date] = temp_dict
