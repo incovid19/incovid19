@@ -31,9 +31,9 @@ for idx in source.index:
     print("State:" + source["StateName"][idx])
     if source["StateDataSourceType"][idx] == "Image(Twitter)":
         ExtractDataFromImage(source["StateCode"][idx], str(today), source['Twitter Handle'][idx], source['Twitter Search Term'][idx])
-    elif source["StateDataSourceType"][idx] == "html":
+    elif source["StateDataSourceType"][idx] in ["html","json"]:
         if source["myGov"][idx] != "yes":
-            fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+".html"))
+            fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+ "." + source["StateDataSourceType"][idx]))
             if not(fileStatus):
                 ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
             else:

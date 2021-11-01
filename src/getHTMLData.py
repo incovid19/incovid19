@@ -383,7 +383,7 @@ def ExtractFromHTML(state, date):
         'OR': odisha,
         'TR': tripura,
         'KL': kerala,
-        'IN': india,
+        'TT': india,
         'MH': maharashtra,
     }
     try:
