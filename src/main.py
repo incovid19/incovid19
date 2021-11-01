@@ -2,15 +2,14 @@ import os
 import datetime
 import timedelta
 
-# today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
-today = datetime.datetime.now().date()
-print(today)
+today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
+present = datetime.datetime.now().date()
 
 folders = ["INPUT","RAWCSV","LOG"]
 
 for folder in folders:
-    if not os.path.isdir(os.path.join("..",folder,str(today))):
-        os.mkdir(os.path.join("..",folder,str(today)))
+    if not os.path.isdir(os.path.join("..",folder,str(present))):
+        os.mkdir(os.path.join("..",folder,str(present)))
         print("Created")
 
 
@@ -21,12 +20,13 @@ from ExtractStateMyGov import ExtractStateMyGov
 from getHTMLData import ExtractFromHTML
 import pandas as pd
 
+print("getSources for:"+ str(present))
 source = pd.read_csv(r"../sources.csv")
-getSources(source,today)
+getSources(source,present)
 
 #*********************************************************************
 
-print("Extracting Data")
+print("Extracting Data for:" + str(today))
 for idx in source.index:
     print("State:" + source["StateName"][idx])
     if source["StateDataSourceType"][idx] == "Image(Twitter)":
