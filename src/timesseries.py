@@ -36,7 +36,9 @@ def ts_json():
             fp.close()
 
         run_date = data_min[key]['meta']['date']
-        timeseries_min[key]["dates"][run_date] = temp_dict
+        timeseries_min[key]['dates'][run_date] = temp_dict
+        print(type(run_date),run_date)
+        # print(timeseries_min[key]["dates"])
         # timeseries_min[key]["dates"][run_date]
 
         with open('../out_timeSeries/timeseries.min.json', 'w') as fp:
@@ -60,37 +62,52 @@ def ts_state_all():
         #     with open(r"timeseries_{}_min.json".format(key), 'wb') as f:
         #         f.write(response.content)
         
+        
+        temp_dict = {}
+        temp  = data_min[key]
+        for i in delta_keys:
+            if i in temp.keys():
+                temp_dict[i] = temp[i]
+        
+        
         with open("../timeSeries/timeseries-{}.min.json".format(key)) as fp:
                 timeseries_min = json.load(fp)
                 fp.close()    
-
+                
+        run_date = data_min[key]['meta']['date']
+        timeseries_min[key]["dates"][run_date] = temp_dict
         
-        if 'districts' in data_min[key].keys():
-            temp = data_min[key]['districts']
-            
+                
+        temp_dict = {}
+        if key != "TT":
+            if 'districts' in data_min[key].keys():
+                temp = data_min[key]['districts']
 
 
-            # print("="*50)
-            # print(temp)
-            for dist in temp:
-                if dist in timeseries_min[key]['districts']:
-                    for i in delta_keys:
-                        # print(temp.keys())
-                # temp = data_min[key]['districts']
-                        if i in temp[dist].keys():
-                            temp_dict[i] = temp[dist][i]
-                    # print("="*50)
-                    # print(dist)
-                    # print("="*50)
-                    # print(temp_dict)
-                    # print("="*50)
+
+                # print("="*50)
+                # print(temp)
+                for dist in temp:
+
+                    if dist in timeseries_min[key]['districts']:
+                        for i in delta_keys:
+                            # print(temp.keys())
+                    # temp = data_min[key]['districts']
+                            if i in temp[dist].keys():
+                                temp_dict[i] = temp[dist][i]
+                        # print("="*50)
+                        # print(dist)
+                        # print("="*50)
+                        # print(temp_dict)
+                        # print("="*50)
 
 
-                    run_date = data_min[key]['meta']['date']
-                    timeseries_min[key]['districts'][dist]["dates"][run_date] = temp_dict
-                    temp_dict = {}
-                # print(timeseries_min[key]['districts'][dist]["dates"][run_date])
-        # a=b
+                        run_date = data_min[key]['meta']['date']
+                        if key != "TT":
+                            timeseries_min[key]['districts'][dist]["dates"][run_date] = temp_dict
+                            temp_dict = {}
+                        # print(timeseries_min[key]['districts'][dist]["dates"][run_date])
+            # a=b
 
         with open(r"../out_timeSeries/timeseries-{}.min.json".format(key), 'w') as fp:
             json.dump(timeseries_min, fp)

@@ -41,7 +41,7 @@ def ExtractStateMyGov(state, date, no_source=False):
     states = json.load(io.open("../StateCode.json"))
     state_name = states[state]
     ind = pd.read_csv(
-        "../RAWCSV/" + date + "/IN_raw.csv",
+        "../RAWCSV/" + date + "/TT_raw.csv",
         index_col=None,
         usecols=[
             "District",
