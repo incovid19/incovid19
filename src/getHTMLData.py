@@ -110,7 +110,8 @@ def gujarat(state, date, path):
     df['StateTested'] = tested = int(soup.find_all("h3", {'id': 'ctl00_body_h3PatientTestedCount'})[0].getText())
     df['StateRecovered'] = recovered = int(soup.find_all("h3", {'id': 'ctl00_body_h3PatientCuredCount'})[0].getText())
     df['StateDeceased'] = death = int(soup.find_all("h3", {'id': 'ctl00_body_h3TotalDath'})[0].getText())
-    df['StateConfirmed'] = int(soup.find_all("h3", {'id': 'ctl00_body_h3TotalActiveConfirmedCount'})[0].getText()) + tested + recovered + death
+    active = int(soup.find_all("h3", {'id': 'ctl00_body_h3TotalActiveConfirmedCount'})[0].getText())
+    df['StateConfirmed'] = active + recovered + death
 
     # creating dictionary that has summary data for state of Assam
     dict_temp = {"var": ["Tested", "Confirmed", "Recovered", "Deceased"],
@@ -383,6 +384,7 @@ def ExtractFromHTML(state, date):
         'TR': tripura,
         'KL': kerala,
         'IN': india,
+        'MH': maharashtra,
     }
     try:
         states[state](state, date, path)
