@@ -37,17 +37,17 @@ def getSources(source, date):
     for idx in source.index:
         print(source["StateCode"][idx])
         if source["myGov"][idx] != "yes":
-            # if source["StateDataSourceType"][idx] == "html":
-            #     try:
-            #         file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
-            #         copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
-            #         StatusMsg(source["StateCode"][idx], str(date), "OK",
-            #                   "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
-            #     except HTTPError:
-            #         StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
-            #     except Exception:
-            #         raise
-            #         StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in Main Loop", program="GetSource")
+            if source["StateDataSourceType"][idx] == "html":
+                try:
+                    file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
+                    copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
+                    StatusMsg(source["StateCode"][idx], str(date), "OK",
+                              "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                except HTTPError:
+                    StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
+                except Exception:
+                    raise
+                    StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in Main Loop", program="GetSource")
             if source["StateDataSourceType"][idx] == "json":
                 if source["StateCode"][idx] == "MH":
                     response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date')

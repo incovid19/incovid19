@@ -27,7 +27,10 @@ def ExtractNoSource(df, state, date):
         for district in list(state['District']):
             if district != 'Unknown':
                 for col in cols:
-                    df[col][df['District'] == district] = int(state[col][state['District'] == district])
+                    try:
+                        df[col][df['District'] == district] = int(state[col][state['District'] == district])
+                    except:
+                        df[col][df['District'] == district] = None
 
         for col in cols:
             df[col][df['District'] == "Unknown"] -= state[col.replace("District", "State")][0]

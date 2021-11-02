@@ -22,7 +22,7 @@ import pandas as pd
 
 print("getSources for:"+ str(present))
 source = pd.read_csv(r"../sources.csv")
-getSources(source,today)
+getSources(source,present)
 
 #*********************************************************************
 
