@@ -70,7 +70,7 @@ def getTNData(file_path,date,StateCode):
     df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
     df_summary = df_districts
     print(df_summary)
-    a=b
+    # a=b
     df_districts = df_districts[:-4]
     
 
