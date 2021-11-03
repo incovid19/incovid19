@@ -26,7 +26,7 @@ def getKAData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    # print(df_districts)
+    print(df_districts)
     # a=b
     
     # df_summary = df_districts
@@ -35,10 +35,11 @@ def getKAData(file_path,date,StateCode):
     col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
-    df_summary = df_districts
+    
     # print(df_districts)
-    df_districts = df_districts[:-2]
-    # print(df_districts)
+    df_summary = df_districts.dropna(axis=0,how='all')
+    df_districts = df_districts.dropna(axis=0,how='all')[:-1]
+    print(df_districts)
     # df = df[]
 
     df_json = pd.read_json("../DistrictMappingMaster.json")
@@ -48,7 +49,7 @@ def getKAData(file_path,date,StateCode):
     
 
     df_summary.rename(columns={"District":"State/UT"},inplace=True)
-    df_summary = df_summary.iloc[-2,:] #testcode needs to be updated later
+    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     
     # print(df_districts)
     # print(df_summary)
@@ -202,12 +203,12 @@ def getPBData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getUKData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'6')
+    table = camelot.read_pdf(file_path,'7')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-2.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-2.csv'.format(date,StateCode))
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     df_districts.columns = df_districts.columns.str.replace("\n","")
     
@@ -340,7 +341,7 @@ def ExtractFromPDF(StateCode = "MH",Date = "2021-10-26"):
         elif StateCode == "PB":
             df_summary,df_districts = getPBData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
-        elif StateCode == "UK":
+        elif StateCode == "UT":
             df_summary,df_districts = getUKData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         elif StateCode == "NL":
