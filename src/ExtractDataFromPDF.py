@@ -81,6 +81,8 @@ def getTNData(file_path,date,StateCode):
 
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary = df_summary.dropna()
+    df_summary = df_summary.str.replace(',', '').astype(int)
     print(df_summary)
     return df_summary,df_districts
 
