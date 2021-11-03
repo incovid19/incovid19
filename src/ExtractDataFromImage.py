@@ -660,6 +660,8 @@ def manipur(state, date, query):
     image = get_image(state, date, query)
     if image is None:
         return ['ERR', 'Source not accessible']
+    
+    cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
 
     recover_image = image[0]
     image = image[2]
@@ -671,7 +673,7 @@ def manipur(state, date, query):
     recover_end = recover_page.find("(", recover_start)
     recovered = int(recover_page[recover_start:recover_end - 1].replace(",", "").replace(".", ""))
 
-    cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
+    
 
     status_text = "Imphal, the "
 
@@ -1064,6 +1066,7 @@ def ExtractDataFromImage(state, date, handle, term):
         )
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
+        # raise
         # print(e)
         StatusMsg(
             StateCode=state,
@@ -1081,7 +1084,7 @@ def ExtractDataFromImage(state, date, handle, term):
 # ExtractDataFromImage('BR', '2021-10-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-10-30', 'health_manipur', 'Manipur updates')
+ExtractDataFromImage('MN', '2021-11-01', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-10-27', 'diprjk', 'Media Bulletin')
 
