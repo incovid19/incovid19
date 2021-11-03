@@ -39,10 +39,6 @@ def ts_json():
                 temp_dict[i] = temp[i]
         # temp_dict = {"delta":temp['delta'],"delta7":temp['delta7'],'total':temp['total']}
         # print(temp_dict)
-<<<<<<< HEAD
-=======
-        
->>>>>>> 58fb7f0ad525b0b894f8ac9938f631b7034b6999
 
         run_date = data_min[key]['meta']['date']
         timeseries_min[key]['dates'][run_date] = temp_dict

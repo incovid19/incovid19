@@ -39,10 +39,18 @@ def getSources(source, date):
         if source["myGov"][idx] != "yes":
             if source["StateDataSourceType"][idx] == "html":
                 try:
-                    file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
-                    copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
-                    StatusMsg(source["StateCode"][idx], str(date), "OK",
-                              "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                    if source["StateCode"][idx]  == "TT":
+                        file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/corona-data/covid19-statewise-status/")
+                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT_State.html")
+                        file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/covid-19")
+                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT.html")
+                        StatusMsg(source["StateCode"][idx], str(date), "OK",
+                                  "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                    else:    
+                        file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
+                        copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
+                        StatusMsg(source["StateCode"][idx], str(date), "OK",
+                                  "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                 except HTTPError:
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                 except Exception:

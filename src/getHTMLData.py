@@ -184,10 +184,15 @@ def kerala(state, date, path):
     for i, sc in enumerate(script):
         if "var data " in sc:
             data = sc.split("=")[-1]
-        if "Total" in sc:
-            confirmed = int(script[i + 1].replace(' ', '').replace('\n', '').split('+')[2])
-            recovered = int(script[i + 2].replace(' ', '').replace('\n', '').split('+')[2])
-            death = int(script[i + 3].replace(' ', '').replace('\n', '').split('+')[2])
+        # if "Total" in sc:
+            # confirmed = int(script[i + 1].replace(' ', '').replace('\n', '').split('+')[2])
+            # recovered = int(script[i + 2].replace(' ', '').replace('\n', '').split('+')[2])
+            # death = int(script[i + 3].replace(' ', '').replace('\n', '').split('+')[2])
+            
+    totals = soup.findAll('h3', {'class': "my-0 my-lg-1"})
+    confirmed = int(totals[0].getText().split("(")[0].replace('*', ""))
+    recovered = int(totals[2].getText().split("(")[0].replace('*', ""))
+    death = int(totals[3].getText().split("(")[0].replace('*', ""))
 
     districts_json = data.split("datasets:")
     districts = districts_json[0]
@@ -263,17 +268,19 @@ def maharashtra(state, date, path):
 
     GenerateRawCsv(state, date, df)
 
-
+# AP,KL,GJ,OD
 def india(state, date, path):
-    URL = "https://www.mygov.in/corona-data/covid19-statewise-status/"
-    file_name, headers = urllib.request.urlretrieve(URL)
-    soup = BeautifulSoup(open(file_name, encoding="utf8"), "html.parser")
+    # URL = "https://www.mygov.in/corona-data/covid19-statewise-status/"
+    # file_name, headers = urllib.request.urlretrieve(URL)
+    soup = BeautifulSoup(open("../INPUT/"+date+"/TT_State.html", encoding="utf8"), "html.parser")
 
-    sum_URL = "https://www.mygov.in/covid-19"
-    sum_file_name, sum_headers = urllib.request.urlretrieve(sum_URL)
-    sum_soup = BeautifulSoup(open(sum_file_name, encoding="utf8"), "html.parser")
+    # sum_URL = "https://www.mygov.in/covid-19"
+    # sum_file_name, sum_headers = urllib.request.urlretrieve(sum_URL)
+    sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
 
     STATES = soup.find_all("div", {"class": "field field-name-field-select-state field-type-list-text field-label-above"})
+    # STATES = soup.find_all("div", {"class":"marquee_data view-content"})
+    # STATES = soup.find_all(soup.find_all("span", {"class":"st_name"}))
     CONFIRMED = soup.find_all("div", {"class": "field field-name-field-total-confirmed-indians field-type-number-integer field-label-above"})
     CURED_DISCHARGED = soup.find_all("div", {"class": "field field-name-field-cured field-type-number-integer field-label-above"})
     DEATH = soup.find_all("div", {"class": "field field-name-field-deaths field-type-number-integer field-label-above"})
@@ -295,6 +302,7 @@ def india(state, date, path):
         death.append(str(val.getText()).split(":")[1].lstrip())
 
     states_data = pd.DataFrame(list(zip(states, confirmed, cured, death)))
+    print(states_data)
 
     final_df_col = [
         'Date', 'State/UTCode', 'District', 'tested_last_updated_district', 'tested_source_district',
