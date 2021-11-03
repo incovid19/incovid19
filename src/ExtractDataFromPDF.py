@@ -26,7 +26,7 @@ def getKAData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    # print(df_districts)
+    print(df_districts)
     # a=b
     
     # df_summary = df_districts
@@ -35,10 +35,11 @@ def getKAData(file_path,date,StateCode):
     col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
-    df_summary = df_districts
+    
     # print(df_districts)
-    df_districts = df_districts[:-2]
-    # print(df_districts)
+    df_summary = df_districts.dropna(axis=0,how='all')
+    df_districts = df_districts.dropna(axis=0,how='all')[:-1]
+    print(df_districts)
     # df = df[]
 
     df_json = pd.read_json("../DistrictMappingMaster.json")
@@ -48,7 +49,7 @@ def getKAData(file_path,date,StateCode):
     
 
     df_summary.rename(columns={"District":"State/UT"},inplace=True)
-    df_summary = df_summary.iloc[-2,:] #testcode needs to be updated later
+    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     
     # print(df_districts)
     # print(df_summary)
@@ -80,6 +81,8 @@ def getTNData(file_path,date,StateCode):
 
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary = df_summary.dropna()
+    df_summary = df_summary.str.replace(',', '').astype(int)
     print(df_summary)
     return df_summary,df_districts
 
