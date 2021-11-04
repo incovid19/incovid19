@@ -99,8 +99,7 @@ def getHRData(file_path,date,StateCode):
     
     col_dict = {"Name of District":"District","Cumulative Positive Cases":"Confirmed","Cumulative     Recovered/ Discharged Cases":"Recovered","No. of Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Sr No','Positive Cases Today','Recovery Rate (%)','No of Active Cases','COVID-19, Vaccination Status  (NHM, Haryana)',
-    'Unnamed: 9','Unnamed: 10'],inplace=True)
+    df_districts.drop(columns=['Sr No','Positive Cases Today','Recovery Rate (%)','No of Active Cases','COVID-19, Vaccination Status  (NHM, Haryana)'],inplace=True)
     df_districts = df_districts[2:]
     df_districts["Recovered"] = df_districts["Recovered"].str.split("[").str[0]
     df_summary = df_districts
