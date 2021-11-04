@@ -180,6 +180,26 @@ def getMHData(file_path,date,StateCode):
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     return df_summary,df_districts
 
+
+def getMLData(file_path,date,StateCode):
+    table = camelot.read_pdf(file_path,pages='1')
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=1)
+    df_districts.columns = df_districts.columns.str.replace("\n","")
+    col_dict = {"District Name":"District","Total Cases":"Confirmed","Total Recoveries":"Recovered","Total Deaths":"Deceased"}
+    df_districts.rename(columns=col_dict,inplace=True)
+    df_summary = df_districts
+    df_districts = df_districts[:-1]
+
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Meghalaya'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
+    
+    df_summary = df_summary.iloc[-1,:]
+    return df_summary,df_districts
+
 def getPBData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,'4')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
@@ -352,6 +372,9 @@ def ExtractFromPDF(StateCode = "MH",Date = "2021-10-26"):
         elif StateCode == "LA":
             df_summary,df_districts = getLAData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
+        elif StateCode == "ML":
+            df_summary,df_districts = getMLData(filepath,Date,StateCode)
+            GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         # elif StateCode == "MZ":
         #     df_summary,df_districts = getMZData(filepath,Date,StateCode)
         #     GenerateRawCsv(StateCode,Date,df_districts,df_summary)
@@ -362,4 +385,4 @@ def ExtractFromPDF(StateCode = "MH",Date = "2021-10-26"):
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
-# ExtractFromPDF(StateCode = "UT",Date = "2021-11-02")
+ExtractFromPDF(StateCode = "ML",Date = "2021-11-03")
