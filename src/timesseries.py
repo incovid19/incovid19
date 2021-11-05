@@ -4,7 +4,7 @@ import os
 import requests
 
 
-fileName = "../timeSeries/data.min.json"
+fileName = "../out_timeSeries/data.min.json"
 
 def ts_json():
     with open(fileName) as f:
@@ -20,11 +20,11 @@ def ts_json():
     #     with open(r"..//timeseries_min.json", 'wb') as f:
     #         f.write(response.content)
     
-    with open('../timeSeries/timeseries.min.json') as fp:
-            timeseries_min = json.load(fp)
-            fp.close()
+    # with open('../out_timeSeries/timeseries.min.json') as fp:
+    #         timeseries_min = json.load(fp)
+    #         fp.close()
 
-    with open('../timeSeries/timeseries.min.json') as fp:
+    with open('../out_timeSeries/timeseries.min.json') as fp:
             timeseries_min = json.load(fp)
             fp.close()
 
@@ -75,7 +75,7 @@ def ts_state_all():
                 temp_dict[i] = temp[i]
         
         
-        with open("../timeSeries/timeseries-{}.min.json".format(key)) as fp:
+        with open("../out_timeSeries/timeseries-{}.min.json".format(key)) as fp:
                 timeseries_min = json.load(fp)
                 fp.close()    
                 
