@@ -233,9 +233,10 @@ def getUKData(file_path,date,StateCode):
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     df_districts.columns = df_districts.columns.str.replace("\n","")
     
-    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased"}
+    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Active Cases','Migrated/ Others'],inplace=True)
+    df_districts['Recovered'] += df_districts['Migrated']
+    df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
     df_summary = df_districts
     df_districts = df_districts[:-1]
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
@@ -341,7 +342,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
-def ExtractFromPDF(StateCode = "MH",Date = "2021-10-26"):
+def ExtractFromPDF(StateCode = "UK",Date = "2021-10-26"):
     try:
         filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
