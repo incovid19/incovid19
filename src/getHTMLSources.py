@@ -106,7 +106,7 @@ def getSources(source, date):
                     url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%d_%b_%Y.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "UT":
-                    url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin.pdf")
+                    url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin_2.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "LA":
                     url = BeautifulSoup(urlopen("https://covid.ladakh.gov.in/").read(), features="html.parser").findAll('marquee')[0].find("a")["href"]
