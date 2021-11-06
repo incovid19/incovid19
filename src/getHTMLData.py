@@ -28,18 +28,22 @@ def andhra_pradesh(state, date, path):
     dist_names = {"Name of the District": "District", "Confirmed Cases": "Confirmed", "Cured/ Discharged": "Recovered",
                   "Deceased": "Deceased"}
     df.rename(columns=dist_names, inplace=True)
-    df = df[1:-4]
+    df = df[df['District'] != 'Total AP Cases']
+    df_state = df.iloc[-1,:]
+    df = df[1:-1]
 
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Andhra Pradesh'].to_dict()
     df['District'].replace(dist_map, inplace=True)
-    df['StateConfirmed'] = int(df_summary['val'][df_summary['var'] == 'Confirmed Cases'])
-    df['StateRecovered'] = int(df_summary['val'][df_summary['var'] == 'Cured/ Discharged'])
-    df['StateDeceased'] = int(df_summary['val'][df_summary['var'] == 'Deceased'])
+    df['StateConfirmed'] = df_state['Confirmed'] #int(df_summary['val'][df_summary['var'] == 'Confirmed Cases'])
+    df['StateRecovered'] = df_state['Recovered'] #int(df_summary['val'][df_summary['var'] == 'Cured/ Discharged'])
+    df['StateDeceased'] = df_state['Deceased'] #int(df_summary['val'][df_summary['var'] == 'Deceased'])
     new_dict = {}
     for key, val in df.to_dict().items():
         new_dict[key] = list(val.values())
     df = pd.DataFrame(new_dict)
+    # print(df)
+    # # a=b
     GenerateRawCsv(state, date, df)
 
 
