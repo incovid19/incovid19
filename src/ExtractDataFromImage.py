@@ -1056,7 +1056,7 @@ def ExtractDataFromImage(state, date, handle, term):
         # print(response)
         if response[1] in ['Source not accessible', 'Data Extraction error - Districts not detected']:
             response[1] = response[1].append(". Picking data from mygov")
-            ExtractStateMyGov(state, date, no_source=True)
+            # ExtractStateMyGov(state, date, no_source=True)
         StatusMsg(
             StateCode=state,
             date=date,
@@ -1075,7 +1075,7 @@ def ExtractDataFromImage(state, date, handle, term):
             StatusCode="ERR",
             statusMessage="Data Extraction Error - {}. Picking data from mygov".format(e)
         )
-        ExtractStateMyGov(state, date, no_source=True)
+        # ExtractStateMyGov(state, date, no_source=True)
         # return [state, date, "ExtractDataFromImage", "ERR", "Data Extraction Error - {}".format(e)]
 
 

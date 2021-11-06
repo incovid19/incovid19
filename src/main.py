@@ -18,15 +18,18 @@ from ExtractDataFromPDF import ExtractFromPDF
 from ExtractStateMyGov import ExtractStateMyGov
 from getHTMLData import ExtractFromHTML
 import pandas as pd
-
+# today = "2021-11-05"
 print("getSources for:"+ str(today))
 source = pd.read_csv(r"../sources.csv")
+# print(source)
+# a=b
 getSources(source,today)
 
 #*********************************************************************
 
 print("Extracting Data for:" + str(today))
 for idx in source.index:
+    # if idx == 0:
     print("State:" + source["StateName"][idx])
     if source["StateDataSourceType"][idx] == "Image(Twitter)":
         ExtractDataFromImage(source["StateCode"][idx], str(today), source['Twitter Handle'][idx], source['Twitter Search Term'][idx])
