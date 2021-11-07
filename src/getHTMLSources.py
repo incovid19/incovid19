@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import json
 import os
+from urllib.error import URLError
 
 
 def downloadFile(Date, StateCode, url):
@@ -108,16 +109,19 @@ def getSources(source, date):
                 elif source["StateCode"][idx] == "UT":
                     url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin_2.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
-                # elif source["StateCode"][idx] == "LA":
-                #     url = BeautifulSoup(urlopen("https://covid.ladakh.gov.in/").read(), features="html.parser").findAll('marquee')[0].find("a")["href"]
-                #     downloadFile(datetime.strptime(url[-14:-4], "%d.%m.%Y").strftime("%Y-%m-%d"), source["StateCode"][idx], url)
+                elif source["StateCode"][idx] == "LA":
+                    url = BeautifulSoup(urlopen("https://covid.ladakh.gov.in/").read(), features="html.parser").findAll('marquee')[0].find("a")["href"]
+                    downloadFile(datetime.strptime(url[-14:-4], "%d.%m.%Y").strftime("%Y-%m-%d"), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "NL":
-                    base_url = "https://covid19.nagaland.gov.in"
-                    rows = BeautifulSoup(urlopen(base_url + "/daily-bulletins").read(), features="html.parser").findAll("table", {'class': "table tablesorter mb-3"})[0].findAll('tbody')[0].findAll('tr')
-                    for i, tr in enumerate(rows):
-                        if tr.findAll('td')[-1].getText() == date.strftime("%d %b %Y"):
-                            url = base_url + tr.findAll("a", {"target": "_blank"})[0]['href']
-                            downloadFile(str(date), source["StateCode"][idx], url)
+                    try:
+                        base_url = "https://covid19.nagaland.gov.in"
+                        rows = BeautifulSoup(urlopen(base_url + "/daily-bulletins").read(), features="html.parser").findAll("table", {'class': "table tablesorter mb-3"})[0].findAll('tbody')[0].findAll('tr')
+                        for i, tr in enumerate(rows):
+                            if tr.findAll('td')[-1].getText() == date.strftime("%d %b %Y"):
+                                url = base_url + tr.findAll("a", {"target": "_blank"})[0]['href']
+                                downloadFile(str(date), source["StateCode"][idx], url)
+                    except URLError:
+                        pass
                 # elif source["StateCode"][idx] == "MZ":
                 #     base_url = "https://health.mizoram.gov.in"
                 #     url = base_url + BeautifulSoup(urlopen(base_url + "/post/covid-19-bulletin-" + date.strftime("%d%m%Y")).read(), features="html.parser").findAll("a", {"class": "attachment-link"})[0]['href']

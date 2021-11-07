@@ -247,6 +247,28 @@ def getUKData(file_path,date,StateCode):
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     return df_summary,df_districts
 
+# def getNLData(file_path,date,StateCode):
+#     table = camelot.read_pdf(file_path,'1')
+#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+#     # table[5].to_excel('foo.xlsx')
+#     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-3.csv'.format(date,StateCode),skiprows=4,
+#     names=['a','District','b','c','d','e','f','g','Recovered','Deceased','h','i','j','Confirmed'])
+#     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
+#     # df_districts.columns = df_districts.columns.str.replace("\n","")
+       
+#     df_districts.drop(columns=list(string.ascii_lowercase[:10]),inplace=True)
+#     df_summary = df_districts
+#     df_districts = df_districts[:-1] 
+#     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
+#     # df = df[]
+#     df_json = pd.read_json("../DistrictMappingMaster.json")
+#     dist_map = df_json['Nagaland'].to_dict()
+#     df_districts['District'].replace(dist_map,inplace=True)
+#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+#     return df_summary,df_districts
+
 def getNLData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,'1')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
@@ -255,6 +277,9 @@ def getNLData(file_path,date,StateCode):
     # table[5].to_excel('foo.xlsx')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-3.csv'.format(date,StateCode),skiprows=4,
     names=['a','District','b','c','d','e','f','g','Recovered','Deceased','h','i','j','Confirmed'])
+
+    df_districts['Recovered'] = df_districts['Recovered'] + df_districts['j']
+    df_districts['Deceased'] = df_districts['Deceased'] + df_districts['h']
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     # df_districts.columns = df_districts.columns.str.replace("\n","")
        
