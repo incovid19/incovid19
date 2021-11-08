@@ -164,9 +164,9 @@ def getMHData(file_path,date,StateCode):
     df_districts = pd.concat(frames,ignore_index=True)
     df_districts.columns = df_districts.columns.str.replace("\n","")
   
-    col_dict = {"District/Municipal Corporation":"District","COVID-19 cases":"Confirmed","Recovered patients":"Recovered","Deaths":"Deceased"}
+    col_dict = {"District/Municipal Corporation":"District","COVID-19 cases":"Confirmed","Recovered patients":"Recovered","Deaths":"Deceased","District/MunicipalCorporation":"District"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Sr. No.','Deaths due to other causes',  'Active cases'],inplace=True)
+    df_districts.drop(columns=['Sr. No.','Deaths due to othercauses',  'Active cases'],inplace=True)
     
     df_summary = df_districts
     df_districts = df_districts[:-1]
@@ -411,4 +411,4 @@ def ExtractFromPDF(StateCode = "UK",Date = "2021-10-26"):
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
-ExtractFromPDF(StateCode = "LA",Date = "2021-11-06")
+ExtractFromPDF(StateCode = "MH",Date = "2021-11-07")
