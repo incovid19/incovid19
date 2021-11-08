@@ -2,7 +2,7 @@ import os
 import datetime
 import timedelta
 
-today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
+today = (datetime.datetime.now() - timedelta.Timedelta(days=0)).date()
 # present = datetime.datetime.now().date()
 
 folders = ["INPUT","RAWCSV","LOG"]
@@ -23,7 +23,7 @@ print("getSources for:"+ str(today))
 source = pd.read_csv(r"../sources.csv")
 # print(source)
 # a=b
-# getSources(source,today)
+getSources(source,today)
 
 #*********************************************************************
 

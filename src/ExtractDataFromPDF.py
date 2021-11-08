@@ -309,12 +309,13 @@ def getLAData(file_path,date,StateCode):
     # df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=list(string.ascii_lowercase[:12]),inplace=True)
     df_summary = df_districts
-    print(df_summary)
+    
     df_districts = df_districts[:-1]
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Ladakh'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
-    df_summary = df_districts #testcode needs to be updated later
+    print(df_districts)
+    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     return df_summary,df_districts
 
 
@@ -410,4 +411,4 @@ def ExtractFromPDF(StateCode = "UK",Date = "2021-10-26"):
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
-ExtractFromPDF(StateCode = "NL",Date = "2021-11-06")
+ExtractFromPDF(StateCode = "LA",Date = "2021-11-06")
