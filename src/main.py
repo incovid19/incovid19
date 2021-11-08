@@ -24,7 +24,6 @@ source = pd.read_csv(r"../sources.csv")
 # print(source)
 # a=b
 getSources(source,today)
-
 #*********************************************************************
 
 print("Extracting Data for:" + str(today))
