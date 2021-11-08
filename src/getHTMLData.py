@@ -7,6 +7,7 @@ import os
 import io
 import datetime
 from ExtractStateMyGov import ExtractStateMyGov
+import requests
 
 
 def andhra_pradesh(state, date, path):
@@ -187,6 +188,8 @@ def tripura(state, date, path):
 
 
 def kerala(state, date, path):
+    tested_soup = BeautifulSoup(requests.post('https://dashboard.kerala.gov.in/covid/testing-view-public.php', "html.parser").text, 'html5lib')
+    tested = int(tested_soup.find_all("span", {'class': 'info-box-number'})[0].getText())
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")
     script = soup.find_all("script")[-1].string.split(";")
     for i, sc in enumerate(script):
@@ -242,6 +245,7 @@ def kerala(state, date, path):
     df['StateConfirmed'] = int(confirmed)
     df['StateRecovered'] = int(recovered)
     df['StateDeceased'] = int(death)
+    df['StateTested'] = int(tested)
     df_summary = pd.DataFrame(dict_temp)
     GenerateRawCsv(state, date, df)
 
@@ -409,4 +413,4 @@ def ExtractFromHTML(state, date):
         ExtractStateMyGov(state, date, no_source=True)
 
 
-# ExtractFromHTML(state="OR", date="2021-11-07")
+# ExtractFromHTML(state="KL", date="2021-11-06")
