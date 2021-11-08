@@ -98,20 +98,22 @@ def getSources(source, date):
                 #     url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d") + '_Health_Bulletin.pdf'
                 #     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "WB":
-                    url = 'https://www.wbhealth.gov.in/uploaded_files/corona/WB_DHFW_Bulletin_' + p.ordinal(date.day).upper() + '_' + date.strftime("%b").upper() + '_REPORT_FINAL_(1).pdf'
+                    url = 'https://www.wbhealth.gov.in/uploaded_files/corona/WB_DHFW_Bulletin_' + p.ordinal(date.day).upper() + '_' + date.strftime("%b").upper() + '_REPORT_FINAL.pdf'
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "KL":
                     url = 'https://dhs.kerala.gov.in/wp-content/uploads/' + date.strftime("%Y/%m/Bulletin-HFWD-English-%B-%d.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "ML":
-                    url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%d_%b_%Y.pdf")
+                    url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%-d_%b_%Y.pdf")
+                    # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "UT":
                     url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin_2.pdf")
                     downloadFile(str(date), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "LA":
-                    url = BeautifulSoup(urlopen("https://covid.ladakh.gov.in/").read(), features="html.parser").findAll('marquee')[0].find("a")["href"]
-                    downloadFile(datetime.strptime(url[-14:-4], "%d.%m.%Y").strftime("%Y-%m-%d"), source["StateCode"][idx], url)
+                    pass
+                    # url = BeautifulSoup(urlopen("https://covid.ladakh.gov.in/", timeout=5).read(), features="html.parser").findAll('marquee')[0].find("a")["href"]
+                    # downloadFile(datetime.strptime(url[-14:-4], "%d.%m.%Y").strftime("%Y-%m-%d"), source["StateCode"][idx], url)
                 elif source["StateCode"][idx] == "NL":
                     try:
                         base_url = "https://covid19.nagaland.gov.in"
