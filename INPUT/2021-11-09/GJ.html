@@ -1,0 +1,2282 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>COVID-19 Tracker | Gujarat</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css"
+        integrity="sha256-piqEf7Ap7CMps8krDQsSOTZgF+MU/0MPyPW2enj5I40=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/assets/css/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="/assets/css/datatables.min.css">
+    <link rel="stylesheet" href="/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/assets/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    
+    <link rel="stylesheet" href="/assets/css/custom.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
+    <style>
+        @media (max-width:768px) {
+            #map.map.leaflet-container {
+                height: 50vh !important;
+            }
+        }
+
+        .leaflet-popup-content {
+            margin: 10px 10px;
+            line-height: 1.5;
+            width: 180px;
+        }
+
+        .leaflet-container a.leaflet-popup-close-button {
+            padding: 8px 20px 0 0;
+            color: #fff;
+            font-size: 17px;
+        }
+    </style>
+
+    <script src="/assets/js/jquery-3.5.1.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="/assets/js/moment.min.js"></script>
+    <script src="/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/assets/js/datatables.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.myDatatable').DataTable({
+                initComplete: function () {
+                    $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+                },
+
+            });
+            var url = window.location.pathname;
+            if (url != "/Dashboard.aspx") {
+                $('li').removeClass("active");
+                $('a[href="' + url + '"]').parent().addClass("active");
+                $('a[href="' + url + '"]').addClass("active");
+                $('a[href="' + url + '"]').parent().parents("li.nav-item").addClass("active");
+            }
+        });
+
+
+        function CallSuccessMsg(title, text) {
+            swal(title, text, "success");
+        }
+        function CallErrorMsg(title, text) {
+            swal(title, text, "error");
+        }
+        function CallWarningMsg(title, text) {
+            swal(title, text, "warning");
+        }
+        var objDel = { status: false, ele: null };
+        function functionConfirmSubmit(me, title, ConfirmButtonText) {
+
+            if (objDel.status) return true;
+            swal({
+                title: title,
+                text: "",
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: "No, cancel!",
+                        value: null,
+                        visible: true,
+                        className: "",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "Yes, delete it!",
+                        value: true,
+                        visible: true,
+                        className: "",
+                        closeModal: false
+                    }
+                }
+            })
+                .then((isConfirm) => {
+                    if (isConfirm) {
+                        objDel.status = true;
+                        objDel.ele.click();
+                    }
+                    else {
+                        objDel.status = false;
+                    }
+                });
+            objDel.ele = me;
+            return false;
+        }
+
+    </script>
+</head>
+<body id="ctl00_MasterBody" class="no-skin">
+    <header>
+        
+        <nav class="navbar navbar-expand-lg navbar-light c-navbar py-0" id="navbar" style="background-color: #f8f9fa">
+            <a class="navbar-brand c-logo" href="#">
+                <img src="/assets/images/emblem.png" height="60" alt="site-logo">
+                <h4 class="d-inline pl-1 f-600">Government of Gujarat</h4>
+            </a>
+            <div class="navbar-nav ml-auto mt-3 mt-lg-0">
+                <h4>COVID-19 Dashboard - Gujarat</h4>
+            </div>
+        </nav>
+    </header>
+    <form name="aspnetForm" method="post" action="./" id="aspnetForm" class="form-wrapper">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="8D0E13E6" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="3d8+NBc0d6+uVnJ8llSpR3cKraz1wOfROWYcUayfGKMYajFFIztjlN3Nh11qKEtXadHSrZrqa8Epj4Laxswwc/QMOCNqRNngwY82N5hcAO5JuW5E3NK5RWzgpQ+uiHAW" />
+        <div class="main-wrapper">
+            <div class="container-fluid">
+                
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header card-head-bg">
+                    <div class="clearfix">
+                        <h5 class="card-title float-right">Last Updated on
+                                    <span id="ctl00_body_lblDate">08/11/2021  9:46:20 PM</span></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        
+        <div class="col-md-4 col-sm-12 dashboard-status">
+            <div class="card pull-up bg-red border-0">
+                <div class="card-body dashboard-count">
+                    <div class="media d-flex position-relative">
+                        <div class="media-right-icon align-self-center">
+                            <h3 id="ctl00_body_h3TotalActiveConfirmedCount" class="count text-white d-inline">217</h3>
+                            <h5 class="d-inline text-white" style="display: none !important"><b>
+                                <i id="ctl00_body_iDiffActiveConfirmCases" class="fa fa-arrow-down" style="font-size: 12px"></i>
+                                <sub id="ctl00_body_SubActiveConfirmedDiff">12</sub></b>
+                            </h5>
+                        </div>
+                        <div class="media-body text-right">
+                            <h5 class="desc">Active Cases</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 dashboard-status px-md-1">
+            <div class="card pull-up bg-orange border-0">
+                <div class="card-body dashboard-count">
+                    <div class="media d-flex position-relative">
+                        <div class="media-right-icon align-self-center">
+                            <h3 id="ctl00_body_h3PatientTestedCount" class="count text-white d-inline">31173858</h3>
+                            <h5 class="d-inline text-white"><b><i id="ctl00_body_iDiffCasesTested" class="fa fa-arrow-up" style="font-size: 12px"></i><sub id="ctl00_body_SubPatientTestedDiff">28577</sub></b></h5>
+                        </div>
+                        <div class="media-body text-right">
+                            <h5 class="desc">Cases Tested for COVID19</h5>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 dashboard-status">
+            <div class="card pull-up bg-success border-0">
+                <div class="card-body dashboard-count text-white">
+                    <div class="media d-flex position-relative">
+                        <div class="media-right-icon align-self-center">
+                            <h3 id="ctl00_body_h3PatientCuredCount" class="count text-white d-inline">816298</h3>
+                            <h5 class="d-inline text-white"><b><i id="ctl00_body_iDiffPatientCured" class="fa fa-arrow-up" style="font-size: 12px"></i><sub id="ctl00_body_SubPatientCuredDiff">41</sub></b></h5>
+                        </div>
+                        <div class="media-body text-right">
+                            <h5 class="desc">Patients Recovered</h5>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 dashboard-status">
+            <div class="card pull-up bg-blue border-0">
+                <div class="card-body dashboard-count">
+                    <div class="media d-flex position-relative">
+                        <div class="media-right-icon align-self-center">
+                            <h3 id="ctl00_body_h3PeopleQuarantineCount" class="count text-white d-inline">1590</h3>
+                            
+                        </div>
+                        <div class="media-body text-right">
+                            <h5 class="desc">People Under Quarantine</h5>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        
+        <div class="col-md-4 col-sm-12 dashboard-status px-md-1">
+            <div class="card pull-up bg-primary border-0">
+                <div class="card-body dashboard-count text-white">
+                    <div class="media d-flex position-relative">
+                        <div class="media-right-icon align-self-center">
+                            <h3 id="ctl00_body_h3TotalDath" class="count d-inline text-white">10087</h3>
+                            <h5 class="d-inline text-white"><b><sub id="ctl00_body_SubTotalDeathDiff"></sub></b></h5>
+                        </div>
+                        <div class="media-body text-right">
+                            <h5 class="desc">Total Deaths</h5>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info rounded-0 text-center" role="alert">
+                <h6><span class="f-600">
+                    <a href="https://dst.gujarat.gov.in/Portal/Document/1_264_Notification%20for%20the%20Covid%20Asst.pdf" class="text-dark blinking-text"
+                        target="_blank">Order for international assistance For Covid – 19</a>
+                    <img title="" alt="" src="/assets/images/new-flashing.gif" width="21" height="12">
+                </span></h6>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-primary rounded-0 text-center" role="alert">
+                <h6><span class="f-600">
+                    <span class="f-600">
+                        <a href="https://dst.gujarat.gov.in/Portal/Document/1_265_Annexure%20A-Performa%20for%20application.doc" class="text-dark blinking-text"
+                            target="_blank">Performa for international assistance For Covid – 19</a>
+                        <img title="" alt="" src="/assets/images/new-flashing.gif" width="21" height="12">
+                    </span></h6>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success rounded-0 text-center" role="alert">
+                <h6><span class="f-600">To Contribute in Chief Minister Relief Fund:</span>
+                    <a href="https://iora.gujarat.gov.in/cmrf/" class="text-dark blinking-text" target="_blank">https://iora.gujarat.gov.in/cmrf/</a></h6>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger rounded-0 p-2">
+                <h6 class="ticker-text">
+                    <marquee scrolldelay="5" behavior="scroll" direction="left" onmouseover="stop()" onmouseout="start()">
+                                    Lockdown- To apply to get Exemption Pass to travel outside Gujarat - <a href="https://www.digitalgujarat.gov.in/loginapp/CitizenLogin.aspx" class="text-decoration-none" target="_blank"><span class="text-dark font-weight-bold">Click Here</span></a> <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+                                    लॉकडाउन - गुजरात के बाहर यात्रा हेतु एक्सेम्पशन छूट पास प्राप्त करना आवश्यक है, आवेदन करने के लिए - <a href="https://www.digitalgujarat.gov.in/loginapp/CitizenLogin.aspx" class="text-decoration-none" target="_blank"><span class="text-dark f-600">यहां क्लिक करें</span></a>
+                                </marquee>
+                </h6>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="alert alert-primary rounded-0 p-2">
+                <h6 class="ticker-text">
+                    <marquee scrolldelay="5" behavior="scroll" direction="left" onmouseover="stop()" onmouseout="start()">
+                                    List of Nodal Officers to facilitate movement of Citizens across state borders - <a href="https://gad.gujarat.gov.in/personnel/Portal/News/407_1_1_order%2029%20april-GAD6--1.pdf" class="text-decoration-none" target="_blank"><span class="text-dark font-weight-bold">Click Here</span></a> <span>&nbsp;</span>
+                                    लॉकडाउन के दौरान नागरिकों की यात्रा को सुविधाजनक बनाने के लिए चुने गए नोडल अधिकारियों की सूची - <a href="https://gad.gujarat.gov.in/personnel/Portal/News/407_1_1_order%2029%20april-GAD6--1.pdf" class="text-decoration-none" target="_blank"><span class="text-dark f-600">यहां क्लिक करें</span></a>
+                                </marquee>
+                </h6>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+    <div class="row">
+        <div id="ctl00_body_dvDISTGRID" class="col-lg-6">
+            <div class="card">
+                <div class="card-header card-head-bg text-white">
+                    <div class="clearfix">
+                        <h5 class="card-title float-left">
+                            <span class="fa fa-list mr-2"></span>Districtwise COVID-19 Statistics
+                        </h5>
+                        <div class="float-right d-lg-block d-none">
+                            <a id="ctl00_body_aDownloadExcel" class="btn btn-success btn-sm py-1 px-1 d-lg-block d-none" href="javascript:__doPostBack(&#39;ctl00$body$aDownloadExcel&#39;,&#39;&#39;)">
+                                <i class="fa fa-file-excel mr-1"></i>
+                                <span id="ctl00_body_Label1">Export</span></a>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body p-1">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-sm text-center mb-0">
+                            
+                                    <thead>
+                                        <tr>
+                                            <th class="f-400 text-center bg-dark text-white align-middle">District</th>
+                                            
+                                            <th class="f-400 text-center bg-red">Active Cases</th>
+                                            <th class="f-400 text-center bg-orange">Cases Tested for COVID19</th>
+                                            <th class="f-400 text-center bg-green">Patients Recovered</th>
+                                            <th class="f-400 text-center bg-blue">People Under Quarantine</th>
+                                            
+                                            <th class="f-400 text-center bg-primary text-white">Total Deaths</th>
+                                        </tr>
+                                    </thead>
+                                
+                                    <tr>
+                                        <td class="text-left">Ahmedabad </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                33  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>3696</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">5336133</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>6</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">234920</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">33</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">3411</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Amreli </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>8</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">596317</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">10708</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">80</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">102</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Anand </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                5  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1471</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">545885</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">9585</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">49</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Aravalli </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>53</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">363558</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">5108</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">78</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Banaskantha </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"></sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">851946</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">13469</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">162</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Bharuch </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1208</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">518714</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">11308</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">118</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Bhavnagar </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                4  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>359</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">1199178</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">21145</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">118</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">301</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Botad </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"></sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">255021</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">2176</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">42</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Chhota Udaipur </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>547</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">270917</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">3357</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">38</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Dahod </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>284</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">712799</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">9917</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">38</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Dang </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>58</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">83570</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">848</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">389</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">18</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Devbhoomi Dwarka </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>333</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">240543</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">4093</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">20</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">82</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Gandhinagar </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                4  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1146</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">835401</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">20549</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">4</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">205</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Gir Somnath </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                2  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>631</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">380354</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>2</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">8501</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">4</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">67</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Jamnagar </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                10  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>270</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">889620</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">34494</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">71</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">478</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Junagadh </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                15  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>872</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">819309</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">20246</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">272</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Kutch </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                3  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"></sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">827958</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>3</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">12487</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">7</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">145</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Kheda </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>550</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">637304</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">10391</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">87</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">48</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Mahisagar </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1048</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">391293</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">8122</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">72</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Mehsana </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                1  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>2187</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">696860</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">24242</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">177</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Morbi </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>682</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">379507</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">6415</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">87</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Narmada </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>134</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">275377</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">5940</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">15</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Navsari </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                7  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1002</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">447973</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">7190</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">38</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">24</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Panchmahal </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>953</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">561632</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">11700</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">70</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Patan </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>319</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">473743</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">11495</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">129</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Porbandar </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>115</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">248232</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">3467</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">5</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">19</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Rajkot </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                9  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1078</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">2077392</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>5</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">57250</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">49</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">725</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Sabarkantha </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                2  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>868</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">496190</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">9160</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">30</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">157</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Surat </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                22  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>3946</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">6489049</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>18</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">141923</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">550</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">1956</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Surendranagar </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>1190</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">540882</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">7985</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">0</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">136</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Tapi </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                0  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>442</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">254790</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"></sub>
+                                            &nbsp;<span class="text-success font-weight-bold">4417</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">46</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">24</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Vadodara </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                66  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>2574</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">1961284</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>2</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">77352</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">45</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">788</span></td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-left">Valsad </td>
+                                        
+                                        <td class="text-right">
+                                            
+                                            &nbsp;
+                                            <span class="text-red font-weight-bold">
+                                                34  </span>
+                                        </td>
+                                        <td class="text-right"><sub class="text-orange font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>553</sub>
+                                            &nbsp;<span class="text-orange font-weight-bold">515127</span></td>
+                                        <td class="text-right"><sub class="text-success font-weight-bold"><i class='fa fa-arrow-up' style='font-size:9px'></i>3</sub>
+                                            &nbsp;<span class="text-success font-weight-bold">6338</span></td>
+                                        <td class="text-right">&nbsp;<span class="text-blue font-weight-bold">14</span></td>
+                                        
+                                        <td class="text-right"><sub class="font-weight-bold"></sub>
+                                            &nbsp;<span class="font-weight-bold">54</span></td>
+                                    </tr>
+                                
+                                    <tr class="font-weight-bold text-right">
+                                        <td class="text-right f-600">Total</td>
+
+                                        
+                                        <td class="f-600">
+                                            <span id="ctl00_body_rptDistDetails_ctl34_lblActiveConfirmedCount">217</span>
+                                        </td>
+                                        <td class="f-600">
+                                            <span id="ctl00_body_rptDistDetails_ctl34_lblPatientTestedCount">31173858</span>
+                                        </td>
+                                        <td class="f-600">
+                                            <span id="ctl00_body_rptDistDetails_ctl34_lblPatientCuredCount">816298</span>
+                                        </td>
+                                        <td class="f-600">
+                                            <span id="ctl00_body_rptDistDetails_ctl34_lblPeopleQuarantineCount">1590</span>
+                                        </td>
+                                        
+
+                                        <td class="f-600">
+                                            <span id="ctl00_body_rptDistDetails_ctl34_lblTotalDath">10087</span>
+                                        </td>
+                                    </tr>
+                                
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header card-head-bg text-white">
+                    <div class="clearfix">
+                        <h5 class="card-title float-left">
+                            <span class="fa fa-list mr-2"></span>COVID-19 Bed Availability Details
+                        </h5>
+                    </div>
+                </div>
+                <div class="card-body p-1">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-sm text-center mb-0">
+                            <tr>
+                                <td class="text-left">Ahmedabad Municipal Corporation AMC hospital beds</td>
+                                <td><a href="https://ahmedabadcity.gov.in/portal/web?requestType=ApplicationRH&actionVal=loadCoronaRelatedDtls&queryType=Select&screenId=114" id="ctl00_body_aamc" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Ahmedabad Municipal Corporation Private Bed</td>
+                                <td><a href="https://ahna.org.in/covid19.html" id="ctl00_body_amc2" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Ahmedabad District Rural </td>
+                                <td><a href="https://vmc.gov.in/AhmedabadDistrictRural/" id="ctl00_body_aAhmedabadRural" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Amreli</td>
+                                <td><a href="https://amreli.nic.in/bed-occupancy/" id="ctl00_body_aAmreli" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Anand</td>
+                                <td><a href="https://vmc.gov.in/Covid19VadodaraApp/CovidBedSelect.aspx" id="ctl00_body_aAnand" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Arvalli</td>
+                                <td><a href="https://arvalli.gujarat.gov.in/" id="ctl00_body_aArvalli" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Banaskantha</td>
+                                <td><a href="https://bkcovid19response.in/covid19/Home/Bedsavailibility" id="ctl00_body_aBanaskantha" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left">Bharuch </td>
+                                <td><a href="https://vmc.gov.in/Covid19VadodaraApp/CovidBedSelect.aspx" id="ctl00_body_aBharuch" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Bhavnagar District & Bhavnagar Municipal Corporation</td>
+                                <td><a href="https://bmcgujarat.com/" id="ctl00_body_aBhavnagar" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Botad</td>
+                                <td><a href="https://ncovid19botad.live/" id="ctl00_body_aBotad" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Chhota Udepur</td>
+                                <td><a href="https://chhotaudepur.gujarat.gov.in/home" id="ctl00_body_aChhotaUdepur" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Dahod</td>
+                                <td><a href="https://dahod.gujarat.gov.in/" id="ctl00_body_aDahod" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Dangs</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/1qdr-4-AJxmFlrFgxVXhyfepMRqOGPCo2Ns4_4KuvCvw/edit?usp=sharing" id="ctl00_body_aDangs" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left">Devbhoomi Dwarka</td>
+                                <td><a href="http://devbhumidwarka.nic.in/covid19" id="ctl00_body_aDevBhumi" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left">Gandhinagar District</td>
+                                <td><a href="https://vmc.gov.in/HospitalModuleGMC/Home.aspx" id="ctl00_body_aGnr" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Gandhinagar Municipal Corporation</td>
+                                <td><a href="https://vmc.gov.in/HospitalModuleGMC/Default.aspx" id="ctl00_body_aGandhinagarMC" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Gir Somnath</td>
+                                <td><a href="https://girsomnath.nic.in/live-bed-status/" id="ctl00_body_aGirSomnath" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Jamnagar District Rural</td>
+                                <td><a href="https://iojn.guj.nic.in/c19vacantbed.aspx?dcode=34" id="ctl00_body_a1" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Jamnagar Municipal Corporation </td>
+                                <td><a href="https://iojn.guj.nic.in/c19vacantbed.aspx?Dcode=10" id="ctl00_body_aJamnagarMC" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="text-left">Junagadh District & Junagadh Municipal Corporation </td>
+                                <td><a href="https://iojn.guj.nic.in/c19vacantbed.aspx?Dcode=12" id="ctl00_body_aJunagadhMC" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left">Kheda</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/10ulBY1S1BpmFq_kVWbVuysVMMajNDJ_EvaXUS8Bdr7Q/edit?usp=sharing" id="ctl00_body_aKheda" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Kutch</td>
+                                <td><a href="https://kachchh.nic.in/covid-19/" id="ctl00_body_aKutch" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left">Medicity Campus Hospital (Ahmedabad Civil)</td>
+                                <td><a href="https://civilhospitalahd.gujarat.gov.in/" id="ctl00_body_aMedicity" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Mehsana</td>
+                                <td><a href="http://covidbedinfo.dhsmehsana.in" id="ctl00_body_aMahesana" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Mahisagar</td>
+                                <td><a href="https://vmc.gov.in/Covid19VadodaraApp/CovidBedSelect.aspx" id="ctl00_body_aMahisagar" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Morbi</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/1s6bqPdqOBTEIOrVurI0ZsVDZrk-Aw7iJ/edit#gid=2049645809" id="ctl00_body_aMorbi" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Narmada</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/1yEv-IfODrQLIz0Yl0Q4iZwOx3L6LfsxeLH_eQGKyftY/edit?usp=sharing" id="ctl00_body_aNarmada" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Navsari</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/1kgyHyPMv-P2SolHav5pR2Ue9_ZcYJabKyRUS2Xu_CbQ/edit#gid=0" id="ctl00_body_aNavasari" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Panchmahal </td>
+                                <td><a href="https://vmc.gov.in/Covid19VadodaraApp/CovidBedSelect.aspx" id="ctl00_body_aPanchmahal" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Patan</td>
+                                <td><a href="https://www.patancrimereport.in/covid19/hospital-beds-details" id="ctl00_body_aPatan" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Porbandar</td>
+                                <td><a href="https://iojn.guj.nic.in/c19vacantbed.aspx" id="ctl00_body_aPorbandar" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left">Rajkot District & Rajkot Muncipal Corporation</td>
+                                <td><a href="https://datastudio.google.com/u/0/reporting/ad497859-6594-4064-ad10-e3019d2beb2e/page/3MVCC" id="ctl00_body_aRajkot" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Sabarkantha</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/1PmLEZV__95_18F7Uzi9RfR6E3tE9Wi_lN0EMCWp7c8M/edit?ts=607aad4c#gid=567349941" id="ctl00_body_aSabarkantha" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Surat District Rural</td>
+                                <td><a href="https://suratdp.gujarat.gov.in/gu/news-details " id="ctl00_body_aSuratDistrict" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left">Surat Muncipal Corporation</td>
+                                <td><a href="http://office.suratsmartcity.com/SuratCOVID19/Home/COVID19BedAvailabilitydetails" id="ctl00_body_aSuratMC" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Surendranagar</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vR2MtieGOqmdRKOE-TiWqKLiOQNB_cp1haarfYBZPFdHF1dYeho8vQ3o29LFyu2TH2AEhA7j3bh4Iaq/pubhtml?gid=1290443510&single=true" id="ctl00_body_aSurendranagar" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Tapi</td>
+                                <td><a href="https://docs.google.com/spreadsheets/d/1XGI4Ei3v5TUR6n_UTPEzByKLFICuVC_zrOd7ZP-Up04/edit#gid=0" id="ctl00_body_aTapi" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Vadodara District & Vadodara Municipal Corporation</td>
+                                <td><a href="https://vmc.gov.in/Covid19VadodaraApp/Default.aspx" id="ctl00_body_aVadodara" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Valsad</td>
+                                <td><a href="https://valsad.gecv.ac.in/index.php" id="ctl00_body_aValsad" target="_blank">Click Here To View Details</a></td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ctl00_body_dvSTATEMAP" class="card">
+                <div class="card-header card-head-bg">
+                    <div class="clearfix">
+                        <h5 class="card-title float-left"><span class="fa fa-map mr-2"></span>State Map</h5>
+                        <h6 class="float-right">
+                            <i class="fa fa-map-marker-alt text-danger ml-2 mr-1"></i><span class="text-white">Affected Area</span>
+                            <i class="fa fa-map-marker-alt ml-2 mr-1" style="color: green"></i><span class="text-white">Not Affected Area</span>
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body p-1">
+                    <div id="map" class="map" style="width: 100% !important; height: 100vh;"></div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="row">
+        <div id="ctl00_body_dvNEWS" class="col-lg-12">
+            <div class="card">
+                <div class="card-header card-head-bg">
+                    <div class="clearfix">
+                        <h5 class="card-title float-left"><i class="fa fa-newspaper"></i>&nbsp;Latest News</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <ul class="newslist mb-0">
+                        
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ક્રમાંક 668
+                                            </span>
+                                            <a href='/uploads/08-11-2021pressbrief11082021094717398.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>08/11/2021  9:46 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .08.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ક્રમાંક 667
+                                            </span>
+                                            <a href='/uploads/07-11-2021pressbrief11072021105233532.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>07/11/2021 10:51 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .07.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ક્રમાંક 666
+                                            </span>
+                                            <a href='/uploads/06-11-2021pressbrief11062021104333777.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>06/11/2021 10:41 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .06.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ક્રમાંક 665
+                                            </span>
+                                            <a href='/uploads/05-11-2021pressbrief11052021104534191.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>05/11/2021 10:43 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .05.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ૬૬૪
+                                            </span>
+                                            <a href='/uploads/04-11-2021pressbrief11042021113150241.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>04/11/2021 11:30 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .04.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી 664
+                                            </span>
+                                            <a href='/uploads/03-11-2021pressbrief11032021082644648.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>03/11/2021  8:25 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .03.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ૬૬૩
+                                            </span>
+                                            <a href='/uploads/02-11-2021pressbrief11022021113442742.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>02/11/2021 11:33 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .02.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ૬૬૨
+                                            </span>
+                                            <a href='/uploads/01-11-2021pressbrief11012021105835757.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>01/11/2021 10:56 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .01.11.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ૬૬૧
+                                            </span>
+                                            <a href='/uploads/31-10-2021pressbrief10312021101911118.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>31/10/2021 10:18 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .31.10.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ૬૬૦
+                                            </span>
+                                            <a href='/uploads/30-10-2021pressbrief10302021100510477.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>30/10/2021 10:02 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .30.10.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ૬૫૯
+                                            </span>
+                                            <a href='/uploads/29-10-2021pressbrief10292021100053281.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>29/10/2021  9:59 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .29.10.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ક્રમાંક: ૬૫૮
+                                            </span>
+                                            <a href='/uploads/28-10-2021pressbrief10282021112807703.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>28/10/2021 11:26 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .28.10.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ક્રમાંક: 657
+                                            </span>
+                                            <a href='/uploads/27-10-2021pressbrief10272021115933239.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>27/10/2021 11:58 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .27.10.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                                <li>
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <span class="date">COVID-19 અખબારી યાદી ૬૫૬
+                                            </span>
+                                            <a href='/uploads/26-10-2021pressbrief10262021085503893.pdf'
+                                                target="_blank" class="download-attachment ml-2 mr-1">
+                                                <i class="fa fa-file-pdf"></i>Attachment
+                                            </a>
+                                            
+                                        </div>
+                                        <div class="float-right">
+                                            <div class="mt-2 ml-3">
+                                                <p>
+                                                    <span class="f-600 text-primary">
+                                                        <i class="fa fa-calendar-alt mr-1"></i></span>26/10/2021  8:54 PM</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="content">
+                                        COVID-19 હેઠળ ગુજરાત રાજ્યની તારીખ .26.10.2021ના રોજ સાંજના પાંચ વાગ્યે સુધીની અદ્યતન પરીસ્થીતી-આરોગ્ય અને પરિવાર કલ્યાણ વિભાગ,ગાંધીનગર
+                                    </p>
+                                </li>
+                            
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+    
+
+    <div class="row">
+        
+        <div id="ctl00_body_dvACPCCHART" class="col-md-6">
+            <div class="card border">
+                <div class="card-header bg-red">
+                    <h5 class="card-title">
+                        <i class="fa fa-chart-line"></i>&nbsp;&nbsp; Active Cases Trends
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="Activelinecht" style="height: 270px"></div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="row">
+        
+        
+    </div>
+
+    <div class="row">
+        
+    </div>
+
+    <div class="row">
+        <div id="ctl00_body_dvDCPCCHART" class="col-md-12">
+            <div class="card border">
+                <div class="card-header card-head-bg bg-secondary" style="background: #6e5ab7 !important">
+                    <h5 class="card-title">
+                        <i class="fa fa-chart-line"></i>&nbsp;&nbsp;District Wise Active Cases Trends
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="linecht5" style="height: 270px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/highcharts.js"></script>
+    <script src="/assets/js/highcharts-3d.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flexslider/2.7.2/jquery.flexslider-min.js"></script>
+    <script type="text/javascript" src="https://raw.githubusercontent.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/json2/20130526/json2.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".media-slide").owlCarousel({
+                items: 3,
+                loop: true,
+                margin: 10,
+                nav: false,
+                dots: false,
+                autoplay: true,
+                autoplayTimeout: 2000,
+                autoplayHoverPause: true,
+            });
+        });
+
+        $(document).ready(function () {
+            CovidFunction();
+            LoadLineChart();
+            LoadLineChart1();
+            LoadLineChart2();
+            LoadLineChart3();
+            LoadLineChart4();
+            LoadLineChart5();
+            LoadActiveLineChart();
+            $('#tbl').DataTable({
+                "paging": false,
+                "ordering": true,
+                "info": false,
+
+            });
+        });
+        var map = L.map('map', { trackResize: false, keyboard: false, boxZoom: false, doubleClickZoom: false, tap: false, touchZoom: false, dragging: false, dragging: !L.Browser.mobile, tap: !L.Browser.mobile, zoomControl: false, scrollWheelZoom: false }).setView([22.2587, 71.1924], 7);
+        var Layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        }).addTo(map);
+
+        function CovidFunction() {
+            //var obj = {};
+            //obj.DeliveryScheduleID = $("#txtDID").val();
+            $.ajax({
+                type: "POST",
+                url: "Home.aspx/GetDistDataForCovid",
+                //data: JSON.stringify(obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+                    var Data = r.d;
+                    var newData = JSON.parse(r.d);
+                    if (newData.length != 0) {
+                        map.eachLayer(function (newData) {
+                            map.removeLayer(newData);
+                        });
+                        map.addLayer(Layer);
+                        $.each(newData, function (index, value) {
+                            /* commented by ravi - get color from sp
+                            var clr = "";
+                            if (value["ConfirmedCount"] == "0") {
+                                clr = "green";
+                            } else {
+                                clr = "red";
+                            }
+                            */
+
+                            var clr = value["PinColor"];
+                            var IconCLR = new L.Icon({
+                                iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-' + clr + '.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                                iconSize: [20, 30],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34],
+                                shadowSize: [41, 41]
+                            });
+                            if (value["Latitude"] != null && value["Longitude"] != null) {
+                                var marker1 = L.marker([parseFloat(value["Latitude"]), parseFloat(value["Longitude"])], { icon: IconCLR })
+                                    .bindPopup('<table class="mb-3" style="width:100%;font-size:14px">' +
+                                        '<tr>' +
+                                        '<td style="text-align:center; font-size: 15px; white-space: pre-wrap;padding:12px; margin: -12px; border-radius: 15px 15px 0 0;display:block;background-color:' + clr + '" class="badge badge-success">' + value["DistrictName"] + '</td>' +
+                                        '</tr>' +
+                                        '</table>' +
+                                        //'<hr >' +
+                                        '<table style="width:100%;font-size:11px">' +
+                                        '<tr>' +
+                                        '<td><b class="f-600">Active Cases</b></td> ' +
+                                        '<td class="text-right">' + value["ActiveConfirmedCount"] + '</td>' +
+                                        '</tr>' +
+                                        '<tr>' +
+                                        '<td><b class="f-600">Cases Tested for COVID19</b></td>' +
+                                        ' <td class="text-right">' + value["PatientTestedCount"] + '</td>' +
+                                        '</tr>' +
+                                        '<tr>' +
+                                        '<td><b class="f-600">Patients Recovered</b></td>' +
+                                        '<td class="text-right">' + value["PatientCuredCount"] + '</td>' +
+                                        '</tr>' +
+                                        '<tr>' +
+                                        '<td><b class="f-600">People Under Quarantine</b></td>' +
+                                        '<td class="text-right">' + value["PeopleQuarantineCount"] + '</td>' +
+                                        '</tr>' +
+                                        '<tr>' +
+                                        '<td><b class="f-600">Total Deaths</b></td>' +
+                                        '<td class="text-right">' + value["TotalDath"] + '</td>' +
+                                        '</tr>' +
+                                        '</table>'
+                                    ).addTo(map);
+                                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                                    map.dragging.disable();
+                                    map.dragging.tap = false;
+                                }
+                                else {
+                                    map.dragging.disable();
+                                }
+                                map.doubleClickZoom.disable();
+                            }
+                        });
+                        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                            map.setView([22.2587, 71.1924], 6);
+                        }
+                    }
+                    else {
+                        map.eachLayer(function (newData) {
+                            map.removeLayer(newData);
+                        });
+                        map.addLayer(Layer);
+
+                    }
+                }
+            });
+        }
+
+
+        // Activate the sliders
+        $('#R0').on('change', function () {
+
+            chart2.options.chart.options3d.alpha = this.value;
+            showValues();
+            chart2.redraw(false);
+
+        });
+        $('#R1').on('change', function () {
+
+            chart2.options.chart.options3d.beta = this.value;
+            showValues();
+            chart2.redraw(false);
+        });
+
+        function showValues() {
+            $('#R0-value').html(chart2.options.chart.options3d.alpha);
+            $('#R1-value').html(chart2.options.chart.options3d.beta);
+
+        }
+        showValues();
+
+        function LoadLineChart() {
+            $.ajax({
+                type: "POST",
+                url: "Home.aspx/GetDistDataForLineCovid",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+                    var Data = response.d;
+                    var newData = JSON.parse(response.d)
+                    // var labels = [];
+                    //var data = [];
+                    //var JSData=[];
+                    var name = Array();
+                    var data = Array();
+                    var dataArrayFinal = Array();
+                    for (i = 0; i < newData.length; i++) {
+                        name[i] = newData[i].DisplayDate;
+                        data[i] = newData[i].ConfirmedCount;
+                    }
+
+                    for (j = 0; j < name.length; j++) {
+                        var temp = new Array(name[j], data[j]);
+                        dataArrayFinal[j] = temp;
+                    }
+
+                    Highcharts.chart('linecht', {
+                        chart: {
+                            type: 'spline'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: name
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            }
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                enableMouseTracking: false
+                            }
+                        },
+                        series: [{
+                            name: 'Date Wise',
+                            data: data
+                        }]
+                    });
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function LoadActiveLineChart() {
+            $.ajax({
+                type: "POST",
+                url: "Home.aspx/GetDistDataForLineCovid",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+                    var Data = response.d;
+                    var newData = JSON.parse(response.d)
+                    // var labels = [];
+                    //var data = [];
+                    //var JSData=[];
+                    var name = Array();
+                    var data = Array();
+                    var dataArrayFinal = Array();
+                    for (i = 0; i < newData.length; i++) {
+                        name[i] = newData[i].DisplayDate;
+                        data[i] = newData[i].ActiveConfirmedCount;
+                    }
+
+                    for (j = 0; j < name.length; j++) {
+                        var temp = new Array(name[j], data[j]);
+                        dataArrayFinal[j] = temp;
+                    }
+
+                    Highcharts.chart('Activelinecht', {
+                        chart: {
+                            type: 'spline'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: name
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            }
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                enableMouseTracking: false
+                            }
+                        },
+                        series: [{
+                            name: 'Date Wise',
+                            data: data
+                        }]
+                    });
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function LoadLineChart1() {
+            $.ajax({
+                type: "POST",
+                url: "Home.aspx/GetDistDataForLineCovid",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+                    var Data = response.d;
+                    var newData = JSON.parse(response.d)
+                    // var labels = [];
+                    //var data = [];
+                    //var JSData=[];
+                    var name = Array();
+                    var data = Array();
+                    var dataArrayFinal = Array();
+                    for (i = 0; i < newData.length; i++) {
+                        name[i] = newData[i].DisplayDate;
+                        data[i] = newData[i].PatientTestedCount;
+                    }
+
+                    for (j = 0; j < name.length; j++) {
+                        var temp = new Array(name[j], data[j]);
+                        dataArrayFinal[j] = temp;
+                    }
+                    Highcharts.chart('linecht1', {
+                        chart: {
+                            type: 'spline'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: name
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            },
+                            allowDecimals: false
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                enableMouseTracking: false
+                            }
+                        },
+                        series: [{
+                            name: 'Date Wise',
+                            data: data
+                        }]
+                    });
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function LoadLineChart2() {
+            $.ajax({
+                type: "POST",
+                url: "Home.aspx/GetDistDataForLineCovid",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+                    var Data = response.d;
+                    var newData = JSON.parse(response.d)
+                    // var labels = [];
+                    //var data = [];
+                    //var JSData=[];
+                    var name = Array();
+                    var data = Array();
+                    var dataArrayFinal = Array();
+                    for (i = 0; i < newData.length; i++) {
+                        name[i] = newData[i].DisplayDate;
+                        data[i] = newData[i].PatientCuredCount;
+                    }
+
+                    for (j = 0; j < name.length; j++) {
+                        var temp = new Array(name[j], data[j]);
+                        dataArrayFinal[j] = temp;
+                    }
+                    Highcharts.chart('linecht2', {
+                        chart: {
+                            type: 'spline'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: name
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            },
+                            allowDecimals: false
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                enableMouseTracking: false
+                            }
+                        },
+                        series: [{
+                            name: 'Date Wise',
+                            data: data
+                        }]
+                    });
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function LoadLineChart3() {
+            $.ajax({
+                type: "POST",
+                url: "Home.aspx/GetDistDataForLineCovid",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+                    var Data = response.d;
+                    var newData = JSON.parse(response.d)
+                    // var labels = [];
+                    //var data = [];
+                    //var JSData=[];
+                    var name = Array();
+                    var data = Array();
+                    var dataArrayFinal = Array();
+                    for (i = 0; i < newData.length; i++) {
+                        name[i] = newData[i].DisplayDate;
+                        data[i] = newData[i].PeopleQuarantineCount;
+                    }
+
+                    for (j = 0; j < name.length; j++) {
+                        var temp = new Array(name[j], data[j]);
+                        dataArrayFinal[j] = temp;
+                    }
+                    Highcharts.chart('linecht3', {
+                        chart: {
+                            type: 'spline'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: name
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            },
+                            allowDecimals: false
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                enableMouseTracking: false
+                            }
+                        },
+                        series: [{
+                            name: 'Date Wise',
+                            data: data
+                        }]
+                    });
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function LoadLineChart4() {
+            $.ajax({
+                type: "POST",
+                url: "Home.aspx/GetDistDataForLineCovid",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+                    var Data = response.d;
+                    var newData = JSON.parse(response.d)
+                    // var labels = [];
+                    //var data = [];
+                    //var JSData=[];
+                    var name = Array();
+                    var data = Array();
+                    var dataArrayFinal = Array();
+                    for (i = 0; i < newData.length; i++) {
+                        name[i] = newData[i].DisplayDate;
+                        data[i] = newData[i].TotalDath;
+                    }
+
+                    for (j = 0; j < name.length; j++) {
+                        var temp = new Array(name[j], data[j]);
+                        dataArrayFinal[j] = temp;
+                    }
+                    Highcharts.chart('linecht4', {
+                        chart: {
+                            type: 'spline'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: name
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            },
+                            allowDecimals: false
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                enableMouseTracking: false
+                            }
+                        },
+                        series: [{
+                            name: 'Date Wise',
+                            data: data
+                        }]
+                    });
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function LoadLineChart5() {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: "DrillDownCharts.aspx/GetDistDataForLineCovidDisrtict",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+                    var Data = response.d;
+                    var newData = JSON.parse(response.d)
+
+                    var name = Array();
+                    var data = Array();
+                    var dist = Array();
+
+                    for (i = 0; i < newData.length; i++) {
+                        name[i] = newData[i].DisplayDate;
+                        data[i] = newData[i].val;
+                        dist[i] = newData[i].DistrictName;
+                    }
+
+                    var x1 = [];              // Will hold the de-duped result
+                    name.forEach(function (elem) { if (x1.indexOf(elem) === -1) x1.push(elem); });
+                    x1;
+
+                    var x2 = [];              // Will hold the de-duped result
+                    dist.forEach(function (elem) { if (x2.indexOf(elem) === -1) x2.push(elem); });
+                    x2;
+
+                    var visiblity = Array();
+                    var count = Array();
+                    var menthdata = Array();
+
+                    for (j = 0; j < x2.length; j++) {
+                        for (k = 0; k < newData.length; k++) {
+                            if (x2[j] == newData[k].DistrictName) {
+                                count[j] = newData[k].val;
+                            }
+                            if (j == 0)
+                                visiblity[j] = true;
+                            else
+                                visiblity[j] = false;
+                        }
+                        menthdata = count;
+                    }
+                    Highcharts.chart('linecht5', {
+                        chart: {
+                            type: 'spline'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: x1
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Active Positive Cases'
+                            }
+                            //tickPositioner: function () {
+                            //    var positions = [],
+                            //        tick = Math.floor(this.dataMin),
+                            //        increment = Math.ceil((this.dataMax - this.dataMin) / 5);
+
+                            //    if (this.dataMax !== null && this.dataMin !== null) {
+                            //        for (tick; tick - increment <= this.dataMax; tick += increment) {
+                            //            positions.push(tick);
+                            //        }
+                            //    }
+                            //    return positions;
+                            //}
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                enableMouseTracking: false
+                            }
+                        },
+                        series: (function () {
+                            var series = [],
+                                temp = x2;
+                            temp1 = menthdata;
+                            temp2 = visiblity;
+                            for (var i = 0; i < temp.length; i++) {
+                                series.push({
+                                    name: temp[i],
+                                    data: JSON.parse(temp1[i]),
+                                    visible: temp2[i],
+                                });
+                            }
+                            return series;
+
+                        }())
+                    });
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+
+        $('.marquee').marquee({
+            //speed in milliseconds of the marquee
+            duration: 5000,
+            //gap in pixels between the tickers
+            gap: 10,
+            //time in milliseconds before the marquee will start animating
+            delayBeforeStart: 0,
+            //'left' or 'right'
+            direction: 'left',
+            //true or false - should the marquee be duplicated to show an effect of continues flow
+            duplicated: true
+        });
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    
+
+            </div>
+        </div>
+
+        <footer class="footer-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-2 d-md-block d-none text-md-left">
+                            <a href="https://dst.gujarat.gov.in/" target="_blank">
+                                <img class="img-fluid mr-1" src="assets/images/dst-logo.jpg" width="85" alt="dst-logo">
+                            </a>
+                        </div>
+                        <div class="col-md-8 align-self-center text-center">
+                            <p>Copyright © 2020 <a href="https://dst.gujarat.gov.in/" target="_blank">Department of Science & Technology, Government of Gujarat</a></p>
+                            <p>
+                                <strong>Designed & Developed By:</strong> <a href="http://gipl.in/" target="_blank">Guj. Info Petro
+                                Ltd.
+                                </a>
+                            </p>
+                            <p><strong>Last Updated On:</strong>
+                                <span id="ctl00_lblDatemst">08/11/2021  9:46:20 PM</span></p>
+                        </div>
+                        <div class="col-md-2 text-center my-2 my-md-0 text-md-right">
+                            <a href="https://dst.gujarat.gov.in/" target="_blank">
+                                <img class="img-fluid mr-1 d-md-none" src="/assets/images/dst-logo.jpg" width="85" alt="dst-logo">
+                            </a>
+                            <a href="https://gil.gujarat.gov.in/" target="_balank">
+                                <img class="img-fluid" src="/assets/images/gil-logo.jpg" width="85" alt="gil-logo">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        
+    </form>
+</body>
+</html>
