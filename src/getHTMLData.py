@@ -7,14 +7,12 @@ import os
 import io
 import datetime
 from ExtractStateMyGov import ExtractStateMyGov
-import requests
 
 
 def andhra_pradesh(state, date, path):
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")
 
     table = soup.find_all('table')
-    tested = int(soup.find_all('span', {'id': 'lblSamples'})[0].getText())
     df_summary = pd.read_html(str(table))[0]
     df_summary = df_summary.melt().dropna()
     # new data frame with split value columns
@@ -40,7 +38,6 @@ def andhra_pradesh(state, date, path):
     df['StateConfirmed'] = df_state['Confirmed'] #int(df_summary['val'][df_summary['var'] == 'Confirmed Cases'])
     df['StateRecovered'] = df_state['Recovered'] #int(df_summary['val'][df_summary['var'] == 'Cured/ Discharged'])
     df['StateDeceased'] = df_state['Deceased'] #int(df_summary['val'][df_summary['var'] == 'Deceased'])
-    df['StateTested'] = tested #int(df_summary['val'][df_summary['var'] == 'Deceased'])
     new_dict = {}
     for key, val in df.to_dict().items():
         new_dict[key] = list(val.values())
@@ -129,7 +126,6 @@ def gujarat(state, date, path):
 
 def odisha(state, date, path):
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")
-    tested = soup.find_all('div', {'id': 'odishatab'})[0].find_all('h5')[0].getText().replace(" ", "").split("[")[0].replace(",", "")
     script = soup.find_all("script")[-1].string.split(";")
     for sc in script:
         if "var result" in sc:
@@ -157,7 +153,6 @@ def odisha(state, date, path):
     df['StateConfirmed'] = int(confirmed)
     df['StateRecovered'] = int(recovered)
     df['StateDeceased'] = int(death)
-    df['StateTested'] = int(tested)
 
     dict_temp = {"var": ["Confirmed", "Recovered", "Deceased"],
                  "val": [confirmed, recovered, death]}
@@ -188,8 +183,6 @@ def tripura(state, date, path):
 
 
 def kerala(state, date, path):
-    tested_soup = BeautifulSoup(requests.post('https://dashboard.kerala.gov.in/covid/testing-view-public.php', "html.parser").text, 'html5lib')
-    tested = int(tested_soup.find_all("span", {'class': 'info-box-number'})[0].getText())
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")
     script = soup.find_all("script")[-1].string.split(";")
     for i, sc in enumerate(script):
@@ -245,7 +238,6 @@ def kerala(state, date, path):
     df['StateConfirmed'] = int(confirmed)
     df['StateRecovered'] = int(recovered)
     df['StateDeceased'] = int(death)
-    df['StateTested'] = int(tested)
     df_summary = pd.DataFrame(dict_temp)
     GenerateRawCsv(state, date, df)
 
@@ -391,6 +383,7 @@ def GenerateRawCsv(state, date, df_districts):
 
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
     df['cumulativeRecoveredNumberForState'] = df_districts['StateRecovered']
+
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, state), index=False)
 
 
@@ -413,4 +406,4 @@ def ExtractFromHTML(state, date):
         ExtractStateMyGov(state, date, no_source=True)
 
 
-# ExtractFromHTML(state="KL", date="2021-11-06")
+ExtractFromHTML(state="TR", date="2021-11-08")
