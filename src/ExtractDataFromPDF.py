@@ -17,8 +17,40 @@ from StatusMsg import StatusMsg
 #Convert your file
 # reads all the tables in the PDF
 
+def getRJData(file_path,date,StateCode):
+    table = camelot.read_pdf(file_path,pages='1,2')
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+
+    df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
+    df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+
+    frames = [df_districts_1,df_districts_2]
+    df_districts = pd.concat(frames,ignore_index=True)
+    df_districts.columns = df_districts.columns.str.replace("\n","")
+
+    col_dict = {"Cumulative Sample":"Tested","Cumulative Positive":"Confirmed","Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased"}
+    df_districts.rename(columns=col_dict,inplace=True)
+    df_districts.drop(columns=['S.No','Today\'s Positive','Today\'s Death','Today\'s  Recovered/Discharged', 'Active  case'],inplace=True)
+
+    df_summary = df_districts
+    df_districts = df_districts[:-1]
+    # df_districts.drop(labels=[0,1],axis=0,inplace=True)
+    # df = df[]
+    df_districts['District'] = df_districts['District'].str.capitalize()
+
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Rajasthan'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
+    
+    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    # print(df_summary)
+    # a=b
+    return df_summary,df_districts
+
 def getKAData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='5')
+    table = camelot.read_pdf(file_path,pages='2,5')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -56,7 +88,7 @@ def getKAData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getTNData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='7')
+    table = camelot.read_pdf(file_path,pages='2,7')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -64,13 +96,14 @@ def getTNData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    
+
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
     
     col_dict = {"Total Positive Cases":"Confirmed","Discharged":"Recovered","Death":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
     df_summary = df_districts
-    print(df_summary)
+    print(df_tests)
     # a=b
     df_districts = df_districts[:-4]
     
@@ -82,12 +115,17 @@ def getTNData(file_path,date,StateCode):
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     df_summary = df_summary.dropna()
+    df_summary["Tested"] = df_tests.loc[5,"DETAILS"][:-1]
+    df_summary["Tested"] = df_summary["Tested"].replace("\n","").split()[-1]
     df_summary = df_summary.str.replace(',', '').astype(int)
+
+    df_districts["Tested"] = df_summary["Tested"]
     print(df_summary)
+    # a=b 
     return df_summary,df_districts
 
 def getHRData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='2')
+    table = camelot.read_pdf(file_path,pages='1,2')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -95,7 +133,9 @@ def getHRData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
     df_districts.columns = df_districts.columns.str.replace("\n","")
+
     
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),names = ["Details","Numbers"])  
     
     col_dict = {"Name of District":"District","Cumulative Positive Cases":"Confirmed","Cumulative     Recovered/ Discharged Cases":"Recovered","No. of Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
@@ -114,10 +154,14 @@ def getHRData(file_path,date,StateCode):
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     # print(df_summary)
+    df_summary["Tested"] = df_tests.loc[3,"Numbers"]
+    df_districts["Tested"] = df_summary["Tested"]
+    # print(df_summary)
+    # a=b
     return df_summary,df_districts
 
 def getWBData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='2')
+    table = camelot.read_pdf(file_path,pages='1,2')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -127,6 +171,11 @@ def getWBData(file_path,date,StateCode):
     df_districts.columns = df_districts.iloc[0]
     df_districts = df_districts[1:]
     df_districts.columns = df_districts.columns.str.replace("\n","")
+
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-2.csv'.format(date,StateCode))
+    
+    # print(df_tests)
+    # a=b
     
     col_dict = {"Total Cases":"Confirmed","Total Discharged":"Recovered","Total Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
@@ -147,8 +196,12 @@ def getWBData(file_path,date,StateCode):
     dist_map = df_json['West Bengal'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary["Tested"] = df_tests.loc[1,"Number"]
     # print(df_summary)
-    
+    df_summary["Tested"]  = int(df_summary["Tested"].replace(',', '')) #.astype(int)
+    df_districts["Tested"] = df_summary["Tested"]
+    # print(df_summary)
+    # a=b
     return df_summary,df_districts
 
 
@@ -200,7 +253,7 @@ def getMLData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getPBData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'4')
+    table = camelot.read_pdf(file_path,'1,4')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -295,7 +348,7 @@ def getNLData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getLAData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'2')
+    table = camelot.read_pdf(file_path,'1,2')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -353,10 +406,12 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
         df['cumulativeConfirmedNumberForState'] = df_summary['Confirmed']#.astype(int).sum()
     if "Tested" in df_districts.columns:
         df['cumulativeTestedNumberForDistrict'] = df_districts['Tested']
-        df['cumulativeTestedNumberForState'] = df['cumulativeTestedNumberForDistrict'].astype(int).sum()
+        df['cumulativeTestedNumberForState'] = df_summary['Tested'] #.astype(int).sum()
     df['cumulativeDeceasedNumberForDistrict'] = df_districts['Deceased']
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
 
+    # print(Date)
+    # a=b
     df['Date'] = Date
     df['State/UTCode'] = StateCode
      
@@ -368,7 +423,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
-def ExtractFromPDF(StateCode = "UK",Date = "2021-10-26"):
+def ExtractFromPDF(StateCode = "WB",Date = "2021-10-26"):
     try:
         filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
@@ -401,6 +456,9 @@ def ExtractFromPDF(StateCode = "UK",Date = "2021-10-26"):
         elif StateCode == "ML":
             df_summary,df_districts = getMLData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
+        elif StateCode == "RJ":
+            df_summary,df_districts = getRJData(filepath,Date,StateCode)
+            GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         # elif StateCode == "MZ":
         #     df_summary,df_districts = getMZData(filepath,Date,StateCode)
         #     GenerateRawCsv(StateCode,Date,df_districts,df_summary)
@@ -411,4 +469,4 @@ def ExtractFromPDF(StateCode = "UK",Date = "2021-10-26"):
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
-ExtractFromPDF(StateCode = "UT",Date = "2021-11-08")
+# ExtractFromPDF(StateCode = "UT",Date = "2021-11-08")
