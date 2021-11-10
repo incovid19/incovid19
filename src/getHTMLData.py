@@ -7,6 +7,7 @@ import os
 import io
 import datetime
 from ExtractStateMyGov import ExtractStateMyGov
+import requests
 
 
 def andhra_pradesh(state, date, path):
@@ -189,6 +190,8 @@ def tripura(state, date, path):
 
 
 def kerala(state, date, path):
+    tested_soup = BeautifulSoup(requests.post('https://dashboard.kerala.gov.in/covid/testing-view-public.php', "html.parser").text, 'html.parser')
+    tested = int(tested_soup.find_all("span", {'class': 'info-box-number'})[0].getText())
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")
     script = soup.find_all("script")[-1].string.split(";")
     total_no = None
@@ -252,6 +255,7 @@ def kerala(state, date, path):
     df['StateConfirmed'] = int(confirmed) if confirmed > 0 else sum(df['Confirmed'])
     df['StateRecovered'] = int(recovered) if recovered > 0 else sum(df['Recovered'])
     df['StateDeceased'] = int(death) if death > 0 else sum(df['Deceased'])
+    df['StateTested'] = int(tested)
     df_summary = pd.DataFrame(dict_temp)
     GenerateRawCsv(state, date, df)
 
@@ -420,8 +424,9 @@ def ExtractFromHTML(state, date):
         states[state](state, date, path)
         StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
     except Exception as e:
+        print(e)
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         ExtractStateMyGov(state, date, no_source=True)
 
 
-ExtractFromHTML(state="OR", date="2021-11-09")
+# ExtractFromHTML(state="KL", date="2021-11-09")
