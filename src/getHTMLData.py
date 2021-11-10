@@ -12,6 +12,8 @@ from ExtractStateMyGov import ExtractStateMyGov
 def andhra_pradesh(state, date, path):
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")
 
+    tested = int(soup.find_all('span', {'id': 'lblSamples'})[0].getText())
+
     table = soup.find_all('table')
     df_summary = pd.read_html(str(table))[0]
     df_summary = df_summary.melt().dropna()
@@ -38,6 +40,7 @@ def andhra_pradesh(state, date, path):
     df['StateConfirmed'] = df_state['Confirmed'] #int(df_summary['val'][df_summary['var'] == 'Confirmed Cases'])
     df['StateRecovered'] = df_state['Recovered'] #int(df_summary['val'][df_summary['var'] == 'Cured/ Discharged'])
     df['StateDeceased'] = df_state['Deceased'] #int(df_summary['val'][df_summary['var'] == 'Deceased'])
+    df['StateTested'] = tested
     new_dict = {}
     for key, val in df.to_dict().items():
         new_dict[key] = list(val.values())
@@ -137,6 +140,8 @@ def odisha(state, date, path):
             recovered = int(div.findAll('h5')[0].getText().replace(" ", "").replace("\n", "").replace(",", "").split('[')[0])
         elif div.findAll('p')[0].getText().replace(" ", "").replace("\n", "") == 'Deceased':
             death = int(div.findAll('h5')[0].getText().replace(" ", "").replace("\n", "").replace(",", "").split('[')[0])
+        elif div.findAll('p')[0].getText().replace(" ", "").replace("\n", "") == 'TotalTestsDone':
+            tested = int(div.findAll('h5')[0].getText().replace(" ", "").replace("\n", "").replace(",", "").split('[')[0])
 
     df = pd.read_json(data)
     df.rename(columns={"vchDistrictName": "District", "intConfirmed": "Confirmed", "intActive": "Active",
@@ -153,6 +158,7 @@ def odisha(state, date, path):
     df['StateConfirmed'] = int(confirmed)
     df['StateRecovered'] = int(recovered)
     df['StateDeceased'] = int(death)
+    df['StateTested'] = int(tested)
 
     dict_temp = {"var": ["Confirmed", "Recovered", "Deceased"],
                  "val": [confirmed, recovered, death]}
@@ -414,9 +420,8 @@ def ExtractFromHTML(state, date):
         states[state](state, date, path)
         StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
     except Exception as e:
-        print(e)
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         ExtractStateMyGov(state, date, no_source=True)
 
 
-ExtractFromHTML(state="KL", date="2021-11-09")
+# ExtractFromHTML(state="AP", date="2021-11-09")
