@@ -267,7 +267,7 @@ def getPBData(file_path,date,StateCode):
     
     col_dict = {"Total ConfirmedCases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
+    df_districts.drop(columns=['S. No.','Total Active Cases'],inplace=True)
     df_summary = df_districts
     df_districts = df_districts[:-1]
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
@@ -449,7 +449,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
-def ExtractFromPDF(StateCode = "KA",Date = "2021-11-09"):
+def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
     try:
         filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
