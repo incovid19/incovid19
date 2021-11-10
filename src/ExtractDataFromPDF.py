@@ -119,7 +119,7 @@ def getTNData(file_path,date,StateCode):
     df_summary["Tested"] = df_summary["Tested"].replace("\n","").split()[-1]
     df_summary = df_summary.str.replace(',', '').astype(int)
 
-    df_districts["Tested"] = df_summary["Tested"]
+    # df_districts["Tested"] = df_summary["Tested"]
     print(df_summary)
     # a=b 
     return df_summary,df_districts
@@ -155,7 +155,7 @@ def getHRData(file_path,date,StateCode):
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     # print(df_summary)
     df_summary["Tested"] = df_tests.loc[3,"Numbers"]
-    df_districts["Tested"] = df_summary["Tested"]
+    # df_districts["Tested"] = df_summary["Tested"]
     # print(df_summary)
     # a=b
     return df_summary,df_districts
@@ -199,7 +199,7 @@ def getWBData(file_path,date,StateCode):
     df_summary["Tested"] = df_tests.loc[1,"Number"]
     # print(df_summary)
     df_summary["Tested"]  = int(df_summary["Tested"].replace(',', '')) #.astype(int)
-    df_districts["Tested"] = df_summary["Tested"]
+    # df_districts["Tested"] = df_summary["Tested"]
     # print(df_summary)
     # a=b
     return df_summary,df_districts
@@ -259,7 +259,7 @@ def getPBData(file_path,date,StateCode):
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
-    # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),names=["Details","Numbers"])
     
     df_districts.columns = df_districts.columns.str.replace("\n","")
     
@@ -274,6 +274,10 @@ def getPBData(file_path,date,StateCode):
     dist_map = df_json['Punjab'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary["Tested"] = df_tests.loc[1,"Numbers"]
+    # df_districts["Tested"] = df_summary["Tested"]
+    # print(df_summary.index)
+    # a=b
     return df_summary,df_districts
 
 def getUKData(file_path,date,StateCode):
@@ -283,8 +287,10 @@ def getUKData(file_path,date,StateCode):
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-2.csv'.format(date,StateCode))
-    # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     df_districts.columns = df_districts.columns.str.replace("\n","")
+
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode)) 
+    df_tests.columns = df_tests.columns.str.replace("\n","")  
     
     col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated"}
     df_districts.rename(columns=col_dict,inplace=True)
@@ -298,6 +304,12 @@ def getUKData(file_path,date,StateCode):
     dist_map = df_json['Uttarakhand'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary["Tested"] = int(df_tests.iloc[-1,-2])
+
+    # print(df_tests.columns)
+    # print(df_summary)
+    # a=b 
+
     return df_summary,df_districts
 
 # def getNLData(file_path,date,StateCode):
@@ -331,6 +343,10 @@ def getNLData(file_path,date,StateCode):
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-3.csv'.format(date,StateCode),skiprows=4,
     names=['a','District','b','c','d','e','f','g','Recovered','Deceased','h','i','j','Confirmed'])
 
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-2.csv'.format(date,StateCode),skiprows=3,
+    names=["RT PCR","Truenat","Rapid Antigen Test","Total"])
+    df_tests.columns = df_tests.columns.str.replace("\n","")
+    
     df_districts['Recovered'] = df_districts['Recovered'] + df_districts['j']
     df_districts['Deceased'] = df_districts['Deceased'] + df_districts['h']
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
@@ -345,6 +361,7 @@ def getNLData(file_path,date,StateCode):
     dist_map = df_json['Nagaland'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary["Tested"] = df_tests.loc["Results Received","Total"].split("\n")[-1]
     return df_summary,df_districts
 
 def getLAData(file_path,date,StateCode):
@@ -357,6 +374,9 @@ def getLAData(file_path,date,StateCode):
     names = ['a','District'] + list(string.ascii_lowercase[1:10]) + ['Confirmed','k','l','Recovered','Deceased'])
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     df_districts.columns = df_districts.columns.str.replace("\n","")
+
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
+    
     
     # col_dict = {"b":"District"}
     # df_districts.rename(columns=col_dict,inplace=True)
@@ -369,6 +389,9 @@ def getLAData(file_path,date,StateCode):
     df_districts['District'].replace(dist_map,inplace=True)
     print(df_districts)
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary["Tested"] = df_tests.iloc[-1,-1]
+    # print(df_summary)
+    # a=b
     return df_summary,df_districts
 
 
@@ -404,9 +427,10 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     if "Confirmed" in df_districts.columns:
         df['cumulativeConfirmedNumberForDistrict'] = df_districts['Confirmed']
         df['cumulativeConfirmedNumberForState'] = df_summary['Confirmed']#.astype(int).sum()
+    if "Tested" in df_summary.index:
+        df['cumulativeTestedNumberForState'] = df_summary['Tested'] #.astype(int).sum()
     if "Tested" in df_districts.columns:
         df['cumulativeTestedNumberForDistrict'] = df_districts['Tested']
-        df['cumulativeTestedNumberForState'] = df_summary['Tested'] #.astype(int).sum()
     df['cumulativeDeceasedNumberForDistrict'] = df_districts['Deceased']
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
 
@@ -423,7 +447,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
-def ExtractFromPDF(StateCode = "WB",Date = "2021-10-26"):
+def ExtractFromPDF(StateCode = "LA",Date = "2021-10-28"):
     try:
         filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
