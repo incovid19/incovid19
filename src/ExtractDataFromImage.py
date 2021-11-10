@@ -80,6 +80,7 @@ def get_detected_text(image, col, state):
         data = get_districts(unformatted_txt, state)
     else:
         semiformatted_txt = unformatted_txt.split("\n")
+        print(semiformatted_txt)
         for text in semiformatted_txt:
             text = text.replace('.', '')
             text = text.replace(',', '')
@@ -541,6 +542,9 @@ def himachal_pradesh(state, date, query):
     client = vision.ImageAnnotatorClient()
     image = get_image(state, date, query)
 
+    if image is None:
+        return ['ERR', 'Source not accessible']
+
     for img in image:
         if "Department of Health & Family Welfare" in client.document_text_detection(image=get_bytes(img)).text_annotations[0].description:
             image = img
@@ -649,11 +653,13 @@ def manipur(state, date, query):
     image = get_image(state, date, query)
     if image is None:
         return ['ERR', 'Source not accessible']
-    
+
+    image = image_concat([image[0], image[2]])
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
 
     recover_image = image[0]
     image = image[2]
+
 
     recover_text = "cumulative number of recovered cases is "
     recover_page = client.document_text_detection(image=get_bytes(recover_image)).text_annotations[0].description
@@ -1067,7 +1073,7 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-11-08', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+ExtractDataFromImage('AR', '2021-11-06', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-11-09', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
