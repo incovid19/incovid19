@@ -109,28 +109,28 @@ def get_image(state, date, search_query):
     query = search_query + '&expansions=attachments.media_keys&media.fields=url&tweet.fields=created_at'
     response = requests.get("https://api.twitter.com/2/tweets/search/recent?query=" + query, headers=header)
 
-    # if response.status_code == 200:
-    #     images = []
-    #     response = json.loads(response.content.decode())
-    #     for data in response['data']:
-    #         if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.strptime(date, "%Y-%m-%d"):
-    #             if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < datetime.strptime(date, "%Y-%m-%d") + timedelta(1):
-    #                 for i in range(img_count[state]):
-    #                     media_id = data['attachments']['media_keys'][i]
-    #                     media_url = next(
-    #                         (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
-    #                         None
-    #                     )
-    #                     images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
-    #                 return images
-    # else:
-    try:
+    if response.status_code == 200:
         images = []
-        for i in range(img_count[state]):
-            images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
-        return images
-    except Exception:
-        return None
+        response = json.loads(response.content.decode())
+        for data in response['data']:
+            if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.strptime(date, "%Y-%m-%d"):
+                if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < datetime.strptime(date, "%Y-%m-%d") + timedelta(1):
+                    for i in range(img_count[state]):
+                        media_id = data['attachments']['media_keys'][i]
+                        media_url = next(
+                            (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
+                            None
+                        )
+                        images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
+                    return images
+    else:
+        try:
+            images = []
+            for i in range(img_count[state]):
+                images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
+            return images
+        except Exception:
+            return None
 
 
 # Concatenate multiple images together
