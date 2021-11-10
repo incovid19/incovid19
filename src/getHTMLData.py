@@ -185,18 +185,26 @@ def tripura(state, date, path):
 def kerala(state, date, path):
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")
     script = soup.find_all("script")[-1].string.split(";")
+    total_no = None
     for i, sc in enumerate(script):
         if "var data " in sc:
             data = sc.split("=")[-1]
-        # if "Total" in sc:
-            # confirmed = int(script[i + 1].replace(' ', '').replace('\n', '').split('+')[2])
-            # recovered = int(script[i + 2].replace(' ', '').replace('\n', '').split('+')[2])
-            # death = int(script[i + 3].replace(' ', '').replace('\n', '').split('+')[2])
-            
-    totals = soup.findAll('h3', {'class': "my-0 my-lg-1"})
-    confirmed = int(totals[0].getText().split("(")[0].replace('*', ""))
-    recovered = int(totals[2].getText().split("(")[0].replace('*', ""))
-    death = int(totals[3].getText().split("(")[0].replace('*', ""))
+        if "Total" in sc:
+            total_no = i
+
+    if total_no is not None:
+        confirmed = int(script[total_no + 1].replace(' ', '').replace('\n', '').split('+')[2])
+        recovered = int(script[total_no + 2].replace(' ', '').replace('\n', '').split('+')[2])
+        death = int(script[total_no + 3].replace(' ', '').replace('\n', '').split('+')[2])
+    else:
+        totals = []
+        totals = soup.findAll('h3', {'class': "my-0 my-lg-1"})
+        if len(totals) > 0:
+            confirmed = int(totals[0].getText().split("(")[0].replace('*', ""))
+            recovered = int(totals[2].getText().split("(")[0].replace('*', ""))
+            death = int(totals[3].getText().split("(")[0].replace('*', ""))
+        else:
+            confirmed = recovered = death = 0
 
     districts_json = data.split("datasets:")
     districts = districts_json[0]
@@ -235,9 +243,9 @@ def kerala(state, date, path):
     df['District'].replace(dist_map, inplace=True)
     dict_temp = {"var": ["Confirmed", "Recovered", "Deceased"],
                  "val": [confirmed, recovered, death]}
-    df['StateConfirmed'] = int(confirmed)
-    df['StateRecovered'] = int(recovered)
-    df['StateDeceased'] = int(death)
+    df['StateConfirmed'] = int(confirmed) if confirmed > 0 else sum(df['Confirmed'])
+    df['StateRecovered'] = int(recovered) if recovered > 0 else sum(df['Recovered'])
+    df['StateDeceased'] = int(death) if death > 0 else sum(df['Deceased'])
     df_summary = pd.DataFrame(dict_temp)
     GenerateRawCsv(state, date, df)
 
@@ -259,6 +267,8 @@ def maharashtra(state, date, path):
 
     if os.path.isfile(path.format(date, state + '_total')):
         mh_total = json.load(io.open(path.replace('.json', '_total.json').format(date, state)))
+        if type(mh_total) is list:
+            mh_total = mh_total[0]
         df['StateConfirmed'] = int(mh_total['Total Prog. Positive Patient'])
         df['StateRecovered'] = int(mh_total['Progressive Discharged'])
         df['StateDeceased'] = int(mh_total['Progressive Deaths Due to Corona'])
@@ -268,7 +278,10 @@ def maharashtra(state, date, path):
         df['StateDeceased'] = sum(df['Deceased'])
 
     if os.path.isfile(path.format(date, state + '_testing')):
-        df['StateTested'] = int(json.load(io.open(path.replace('.json', '_testing.json').format(date, state)))['total'])
+        mh_testing = json.load(io.open(path.replace('.json', '_testing.json').format(date, state)))
+        if type(mh_testing) is list:
+            mh_testing = mh_testing[0]
+        df['StateTested'] = int(mh_testing['total'])
 
     GenerateRawCsv(state, date, df)
 
@@ -383,7 +396,6 @@ def GenerateRawCsv(state, date, df_districts):
 
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
     df['cumulativeRecoveredNumberForState'] = df_districts['StateRecovered']
-
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, state), index=False)
 
 
@@ -401,9 +413,10 @@ def ExtractFromHTML(state, date):
     try:
         states[state](state, date, path)
         StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
-    except Exception:
+    except Exception as e:
+        print(e)
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         ExtractStateMyGov(state, date, no_source=True)
 
 
-ExtractFromHTML(state="TR", date="2021-11-08")
+ExtractFromHTML(state="KL", date="2021-11-09")
