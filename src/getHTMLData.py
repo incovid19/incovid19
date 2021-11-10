@@ -426,7 +426,7 @@ def ExtractFromHTML(state, date):
     except Exception as e:
         print(e)
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
-        ExtractStateMyGov(state, date, no_source=True)
+        # ExtractStateMyGov(state, date, no_source=True)
 
 
 # ExtractFromHTML(state="KL", date="2021-11-09")
