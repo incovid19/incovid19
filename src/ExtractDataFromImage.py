@@ -109,21 +109,27 @@ def get_image(state, date, search_query):
     query = search_query + '&expansions=attachments.media_keys&media.fields=url&tweet.fields=created_at'
     response = requests.get("https://api.twitter.com/2/tweets/search/recent?query=" + query, headers=header)
 
-    if response.status_code == 200:
+    # if response.status_code == 200:
+    #     images = []
+    #     response = json.loads(response.content.decode())
+    #     for data in response['data']:
+    #         if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.strptime(date, "%Y-%m-%d"):
+    #             if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < datetime.strptime(date, "%Y-%m-%d") + timedelta(1):
+    #                 for i in range(img_count[state]):
+    #                     media_id = data['attachments']['media_keys'][i]
+    #                     media_url = next(
+    #                         (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
+    #                         None
+    #                     )
+    #                     images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
+    #                 return images
+    # else:
+    try:
         images = []
-        response = json.loads(response.content)
-        for data in response['data']:
-            if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.strptime(date, "%Y-%m-%d"):
-                if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < datetime.strptime(date, "%Y-%m-%d") + timedelta(1):
-                    for i in range(img_count[state]):
-                        media_id = data['attachments']['media_keys'][i]
-                        media_url = next(
-                            (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
-                            None
-                        )
-                        images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
-                    return images
-    else:
+        for i in range(img_count[state]):
+            images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
+        return images
+    except Exception:
         return None
 
 
@@ -534,14 +540,6 @@ def himachal_pradesh(state, date, query):
     state_name = "Himachal Pradesh"
     client = vision.ImageAnnotatorClient()
     image = get_image(state, date, query)
-    test_x_before = 10
-    test_x_after = 0
-    if image is None:
-        image = get_image(state, date, query.replace("7PM", "2PM"))
-        if image is None:
-            return ['ERR', 'Source not accessible']
-        test_x_before = 0
-        test_x_after = 30
 
     for img in image:
         if "Department of Health & Family Welfare" in client.document_text_detection(image=get_bytes(img)).text_annotations[0].description:
@@ -562,8 +560,6 @@ def himachal_pradesh(state, date, query):
 
     total = False
     for i, text in enumerate(page[:-1]):
-        # if text.description == "Sampling":
-        #     test_x1, test_x2 = text.bounding_poly.vertices[0].x - test_x_before, text.bounding_poly.vertices[1].x + test_x_after
         if text.description == "Confirmed":
             total_x1, total_x2 = text.bounding_poly.vertices[0].x, text.bounding_poly.vertices[1].x
         if text.description == "Cured":
@@ -584,7 +580,6 @@ def himachal_pradesh(state, date, query):
         total=[total_x1, total_x2, y, y2],
         recovered=[recover_x1, recover_x2, y, y2],
         dead=[dead_x1, dead_x2, y, y2],
-        # tested=[test_x1, test_x2, y, y2],
     )
     data_source = 'https://twitter.com/nhm_hp'
 
@@ -597,7 +592,6 @@ def himachal_pradesh(state, date, query):
     single_digit = any(x < 10 for x in hp['dead']['data'])
     single_digit = any(x < 10 for x in hp['total']['data'])
     single_digit = any(x < 10 for x in hp['recovered']['data'])
-    single_digit = any(x < 10 for x in hp['tested']['data'])
 
     if len(hp['districts']['data']) < 12:
         return ['ERR', 'Data Extraction error - Districts not detected']
@@ -616,11 +610,6 @@ def himachal_pradesh(state, date, query):
         for i in range(len(hp['districts']['data']) - len(hp['recovered']['data'])):
             hp['recovered']['data'].insert(len(hp['recovered']['data']) - 1, 0)
             single_digit = True
-
-    # if len(hp['districts']['data']) > len(hp['tested']['data']):
-    #     for i in range(len(hp['districts']['data']) - len(hp['tested']['data'])):
-    #         hp['tested']['data'].insert(len(hp['tested']['data']) - 1, 0)
-    #         single_digit = True
 
     for i in range(len(hp['districts']['data'])-1):
         hp_data.append({
@@ -673,8 +662,6 @@ def manipur(state, date, query):
     recover_end = recover_page.find("(", recover_start)
     recovered = int(recover_page[recover_start:recover_end - 1].replace(",", "").replace(".", ""))
 
-    
-
     status_text = "Imphal, the "
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
@@ -722,7 +709,7 @@ def manipur(state, date, query):
 
     single_digit = any(x < 10 for x in mn['dead']['data'])
     single_digit = any(x < 10 for x in mn['total']['data'])
-    single_digit = any(x < 10 for x in mn['total']['data'])
+    single_digit = any(x < 10 for x in mn['tested']['data'])
 
     if len(mn['districts']['data']) < 16:
         return ['ERR', 'Data Extraction error - Districts not detected']
@@ -1054,8 +1041,8 @@ def ExtractDataFromImage(state, date, handle, term):
     try:
         response = states[state](state, date, query)
         # print(response)
-        if response[1] in ['Source not accessible', 'Data Extraction error - Districts not detected']:
-            response[1] = response[1].append(". Picking data from mygov")
+        # if response[1] in ['Source not accessible', 'Data Extraction error - Districts not detected']:
+        #     response[1] = response[1].append(". Picking data from mygov")
             # ExtractStateMyGov(state, date, no_source=True)
         StatusMsg(
             StateCode=state,
@@ -1080,8 +1067,8 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-10-30', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-10-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('AR', '2021-11-08', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('BR', '2021-11-09', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-10-29', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-11-01', 'health_manipur', 'Manipur updates')
