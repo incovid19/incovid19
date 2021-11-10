@@ -46,12 +46,12 @@ def getSources(source, date):
                         file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/covid-19")
                         copyfile(file_name, r"../INPUT/" + str(date) + "/TT.html")
                         StatusMsg(source["StateCode"][idx], str(date), "OK",
-                                  "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                                "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                     else:    
                         file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
                         copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
                         StatusMsg(source["StateCode"][idx], str(date), "OK",
-                                  "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                                "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                 except HTTPError:
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                 except Exception:
@@ -82,48 +82,50 @@ def getSources(source, date):
                     else:
                         StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
             elif source["StateDataSourceType"][idx] == "pdf":
-                if source["StateCode"][idx] == "HR":
-                    url = 'http://nhmharyana.gov.in/WriteReadData/userfiles/file/CoronaVirus/Daily%20Bulletin%20of%20COVID%2019%20as%20on%20' + date.strftime("%d-%m-%Y") + '.pdf'
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "KA":
-                    url = 'https://covid19.karnataka.gov.in/storage/pdf-files/EMB-' + date.strftime("%b%y//%d-%m-%Y").upper() + '%20HMB%20English.pdf'
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "PB":
-                    url = 'https://nhm.punjab.gov.in/advertisements/Media_Bulletin/Media%20Bulletin%20COVID-19%20' + date.strftime("%d-%m-%Y") + '.pdf'
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "TN":
-                    url = 'https://stopcorona.tn.gov.in/wp-content/uploads/2020/03/Media-Bulletin-' + date.strftime("%d-%m-%y") + '-COVID-19.pdf'
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                # elif source["StateCode"][idx] == "UK":
-                #     url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d") + '_Health_Bulletin.pdf'
-                #     downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "WB":
-                    url = 'https://www.wbhealth.gov.in/uploaded_files/corona/WB_DHFW_Bulletin_' + p.ordinal(date.day).upper() + '_' + date.strftime("%b").upper() + '_REPORT_FINAL.pdf'
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "KL":
-                    url = 'https://dhs.kerala.gov.in/wp-content/uploads/' + date.strftime("%Y/%m/Bulletin-HFWD-English-%B-%d.pdf")
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "ML":
-                    url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%-d_%b_%Y.pdf")
-                    # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "UT":
-                    url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin_2.pdf")
-                    downloadFile(str(date), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "LA":
-                    pass
-                    # url = BeautifulSoup(urlopen("https://covid.ladakh.gov.in/", timeout=5).read(), features="html.parser").findAll('marquee')[0].find("a")["href"]
-                    # downloadFile(datetime.strptime(url[-14:-4], "%d.%m.%Y").strftime("%Y-%m-%d"), source["StateCode"][idx], url)
-                elif source["StateCode"][idx] == "NL":
-                    try:
+                try:
+                    if source["StateCode"][idx] == "HR":
+                        url = 'http://nhmharyana.gov.in/WriteReadData/userfiles/file/CoronaVirus/Daily%20Bulletin%20of%20COVID%2019%20as%20on%20' + date.strftime("%d-%m-%Y") + '.pdf'
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "KA":
+                        url = 'https://covid19.karnataka.gov.in/storage/pdf-files/EMB-' + date.strftime("%b%y//%d-%m-%Y").upper() + '%20HMB%20English.pdf'
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "PB":
+                        url = 'https://nhm.punjab.gov.in/advertisements/Media_Bulletin/Media%20Bulletin%20COVID-19%20' + date.strftime("%d-%m-%Y") + '.pdf'
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "TN":
+                        url = 'https://stopcorona.tn.gov.in/wp-content/uploads/2020/03/Media-Bulletin-' + date.strftime("%d-%m-%y") + '-COVID-19.pdf'
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    # elif source["StateCode"][idx] == "UK":
+                    #     url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d") + '_Health_Bulletin.pdf'
+                    #     downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "WB":
+                        url = 'https://www.wbhealth.gov.in/uploaded_files/corona/WB_DHFW_Bulletin_' + p.ordinal(date.day).upper() + '_' + date.strftime("%b").upper() + '_REPORT_FINAL.pdf'
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "KL":
+                        url = 'https://dhs.kerala.gov.in/wp-content/uploads/' + date.strftime("%Y/%m/Bulletin-HFWD-English-%B-%d.pdf")
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "ML":
+                        url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%-d_%b_%Y.pdf")
+                        # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "UT":
+                        url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin_2.pdf")
+                        downloadFile(str(date), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "LA":
+                        url = BeautifulSoup(urlopen("https://covid.ladakh.gov.in/", timeout=5).read(), features="html.parser").findAll('marquee')[0].find("a")["href"]
+                        downloadFile(datetime.strptime(url[-14:-4], "%d.%m.%Y").strftime("%Y-%m-%d"), source["StateCode"][idx], url)
+                    elif source["StateCode"][idx] == "NL":
                         base_url = "https://covid19.nagaland.gov.in"
                         rows = BeautifulSoup(urlopen(base_url + "/daily-bulletins").read(), features="html.parser").findAll("table", {'class': "table tablesorter mb-3"})[0].findAll('tbody')[0].findAll('tr')
                         for i, tr in enumerate(rows):
                             if tr.findAll('td')[-1].getText() == date.strftime("%d %b %Y"):
                                 url = base_url + tr.findAll("a", {"target": "_blank"})[0]['href']
                                 downloadFile(str(date), source["StateCode"][idx], url)
-                    except URLError:
-                        pass
+                except URLError:
+                    pass
+                except Exception:
+                    StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in PDF Loop", program="GetSource")
+
                 # elif source["StateCode"][idx] == "MZ":
                 #     base_url = "https://health.mizoram.gov.in"
                 #     url = base_url + BeautifulSoup(urlopen(base_url + "/post/covid-19-bulletin-" + date.strftime("%d%m%Y")).read(), features="html.parser").findAll("a", {"class": "attachment-link"})[0]['href']
