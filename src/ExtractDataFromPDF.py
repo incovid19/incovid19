@@ -98,6 +98,8 @@ def getTNData(file_path,date,StateCode):
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
+    # print(df_tests)
+    # a=b
     
     col_dict = {"Total Positive Cases":"Confirmed","Discharged":"Recovered","Death":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
@@ -115,7 +117,7 @@ def getTNData(file_path,date,StateCode):
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     df_summary = df_summary.dropna()
-    df_summary["Tested"] = df_tests.loc[5,"DETAILS"][:-1]
+    df_summary["Tested"] = df_tests.loc[3,"DETAILS"][:-1]
     df_summary["Tested"] = df_summary["Tested"].replace("\n","").split()[-1]
     df_summary = df_summary.str.replace(',', '').astype(int)
 
@@ -447,7 +449,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
-def ExtractFromPDF(StateCode = "LA",Date = "2021-10-28"):
+def ExtractFromPDF(StateCode = "KA",Date = "2021-11-09"):
     try:
         filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
