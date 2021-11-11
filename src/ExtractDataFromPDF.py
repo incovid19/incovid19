@@ -495,4 +495,4 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
-ExtractFromPDF(StateCode = "LA",Date = "2021-11-09")
+ExtractFromPDF(StateCode = "LA",Date = "2021-11-10")
