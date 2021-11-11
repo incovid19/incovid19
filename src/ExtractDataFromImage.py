@@ -80,7 +80,7 @@ def get_detected_text(image, col, state):
         data = get_districts(unformatted_txt, state)
     else:
         semiformatted_txt = unformatted_txt.split("\n")
-        print(semiformatted_txt)
+        # print(semiformatted_txt)
         for text in semiformatted_txt:
             text = text.replace('.', '')
             text = text.replace(',', '')
@@ -1056,7 +1056,7 @@ def ExtractDataFromImage(state, date, handle, term):
             date=date,
             program="ExtractDataFromImage",
             StatusCode=response[0],
-            statusMessage=response[1]
+            statusMessage=response[1] + ". Source URL: https://www.twitter.com/" + handle
         )
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
