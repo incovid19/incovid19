@@ -429,4 +429,4 @@ def ExtractFromHTML(state, date):
         # ExtractStateMyGov(state, date, no_source=True)
 
 
-# ExtractFromHTML(state="KL", date="2021-11-09")
+ExtractFromHTML(state="GJ", date="2021-11-10")
