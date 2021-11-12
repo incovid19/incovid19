@@ -265,9 +265,10 @@ def getPBData(file_path,date,StateCode):
     
     df_districts.columns = df_districts.columns.str.replace("\n","")
     
-    col_dict = {"Total Confirmed Cases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
+    col_dict = {"Total ConfirmedCases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['S. No.','Total Active Cases'],inplace=True)
+    print(df_districts.columns)
+    df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
     df_summary = df_districts
     df_districts = df_districts[:-1]
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
@@ -283,15 +284,15 @@ def getPBData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getUKData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'7')
+    table = camelot.read_pdf(file_path,'6')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-2.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-2.csv'.format(date,StateCode))
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
-    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode)) 
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","")  
     
     col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated"}
@@ -494,14 +495,13 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
+#ExtractFromPDF(StateCode = "LA",Date = "2021-11-01")
+ExtractFromPDF(StateCode = "UT",Date = "2021-11-11")
+#ExtractFromPDF(StateCode = "HR",Date = "2021-11-01")
+#ExtractFromPDF(StateCode = "KA",Date = "2021-11-01")
+#ExtractFromPDF(StateCode = "ML",Date = "2021-11-01")
+#ExtractFromPDF(StateCode = "NL",Date = "2021-11-01")
+#ExtractFromPDF(StateCode = "PB",Date = "2021-11-01")
+#ExtractFromPDF(StateCode = "TN",Date = "2021-11-01")
+#ExtractFromPDF(StateCode = "WB",Date = "2021-11-01")
 
-#ExtractFromPDF(StateCode = "LA",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "UT",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "HR",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "KA",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "ML",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "NL",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "PB",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "TN",Date = "2021-10-31")
-#ExtractFromPDF(StateCode = "WB",Date = "2021-10-31")
-ExtractFromPDF(StateCode = "PB",Date = "2021-11-10")
