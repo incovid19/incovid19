@@ -86,7 +86,7 @@ def ExtractStateMyGov(state, date, no_source=False):
     if no_source:
         state_df = ExtractNoSource(state_df, state, datetime.strptime(date, "%Y-%m-%d"))
 
-    state_df.to_csv("../RAWCSV/" + date + "/" + state + "_raw.csv", index=False)
+    # state_df.to_csv("../RAWCSV/" + date + "/" + state + "_raw.csv", index=False)
     return state_df
 
 

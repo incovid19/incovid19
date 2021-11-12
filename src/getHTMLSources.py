@@ -31,6 +31,23 @@ def downloadFile(Date, StateCode, url):
         StatusMsg(StateCode, Date, "ERR", "File Not Found", program="GetSource")
 
 
+def check_date(url, state, date):
+    try:
+        soup = BeautifulSoup(requests.get(url, verify=False).content, 'html.parser')
+        if state == 'AP':
+            return datetime.strptime(soup.find_all('span', {'id': 'lblLast_Update'})[0].getText(), "%d-%m-%Y %I:%M:%S %p").date()
+        if state == 'GJ':
+            return datetime.strptime(soup.find_all('span', {'id': 'ctl00_body_lblDate'})[0].getText(), "%d/%m/%Y %I:%M:%S %p").date()
+        if state == 'KL':
+            return datetime.strptime(soup.find_all('li', {'class': 'breadcrumb-item active'})[0].getText().upper()[9:], "%d-%m-%Y %I:%M %p").date()
+        if state == 'OR':
+            soup.sup.clear()
+            return datetime.strptime(soup.find_all('small')[1].getText().split('@ ')[1], "%I:%M %p on %d %b ").replace(year=datetime.now().year).date()
+        if state == 'TR':
+            return datetime.strptime(soup.find_all('span', {'id': 'ContentPlaceHolder1_lblSelectedDate'})[0].getText(), "%d %b %Y").date()
+    except Exception:
+        date
+
 def getSources(source, date):
     p = inflect.engine()
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -40,45 +57,44 @@ def getSources(source, date):
         if source["myGov"][idx] != "yes":
             if source["StateDataSourceType"][idx] == "html":
                 try:
-                    if source["StateCode"][idx]  == "TT":
+                    if source["StateCode"][idx] == "TT":
                         file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/corona-data/covid19-statewise-status/")
                         copyfile(file_name, r"../INPUT/" + str(date) + "/TT_State.html")
+                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT_State" + "_" + datetime.now().strftime("%H_%M") + ".html")
                         file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/covid-19")
                         copyfile(file_name, r"../INPUT/" + str(date) + "/TT.html")
-                        StatusMsg(source["StateCode"][idx], str(date), "OK",
-                                  "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT" + "_" + datetime.now().strftime("%H_%M") + ".html")
+                        StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                     else:    
                         file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
-                        copyfile(file_name, r"../INPUT/" + str(date) + "/" + source["StateCode"][idx] + ".html")
-                        StatusMsg(source["StateCode"][idx], str(date), "OK",
-                                  "File Downloaded. Source URL: " + source["StateDataURL"][idx], program="GetSource")
+                        copyfile(file_name, r"../INPUT/" + str(check_date(source["StateDataURL"][idx], source["StateCode"][idx], date)) + "/" + source["StateCode"][idx] + ".html")
+                        copyfile(file_name, r"../INPUT/" + str(check_date(source["StateDataURL"][idx], source["StateCode"][idx], date)) + "/" + source["StateCode"][idx] + "_" + datetime.now().strftime("%H_%M") + ".html")
+                        StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded. Source URL: " + source["StateDataURL"][idx], program="GetSource")
                 except HTTPError:
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                 except Exception:
-                    raise
+                    # raise
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in Main Loop", program="GetSource")
             if source["StateDataSourceType"][idx] == "json":
                 if source["StateCode"][idx] == "MH":
                     response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date')
                     if response.status_code == 200:
                         data = json.loads(response.content)
-                        if datetime.fromtimestamp(int(data[0]['Date']) / 1000).date() == date:
-                            json_object = json.dumps(data)
-                            with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
-                                outfile.write(json_object)
-                            response_total = requests.get(source["StateDataURL"][idx] + '/dbd-kpi')
-                            if response_total.status_code == 200:
-                                json_object_total = json.dumps(json.loads(response_total.content)[0])
-                                with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
-                                    outfile.write(json_object_total)
-                            response_total = requests.get(source["StateDataURL"][idx] + '/d_testing')
-                            if response_total.status_code == 200:
-                                json_object_total = json.dumps(json.loads(response_total.content)[0])
-                                with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
-                                    outfile.write(json_object_total)
-                            StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
-                        else:
-                            StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
+                        date = datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()
+                        json_object = json.dumps(data)
+                        with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
+                            outfile.write(json_object)
+                        response_total = requests.get(source["StateDataURL"][idx] + '/dbd-kpi')
+                        if response_total.status_code == 200:
+                            json_object_total = json.dumps(json.loads(response_total.content)[0])
+                            with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
+                                outfile.write(json_object_total)
+                        response_total = requests.get(source["StateDataURL"][idx] + '/d_testing')
+                        if response_total.status_code == 200:
+                            json_object_total = json.dumps(json.loads(response_total.content)[0])
+                            with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
+                                outfile.write(json_object_total)
+                        StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                     else:
                         StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
             elif source["StateDataSourceType"][idx] == "pdf":
@@ -111,10 +127,16 @@ def getSources(source, date):
                             "%Y/%m/Bulletin-HFWD-English-%B-%d.pdf")
                         downloadFile(str(date), source["StateCode"][idx], url)
                     elif source["StateCode"][idx] == "ML":
-                        url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
-                            "%-d_%b_%Y.pdf")
-                        # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
-                        downloadFile(str(date), source["StateCode"][idx], url)
+                        try:
+                            url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
+                                "%-d_%b_%Y.pdf")
+                            # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
+                            downloadFile(str(date), source["StateCode"][idx], url)
+                        except Exception:
+                            url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
+                                "%-d_%b_%y.pdf")
+                            # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
+                            downloadFile(str(date), source["StateCode"][idx], url)
                     elif source["StateCode"][idx] == "UT":
                         url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin_2.pdf")
                         downloadFile(str(date), source["StateCode"][idx], url)
@@ -140,5 +162,5 @@ def getSources(source, date):
                 #     downloadFile(str(date), source["StateCode"][idx], url)
 
 
-# df = pd.read_csv("../sources.csv")
+df = pd.read_csv("../sources.csv")
 # getSources(df, (datetime.today() - timedelta(1)).date())
