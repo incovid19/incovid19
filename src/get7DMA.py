@@ -22,8 +22,8 @@ def get_7dma_state(state, date):
     for col in cols:
         df[f'7Dma{col}ForState'] = round(df[f'7Dma{col}ForState'] / 7)
         df[f'7Dma{col}ForDistrict'] = round(df[f'7Dma{col}ForDistrict'] / 7)
-    # df.to_csv(f"../RAWCSV_7DMA/{state}_final.csv", index=False)
-    return df
+    df.to_csv(f"../RAWCSV_7DMA/{state}_final.csv", index=False)
+    #return df
 
 
 def get_7dma(date):
