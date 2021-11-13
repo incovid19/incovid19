@@ -45,6 +45,9 @@ def check_date(url, state, date):
             return datetime.strptime(soup.find_all('small')[1].getText().split('@ ')[1], "%I:%M %p on %d %b ").replace(year=datetime.now().year).date()
         if state == 'TR':
             return datetime.strptime(soup.find_all('span', {'id': 'ContentPlaceHolder1_lblSelectedDate'})[0].getText(), "%d %b %Y").date()
+        if state == 'TT':
+            return datetime.strptime(soup.find_all('div', {'class': 'updated-date'})[0].getText().split(" : ")[1].split(",")[0],
+                                     "%d %b %Y").date()
     except Exception:
         return date
 
@@ -59,17 +62,19 @@ def getSources(source, date):
                 try:
                     if source["StateCode"][idx] == "TT":
                         file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/corona-data/covid19-statewise-status/")
-                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT_State.html")
-                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT_State" + "_" + datetime.now().strftime("%H_%M") + ".html")
+                        source_date = check_date(source["StateDataURL"][idx], source["StateCode"][idx], date)
+                        copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT_State.html")
+                        copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT_State" + "_" + datetime.now().strftime("%H_%M") + ".html")
                         file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/covid-19")
-                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT.html")
-                        copyfile(file_name, r"../INPUT/" + str(date) + "/TT" + "_" + datetime.now().strftime("%H_%M") + ".html")
-                        StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                        copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT.html")
+                        copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT" + "_" + datetime.now().strftime("%H_%M") + ".html")
+                        StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                     else:    
                         file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
-                        copyfile(file_name, r"../INPUT/" + str(check_date(source["StateDataURL"][idx], source["StateCode"][idx], date)) + "/" + source["StateCode"][idx] + ".html")
-                        copyfile(file_name, r"../INPUT/" + str(check_date(source["StateDataURL"][idx], source["StateCode"][idx], date)) + "/" + source["StateCode"][idx] + "_" + datetime.now().strftime("%H_%M") + ".html")
-                        StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded. Source URL: " + source["StateDataURL"][idx], program="GetSource")
+                        source_date = check_date(source["StateDataURL"][idx], source["StateCode"][idx], date)
+                        copyfile(file_name, r"../INPUT/" + str(source_date) + "/" + source["StateCode"][idx] + ".html")
+                        copyfile(file_name, r"../INPUT/" + str(source_date) + "/" + source["StateCode"][idx] + "_" + datetime.now().strftime("%H_%M") + ".html")
+                        StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded. Source URL: " + source["StateDataURL"][idx], program="GetSource")
                 except HTTPError:
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                 except Exception:
@@ -80,7 +85,6 @@ def getSources(source, date):
                     response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date')
                     if response.status_code == 200:
                         data = json.loads(response.content)
-                        # DONT UNCOMMENT !! date = datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()
                         json_object = json.dumps(data)
                         with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
                             outfile.write(json_object)
@@ -94,7 +98,7 @@ def getSources(source, date):
                             json_object_total = json.dumps(json.loads(response_total.content)[0])
                             with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
                                 outfile.write(json_object_total)
-                        StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                        StatusMsg(source["StateCode"][idx], str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                     else:
                         StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
             elif source["StateDataSourceType"][idx] == "pdf":
@@ -162,5 +166,5 @@ def getSources(source, date):
                 #     downloadFile(str(date), source["StateCode"][idx], url)
 
 
-df = pd.read_csv("../sources.csv")
-# getSources(df, (datetime.today() - timedelta(1)).date())
+# df = pd.read_csv("../sources.csv")
+# getSources(df, (datetime.today() - timedelta(0)).date())
