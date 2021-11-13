@@ -46,7 +46,7 @@ def check_date(url, state, date):
         if state == 'TR':
             return datetime.strptime(soup.find_all('span', {'id': 'ContentPlaceHolder1_lblSelectedDate'})[0].getText(), "%d %b %Y").date()
     except Exception:
-        date
+        return date
 
 def getSources(source, date):
     p = inflect.engine()
@@ -80,19 +80,19 @@ def getSources(source, date):
                     response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date')
                     if response.status_code == 200:
                         data = json.loads(response.content)
-                        date = datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()
+                        # DONT UNCOMMENT !! date = datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()
                         json_object = json.dumps(data)
-                        with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
+                        with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
                             outfile.write(json_object)
                         response_total = requests.get(source["StateDataURL"][idx] + '/dbd-kpi')
                         if response_total.status_code == 200:
                             json_object_total = json.dumps(json.loads(response_total.content)[0])
-                            with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
+                            with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
                                 outfile.write(json_object_total)
                         response_total = requests.get(source["StateDataURL"][idx] + '/d_testing')
                         if response_total.status_code == 200:
                             json_object_total = json.dumps(json.loads(response_total.content)[0])
-                            with open('../INPUT/' + str(date) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
+                            with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
                                 outfile.write(json_object_total)
                         StatusMsg(source["StateCode"][idx], str(date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
                     else:
