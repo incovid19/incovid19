@@ -30,12 +30,15 @@ def getRJData(file_path,date,StateCode):
     df_districts = pd.concat(frames,ignore_index=True)
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
-    col_dict = {"Cumulative Sample":"Tested","Cumulative Positive":"Confirmed","CumulativeRecovered/ Discharged":"Recovered","CumulativeDeath":"Deceased"}
+    col_dict = {"Cumulative Sample":"Tested","Cumulative Positive":"Confirmed","Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
-    df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
+    df_districts.drop(columns=['S.No','Today\'s Positive','Today\'s Death','Today\'s  Recovered/Discharged', 'Active  case'],inplace=True)
 
+    # df_summary = df_districts
+    # df_districts = df_districts[:-4]
     df_summary = df_districts
+    print(df_districts)
     df_districts = df_districts[:-1]
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
@@ -505,4 +508,4 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
 #ExtractFromPDF(StateCode = "PB",Date = "2021-11-01")
 #ExtractFromPDF(StateCode = "TN",Date = "2021-11-01")
 #ExtractFromPDF(StateCode = "WB",Date = "2021-11-01")
-ExtractFromPDF(StateCode = "RJ",Date = "2021-11-12")
+#ExtractFromPDF(StateCode = "RJ",Date = "2021-11-13")
