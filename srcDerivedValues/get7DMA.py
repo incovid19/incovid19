@@ -67,8 +67,9 @@ def get_7dma_state(state, date):
 def get_7dma(date):
     src = pd.read_csv("../sources.csv")
     for state in src['StateCode']:
+        #if state != "TT":
         print(state)
         get_7dma_state(state, date)
 
-# get_7dma('2021-11-12')
+#get_7dma('2021-10-31')
 # get_7dma_state('GA', '2021-11-03')
