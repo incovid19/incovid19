@@ -59,8 +59,8 @@ def get_7dma_state(state, date):
         df[f'7Dma{col}ForState'] -= prev_df[f'cumulative{col}NumberForState']
         df[f'7Dma{col}ForDistrict'] -= prev_df[f'cumulative{col}NumberForDistrict']
     for col in cols:
-        df[f'7Dma{col}ForState'] = round(df[f'7Dma{col}ForState'] / 7)
-        df[f'7Dma{col}ForDistrict'] = round(df[f'7Dma{col}ForDistrict'] / 7)
+        df[f'7Dma{col}ForState'] = round(df[f'7Dma{col}ForState'] / 1)
+        df[f'7Dma{col}ForDistrict'] = round(df[f'7Dma{col}ForDistrict'] / 1)
     df.to_csv(f"../RAWCSV/{date}/{state}_final.csv", index=False)
     # print(df)
     # return df
@@ -72,5 +72,5 @@ def get_7dma(date):
         print(state)
         get_7dma_state(state, date)
 
-# get_7dma('2021-11-12')
+get_7dma('2021-11-14')
 # get_7dma_state('GA', '2021-11-02')
