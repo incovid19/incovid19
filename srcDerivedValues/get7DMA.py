@@ -1,8 +1,8 @@
 import pandas as pd
 from datetime import datetime, timedelta
 
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
+# pd.set_option('display.max_rows', None)
+# pd.set_option('display.max_columns', None)
 
 
 def col_check_state_raw_csv(df):
@@ -73,4 +73,4 @@ def get_7dma(date):
         get_7dma_state(state, date)
 
 # get_7dma('2021-11-12')
-get_7dma_state('GA', '2021-11-02')
+# get_7dma_state('GA', '2021-11-02')
