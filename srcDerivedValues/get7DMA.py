@@ -1,6 +1,9 @@
 import pandas as pd
 from datetime import datetime, timedelta
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+
 
 def col_check_state_raw_csv(df):
     cols_ls = df.columns
@@ -37,39 +40,37 @@ def get_7dma_state(state, date):
     for col in cols:
         df[f'7Dma{col}ForState'] = df[f'cumulative{col}NumberForState']
         df[f'7Dma{col}ForDistrict'] = df[f'cumulative{col}NumberForDistrict']
-    for i in range(1, 7):
-        prev_date = (datetime.strptime(date, "%Y-%m-%d") - timedelta(i)).strftime("%Y-%m-%d")
-        prev_df = pd.read_csv(f'../RAWCSV/{prev_date}/{state}_final.csv')
-        prev_df = col_check_state_raw_csv(prev_df)
-        for dist in list(df['District']):
-            if dist not in list(prev_df['District']):
-                prev_df = prev_df.append({
-                    'District': dist,
-                    'cumulativeConfirmedNumberForState': prev_df['cumulativeConfirmedNumberForState'][0],
-                    'cumulativeRecoveredNumberForState': prev_df['cumulativeRecoveredNumberForState'][0],
-                    'cumulativeDeceasedNumberForState': prev_df['cumulativeDeceasedNumberForState'][0],
-                    'cumulativeTestedNumberForState': prev_df['cumulativeTestedNumberForState'][0],
-                    'cumulativeVaccinated1NumberForState': prev_df['cumulativeVaccinated1NumberForState'][0],
-                    'cumulativeVaccinated2NumberForState': prev_df['cumulativeVaccinated2NumberForState'][0]
-                }, ignore_index=True)
-        prev_df.sort_values('District', inplace=True)
-        prev_df.reset_index(drop=True, inplace=True)
-        for col in cols:
-            df[f'7Dma{col}ForState'] += prev_df[f'cumulative{col}NumberForState']
-            df[f'7Dma{col}ForDistrict'] += prev_df[f'cumulative{col}NumberForDistrict']
+    prev_df = pd.read_csv(f'../RAWCSV/{(datetime.strptime(date, "%Y-%m-%d") - timedelta(7)).strftime("%Y-%m-%d")}/{state}_final.csv')
+    prev_df = col_check_state_raw_csv(prev_df)
+    for dist in list(df['District']):
+        if dist not in list(prev_df['District']):
+            prev_df = prev_df.append({
+                'District': dist,
+                'cumulativeConfirmedNumberForState': prev_df['cumulativeConfirmedNumberForState'][0],
+                'cumulativeRecoveredNumberForState': prev_df['cumulativeRecoveredNumberForState'][0],
+                'cumulativeDeceasedNumberForState': prev_df['cumulativeDeceasedNumberForState'][0],
+                'cumulativeTestedNumberForState': prev_df['cumulativeTestedNumberForState'][0],
+                'cumulativeVaccinated1NumberForState': prev_df['cumulativeVaccinated1NumberForState'][0],
+                'cumulativeVaccinated2NumberForState': prev_df['cumulativeVaccinated2NumberForState'][0]
+            }, ignore_index=True)
+    prev_df.sort_values('District', inplace=True)
+    prev_df.reset_index(drop=True, inplace=True)
+    for col in cols:
+        df[f'7Dma{col}ForState'] -= prev_df[f'cumulative{col}NumberForState']
+        df[f'7Dma{col}ForDistrict'] -= prev_df[f'cumulative{col}NumberForDistrict']
     for col in cols:
         df[f'7Dma{col}ForState'] = round(df[f'7Dma{col}ForState'] / 7)
         df[f'7Dma{col}ForDistrict'] = round(df[f'7Dma{col}ForDistrict'] / 7)
     df.to_csv(f"../RAWCSV/{date}/{state}_final.csv", index=False)
+    # print(df)
     # return df
 
 
 def get_7dma(date):
     src = pd.read_csv("../sources.csv")
     for state in src['StateCode']:
-        #if state != "TT":
         print(state)
         get_7dma_state(state, date)
 
-#get_7dma('2021-10-31')
-# get_7dma_state('GA', '2021-11-03')
+# get_7dma('2021-11-12')
+get_7dma_state('GA', '2021-11-02')
