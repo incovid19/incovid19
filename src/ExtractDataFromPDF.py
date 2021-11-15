@@ -62,7 +62,7 @@ def getKAData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    print(df_districts)
+    
     # a=b
     
     # df_summary = df_districts
@@ -73,9 +73,13 @@ def getKAData(file_path,date,StateCode):
     df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
     
     # print(df_districts)
+    for col in df_districts.columns:
+        df_districts[col] = df_districts[col].astype(str).str.replace("*","")
+    
     df_summary = df_districts.dropna(axis=0,how='all')
-    df_districts = df_districts.dropna(axis=0,how='all')[:-1]
-    print(df_districts)
+    
+    df_districts = df_districts.dropna(axis=0,how='all')[:-3]
+    # print(df_districts)
     # df = df[]
 
     df_json = pd.read_json("../DistrictMappingMaster.json")
@@ -85,10 +89,10 @@ def getKAData(file_path,date,StateCode):
     
 
     df_summary.rename(columns={"District":"State/UT"},inplace=True)
-    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary = df_summary.iloc[-3,:] #testcode needs to be updated later
     
-    # print(df_districts)
-    # print(df_summary)
+    print(df_districts)
+    print(df_summary)
     return df_summary,df_districts
 
 def getTNData(file_path,date,StateCode):
@@ -241,6 +245,8 @@ def getMHData(file_path,date,StateCode):
 
 def getMLData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,pages='1')
+    # print(file_path,date,StateCode)
+    # print(table)
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -269,10 +275,10 @@ def getPBData(file_path,date,StateCode):
     
     df_districts.columns = df_districts.columns.str.replace("\n","")
     
-    col_dict = {"Total ConfirmedCases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
+    col_dict = {"Total Confirmed Cases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
-    df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
+    df_districts.drop(columns=['S. No.','Total Active Cases'],inplace=True)
     df_summary = df_districts
     df_districts = df_districts[:-1]
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
@@ -493,13 +499,13 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
-#ExtractFromPDF(StateCode = "LA",Date = "2021-11-01")
+#ExtractFromPDF(StateCode = "LA",Date = "2021-11-04")
 #ExtractFromPDF(StateCode = "UT",Date = "2021-11-14")
 #ExtractFromPDF(StateCode = "HR",Date = "2021-11-02")
-#ExtractFromPDF(StateCode = "KA",Date = "2021-11-02")
-#ExtractFromPDF(StateCode = "ML",Date = "2021-11-02")
+#ExtractFromPDF(StateCode = "KA",Date = "2021-11-04")
+#ExtractFromPDF(StateCode = "ML",Date = "2021-11-04")
 #ExtractFromPDF(StateCode = "NL",Date = "2021-11-02")
-#ExtractFromPDF(StateCode = "PB",Date = "2021-11-03")
+#ExtractFromPDF(StateCode = "PB",Date = "2021-11-05")
 #ExtractFromPDF(StateCode = "TN",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "WB",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "MH",Date = "2021-11-02")
