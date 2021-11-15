@@ -101,7 +101,7 @@ def get_image(state, date, search_query):
     img_count = {
         'AR': 1,
         'BR': 2,
-        'CT': 3,
+        'CT': 4,
         'HP': 2,
         'MN': 3,
         'RJ': 1,
@@ -117,12 +117,15 @@ def get_image(state, date, search_query):
             if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.strptime(date, "%Y-%m-%d"):
                 if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < datetime.strptime(date, "%Y-%m-%d") + timedelta(1):
                     for i in range(img_count[state]):
-                        media_id = data['attachments']['media_keys'][i]
-                        media_url = next(
-                            (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
-                            None
-                        )
-                        images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
+                        try:
+                            media_id = data['attachments']['media_keys'][i]
+                            media_url = next(
+                                (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
+                                None
+                            )
+                            images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
+                        except Exception:
+                            continue
                     return images
     else:
         try:
@@ -440,8 +443,8 @@ def chhattisgarh(state, date, query):
         return ['ERR', 'Source not accessible']
     client = vision.ImageAnnotatorClient()
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image_concat(image[1:]))
-    summary_image = image[1]
-    image = image[2]
+    summary_image = image[-2]
+    image = image[-1]
 
     summary_page = client.document_text_detection(image=get_bytes(summary_image)).text_annotations
 
@@ -932,13 +935,13 @@ def jammu_kashmir(state, date, query):
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     for i, text in enumerate(page[:-1]):
-        if (text.description == '10') and (text.bounding_poly.vertices[1].x <= 100):
+        if (text.description == '10') and (text.bounding_poly.vertices[0].x <= 100):
             # if page[i + 1].description == 'Shopian':
             p1_y = text.bounding_poly.vertices[2].y + 13
-        if (text.description == '11') and (text.bounding_poly.vertices[1].x <= 100):
+        if (text.description == '11') and (text.bounding_poly.vertices[0].x <= 100):
             # if page[i + 1].description == 'Jammu':
             p2_y = text.bounding_poly.vertices[0].y - 13
-        if (text.description == '20') and (text.bounding_poly.vertices[1].x <= 100):
+        if (text.description == '20') and (text.bounding_poly.vertices[0].x <= 100):
             # if page[i + 1].description == 'Reasi':
             p3_y = text.bounding_poly.vertices[2].y + 15
         if text.description == 'UT':
@@ -1076,9 +1079,9 @@ def ExtractDataFromImage(state, date, handle, term):
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-11-06', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-11-09', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-# ExtractDataFromImage('CT', '2021-10-30', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+# ExtractDataFromImage('CT', '2021-11-13', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-11-12', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-11-10', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
-# ExtractDataFromImage('JK', '2021-10-27', 'diprjk', 'Media Bulletin')
+# ExtractDataFromImage('JK', '2021-11-14', 'diprjk', 'Media Bulletin')
 
