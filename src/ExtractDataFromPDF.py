@@ -275,10 +275,10 @@ def getPBData(file_path,date,StateCode):
     
     df_districts.columns = df_districts.columns.str.replace("\n","")
     
-    col_dict = {"Total Confirmed Cases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
+    col_dict = {"Total ConfirmedCases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
-    df_districts.drop(columns=['S. No.','Total Active Cases'],inplace=True)
+    df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
     df_summary = df_districts
     df_districts = df_districts[:-1]
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
@@ -499,7 +499,7 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
-#ExtractFromPDF(StateCode = "LA",Date = "2021-11-04")
+#ExtractFromPDF(StateCode = "LA",Date = "2021-11-15")
 #ExtractFromPDF(StateCode = "UT",Date = "2021-11-14")
 #ExtractFromPDF(StateCode = "HR",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "KA",Date = "2021-11-04")
@@ -509,3 +509,4 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
 #ExtractFromPDF(StateCode = "TN",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "WB",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "MH",Date = "2021-11-02")
+#ExtractFromPDF(StateCode = "PB",Date = "2021-11-15")
