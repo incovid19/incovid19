@@ -72,5 +72,5 @@ def get_7dma(date):
         print(state)
         get_7dma_state(state, date)
 
-get_7dma('2021-10-31')
-# get_7dma_state('GA', '2021-11-02')
+#get_7dma('2021-11-13')
+#get_7dma_state('TT', '2021-10-31')
