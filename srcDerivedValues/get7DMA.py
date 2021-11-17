@@ -73,4 +73,12 @@ def get_7dma(date):
         get_7dma_state(state, date)
 
 #get_7dma('2021-11-13')
-#get_7dma_state('TT', '2021-10-31')
+# get_7dma_state('TT', '2021-10-31')
+# get_7dma_state('TT', '2021-11-01')
+# get_7dma_state('TT', '2021-11-02')
+# get_7dma_state('TT', '2021-11-03')
+# get_7dma_state('TT', '2021-11-04')
+# get_7dma_state('TT', '2021-11-05')
+# get_7dma_state('TT', '2021-11-06')
+get_7dma_state('MN', '2021-10-31')
+
