@@ -7,7 +7,7 @@ import requests
 #fileName = "../out_timeSeries/data.min.json"
 
 #ASHA ... To run previous dates, use data.swi.min.json, so that the data.min.json is not disturbed..
-fileName = "../out_timeSeries/data.min_swi.json"
+fileName = "../out_timeSeries/data.min.json"
 #ASHA ... To run previous dates, use data.swi.min.json, so that the data.min.json is not disturbed..
 
 def ts_json():
