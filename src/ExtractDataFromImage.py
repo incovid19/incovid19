@@ -150,14 +150,17 @@ def get_dict(image, districts=None, total=None, recovered=None, dead=None, teste
     for key in arguments.keys():
         if key == 'image':
             continue
-        if arguments[key] is not None:
-            data[key] = {
-                'image': {
-                    'source': image[arguments[key][2]:arguments[key][3], arguments[key][0]:arguments[key][1]],
-                    'bytes': None,
-                },
-                'data': None
-            }
+        try:
+            if arguments[key] is not None:
+                data[key] = {
+                    'image': {
+                        'source': image[arguments[key][2]:arguments[key][3], arguments[key][0]:arguments[key][1]],
+                        'bytes': None,
+                    },
+                    'data': None
+                }
+        except Exception:
+            continue
     return data
 
 
@@ -183,15 +186,18 @@ def arunachal_pradesh(state, date, query):
     date_string = page_text[date_start:date_end+1].replace(status_text, "").replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace(".", "")
     last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B %Y (updated at  %I%M %p"))
 
+    test_dim = total_dim = recover_dim = dead_dim = xm = []
+    x = x2 = 0
+    y = y2 = None
     total = False
     for i, text in enumerate(page[:-1]):
-        if (text.description == "Person") and (page[i + 1].description == "tested"):
-            test_x1, test_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
+        if (text.description == "Person") and not total:
+            test_dim = [text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10]
         if (text.description == "Total") and not total:
-            total_x1, total_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
-        if (text.description == "Discharged") and (page[i + 1].description == "Death"):
-            recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10
-            dead_x1, dead_x2 = page[i + 1].bounding_poly.vertices[0].x - 10, page[i + 1].bounding_poly.vertices[1].x + 10
+            total_dim = [text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10]
+        if (text.description == "Discharged") and not total:
+            recover_dim = [text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 10]
+            dead_dim = [page[i + 1].bounding_poly.vertices[0].x - 10, page[i + 1].bounding_poly.vertices[1].x + 10]
         if text.description == 'Anjaw':
             x, y = text.bounding_poly.vertices[0].x - 9, text.bounding_poly.vertices[0].y - 11
             total = True
@@ -200,7 +206,7 @@ def arunachal_pradesh(state, date, query):
             if (x >= x2 + 5) or (x <= x2 - 5):
                 x -= 39
         if text.description == 'District':
-            xm1, xm2 = text.bounding_poly.vertices[0].x, text.bounding_poly.vertices[1].x
+            xm = [text.bounding_poly.vertices[0].x, text.bounding_poly.vertices[1].x]
         if (text.description == "Total") and total:
             y2 = text.bounding_poly.vertices[2].y + 11
         elif "Siang" in text.description:
@@ -208,11 +214,11 @@ def arunachal_pradesh(state, date, query):
 
     ar = get_dict(
         image,
-        districts=[x, xm2 + xm1 - x + 9, y, y2],
-        total=[total_x1, total_x2, y, y2],
-        recovered=[recover_x1, recover_x2, y, y2],
-        dead=[dead_x1, dead_x2, y, y2],
-        tested=[test_x1, test_x2, y, y2],
+        districts=[x, xm[1] + xm[0] - x + 9, y, y2] if len(xm) > 0 else [x, 100, y, y2],
+        total=[total_dim[0], total_dim[1], y, y2] if len(total_dim) > 0 else None,
+        recovered=[recover_dim[0], recover_dim[1], y, y2] if len(recover_dim) > 0 else None,
+        dead=[dead_dim[0], dead_dim[1], y, y2] if len(dead_dim) > 0 else None,
+        tested=[test_dim[0], test_dim[1], y, y2] if len(test_dim) > 0 else None,
     )
     data_source = 'https://twitter.com/DirHealth_ArPr'
 
@@ -663,8 +669,6 @@ def manipur(state, date, query):
     image = image_concat([recover_image, image])
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
 
-
-
     recover_text = "cumulative number of recovered cases is "
     recover_page = client.document_text_detection(image=get_bytes(recover_image)).text_annotations[0].description
     recover_start = recover_page.find(recover_text)
@@ -684,7 +688,10 @@ def manipur(state, date, query):
 
     date_string = page_text[date_start:date_end] + page_text[time_start + 2:time_end + 1]
     date_string = date_string.replace("th", "").replace("nd", "").replace("st", "").replace("rd", "").replace("*", "")
-    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B, %Y%I:%M %p"))
+    try:
+        last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B, %Y%I:%M %p"))
+    except Exception:
+        last_updated = datetime.now()
 
     for i, text in enumerate(page[:-1]):
         if text.description == "tested":
@@ -1077,11 +1084,11 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-11-06', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('AR', '2021-11-16', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-11-09', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-11-13', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-11-12', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-11-10', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('MN', '2021-11-17', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-14', 'diprjk', 'Media Bulletin')
 
