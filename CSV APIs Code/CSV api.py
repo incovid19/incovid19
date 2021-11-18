@@ -187,4 +187,38 @@ districts_wise_df.to_csv(f"{dest_path}/district_wise.csv",index=False)
 states_wise_df.reset_index(inplace=True,drop=True)
 states_wise_df.to_csv(f"{dest_path}/state_wise.csv",index=False)
 
+#sate_wise_daily
+
+state_wise_daily=pd.read_csv("./state_wise_daily.csv")
+state_wise_daily=state_wise_daily.drop(["DD","UN"],axis=1)
+temp_df=TT_final_df[["District",'deltaConfirmedForDistrict','deltaRecoveredForDistrict','deltaDeceasedForDistrict']]
+rev_STATE_NAMES={v:k for k,v in STATE_NAMES.items()}
+temp_df["District"]=temp_df["District"].apply(lambda val: rev_STATE_NAMES.get(val))
+temp_df.index=temp_df["District"]
+temp_df_=temp_df[["deltaConfirmedForDistrict","deltaDeceasedForDistrict","deltaRecoveredForDistrict"]]
+
+temp_df_T=temp_df_.T
+temp_df_T.reset_index(inplace=True)
+temp_df_T["Date"]=TT_final_df.loc[0,"Date"]
+temp_df_T["Date_YMD"]=TT_final_df.loc[0,"Date"]
+
+temp_df_T["Date"]=temp_df_T["Date"].apply(lambda val: datetime.strptime(val,"%Y-%m-%d"))
+temp_df_T["Date"]=temp_df_T["Date"].apply(lambda val: datetime.strftime(val,"%d-%b-%Y"))
+
+temp_df_T=temp_df_T.rename(columns={"index":"Status"})
+print(temp_df_T.head())
+temp_df_T.loc[temp_df_T["Status"]=="deltaConfirmedForDistrict","Status"]="Confirmed"
+temp_df_T.loc[temp_df_T["Status"]=="deltaRecoveredForDistrict","Status"]="Recovered"
+temp_df_T.loc[temp_df_T["Status"]=="deltaDeceasedForDistrict","Status"]="Deceased"
+temp_df_T["TT"]=[TT_final_df.loc[0,"deltaConfirmedForState"],
+                TT_final_df.loc[0,"deltaRecoveredForState"],
+                TT_final_df.loc[0,"deltaDeceasedForState"]]
+
+temp_df_T.head()
+
+temp_df_T=temp_df_T[state_wise_daily.columns]
+state_wise_daily=pd.concat([state_wise_daily,temp_df_T],axis=0)
+state_wise_daily.reset_index(inplace=True,drop=True)
+state_wise_daily.to_csv(f"{dest_path}/state_wise_daily.csv",index=False)
+
 
