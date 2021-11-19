@@ -6,17 +6,9 @@ import os
 
 
 
-source_path="C:/Users/sambh/Desktop/inCovid19-GITHUB/incovid19/RAWCSV/2021-11-01"
-
-
-
+source_path="../RAWCSV/2021-11-01"
 case_time_series_df=pd.read_csv("./case_time_series.csv")
-
-
-
 TT_final_df=pd.read_csv("./TT_final.csv")
-
-
 
 v=TT_final_df.loc[0,["Date","Date","deltaConfirmedForState","cumulativeConfirmedNumberForState","deltaRecoveredForState","cumulativeRecoveredNumberForState","deltaDeceasedForState","cumulativeDeceasedNumberForState"]]
 v[0]=datetime.strptime(v[0],"%Y-%m-%d")
