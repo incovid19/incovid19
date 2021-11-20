@@ -234,7 +234,7 @@ def kerala(state, date, path):
 
     for k, v in text_dict.items():
         data = data.replace(k, v)
-
+    data = data.replace("/*", "").replace("*/", "")
     data = data.replace(",]", "]")
 
     df_districts = pd.read_json(data)
@@ -242,10 +242,9 @@ def kerala(state, date, path):
     Confirmed = df_districts['data'][0]
     Recovered = df_districts['data'][1]
     Deceased = df_districts['data'][2]
-    Active = df_districts['data'][3]
+    # Active = df_districts['data'][3]
 
-    df = pd.DataFrame(list(zip(dist['District'].tolist(), Confirmed, Recovered, Deceased, Active)),
-                               columns=['District', 'Confirmed', 'Recovered', 'Deceased', 'Active'])
+    df = pd.DataFrame(list(zip(dist['District'].tolist(), Confirmed, Recovered, Deceased)), columns=['District', 'Confirmed', 'Recovered', 'Deceased'])
 
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Kerala'].to_dict()
@@ -428,14 +427,5 @@ def ExtractFromHTML(state, date):
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         # ExtractStateMyGov(state, date, no_source=True)
 
-#ExtractFromHTML(state="KL", date="2021-11-18")
-#ExtractFromHTML(state="TR", date="2021-11-18")
-# ExtractFromHTML(state="GJ", date="2021-11-19")
-#ExtractFromHTML(state="AP", date="2021-11-02")
-#ExtractFromHTML(state="OR", date="2021-11-02")
-#ExtractFromHTML(state="MH", date="2021-11-18")
-#ExtractFromHTML(state="MH", date="2021-11-11")
-#ExtractFromHTML(state="KL", date="2021-11-04")
-#ExtractFromHTML(state="TR", date="2021-11-06")
-#ExtractFromHTML(state="TR", date="2021-11-16")
-#ExtractFromHTML(state="TT", date="2021-11-02")
+
+# ExtractFromHTML(state="KL", date="2021-11-18")
