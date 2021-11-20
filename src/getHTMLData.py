@@ -430,7 +430,7 @@ def ExtractFromHTML(state, date):
 
 #ExtractFromHTML(state="KL", date="2021-11-18")
 #ExtractFromHTML(state="TR", date="2021-11-18")
-#ExtractFromHTML(state="GJ", date="2021-11-02")
+# ExtractFromHTML(state="GJ", date="2021-11-19")
 #ExtractFromHTML(state="AP", date="2021-11-02")
 #ExtractFromHTML(state="OR", date="2021-11-02")
 #ExtractFromHTML(state="MH", date="2021-11-18")
