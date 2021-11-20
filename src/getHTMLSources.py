@@ -51,6 +51,7 @@ def check_date(url, state, date):
     except Exception:
         return date
 
+
 def getSources(source, date):
     p = inflect.engine()
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -69,12 +70,16 @@ def getSources(source, date):
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT.html")
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT" + "_" + datetime.now().strftime("%H_%M") + ".html")
                         StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                        if source_date != date:
+                            StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                     else:    
                         file_name, headers = urllib.request.urlretrieve(source["StateDataURL"][idx])
                         source_date = check_date(source["StateDataURL"][idx], source["StateCode"][idx], date)
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/" + source["StateCode"][idx] + ".html")
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/" + source["StateCode"][idx] + "_" + datetime.now().strftime("%H_%M") + ".html")
                         StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded. Source URL: " + source["StateDataURL"][idx], program="GetSource")
+                        if source_date != date:
+                            StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                 except HTTPError:
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                 except Exception:
@@ -86,19 +91,22 @@ def getSources(source, date):
                     if response.status_code == 200:
                         data = json.loads(response.content)
                         json_object = json.dumps(data)
-                        with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
+                        source_date = datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()
+                        with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
                             outfile.write(json_object)
                         response_total = requests.get(source["StateDataURL"][idx] + '/dbd-kpi')
                         if response_total.status_code == 200:
                             json_object_total = json.dumps(json.loads(response_total.content)[0])
-                            with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
+                            with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
                                 outfile.write(json_object_total)
                         response_total = requests.get(source["StateDataURL"][idx] + '/d_testing')
                         if response_total.status_code == 200:
                             json_object_total = json.dumps(json.loads(response_total.content)[0])
-                            with open('../INPUT/' + str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
+                            with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
                                 outfile.write(json_object_total)
-                        StatusMsg(source["StateCode"][idx], str(datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                        StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                        if source_date != date:
+                            StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
                     else:
                         StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
             elif source["StateDataSourceType"][idx] == "pdf":
