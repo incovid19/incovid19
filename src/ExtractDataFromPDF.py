@@ -62,6 +62,7 @@ def getKAData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
+    # print(df_districts)
     
     # a=b
     
@@ -75,10 +76,13 @@ def getKAData(file_path,date,StateCode):
     # print(df_districts)
     for col in df_districts.columns:
         df_districts[col] = df_districts[col].astype(str).str.replace("*","")
+    df_districts.dropna(axis=0,inplace=True)
+    # print(df_districts)
+    # a=b
     
-    df_summary = df_districts.dropna(axis=0,how='all')
+    df_summary = df_districts
     
-    df_districts = df_districts.dropna(axis=0,how='all')[:-3]
+    df_districts = df_districts[:-2]
     # print(df_districts)
     # df = df[]
 
@@ -89,10 +93,11 @@ def getKAData(file_path,date,StateCode):
     
 
     df_summary.rename(columns={"District":"State/UT"},inplace=True)
-    df_summary = df_summary.iloc[-3,:] #testcode needs to be updated later
+    df_summary = df_summary.iloc[-2,:] #testcode needs to be updated later
     
     print(df_districts)
     print(df_summary)
+    # a=b
     return df_summary,df_districts
 
 def getTNData(file_path,date,StateCode):
@@ -150,8 +155,16 @@ def getHRData(file_path,date,StateCode):
     col_dict = {"Name of District":"District","Cumulative Positive Cases":"Confirmed","Cumulative     Recovered/ Discharged Cases":"Recovered","No. of Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=['Sr No','Positive Cases Today','Recovery Rate (%)','No of Active Cases','COVID-19, Vaccination Status  (NHM, Haryana)'],inplace=True)
+    # print(df_districts)
+    # a=b
     df_districts = df_districts[2:]
+    # print(df_districts.columns)
+    # print(df_districts['Recovered'].str.contains('['))
+    # if df_districts['Recovered'].str.contains('[').any():
     df_districts["Recovered"] = df_districts["Recovered"].str.split("[").str[0]
+    # if df_districts['Deceased'].str.contains('[').any():
+    df_districts["Deceased"] = df_districts["Deceased"].str.split("[").str[0]
+    # df_districts["Confirmed"] = df_districts["Confirmed"].str.split("[").str[0]
     df_summary = df_districts
     df_districts = df_districts[:-1]
     
@@ -166,7 +179,8 @@ def getHRData(file_path,date,StateCode):
     # print(df_summary)
     df_summary["Tested"] = df_tests.loc[3,"Numbers"]
     # df_districts["Tested"] = df_summary["Tested"]
-    # print(df_summary)
+    print(df_districts)
+    print(df_summary)
     # a=b
     return df_summary,df_districts
 
@@ -511,3 +525,6 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
 #ExtractFromPDF(StateCode = "MH",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "PB",Date = "2021-11-15")
 #ExtractFromPDF(StateCode = "LA",Date = "2021-11-18")
+
+
+ExtractFromPDF(StateCode = "HR",Date = "2021-11-18")
