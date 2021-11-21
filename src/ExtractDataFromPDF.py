@@ -17,6 +17,32 @@ from StatusMsg import StatusMsg
 #Convert your file
 # reads all the tables in the PDF
 
+def getAPData(file_path,date,StateCode):
+    table = camelot.read_pdf(file_path,pages='1')
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+
+    df_districts =  pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
+    df_districts.columns = df_districts.columns.str.replace("\n","")
+    col_dict = {"TotalPositives":"Confirmed","TotalRecovered":"Recovered","TotalDeceased":"Deceased"}
+    df_districts.rename(columns=col_dict,inplace=True)
+    df_districts.drop(columns=['S.No','PositivesLast 24 Hrs','TotalActive Cases'],inplace=True)
+    df_districts = df_districts[df_districts['District']!="Total AP Cases"]
+    df_summary = df_districts
+    df_districts = df_districts[:-1]
+
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Andhra Pradesh'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
+    df_summary = df_summary.iloc[-1,:]
+
+
+    # print(df_districts)
+    # print(df_summary)
+    # a=b
+    return df_summary,df_districts
+
 def getRJData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,pages='1,2')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
@@ -468,7 +494,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
-def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
+def ExtractFromPDF(StateCode = "AP",Date = "2021-11-19"):
     try:
         filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
@@ -504,6 +530,9 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
         elif StateCode == "RJ":
             df_summary,df_districts = getRJData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
+        elif StateCode == "AP":
+            df_summary,df_districts = getAPData(filepath,Date,StateCode)
+            GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         # elif StateCode == "MZ":
         #     df_summary,df_districts = getMZData(filepath,Date,StateCode)
         #     GenerateRawCsv(StateCode,Date,df_districts,df_summary)
@@ -527,4 +556,4 @@ def ExtractFromPDF(StateCode = "PB",Date = "2021-11-09"):
 #ExtractFromPDF(StateCode = "LA",Date = "2021-11-18")
 
 
-ExtractFromPDF(StateCode = "HR",Date = "2021-11-18")
+# ExtractFromPDF(StateCode = "AP",Date = "2021-11-19")
