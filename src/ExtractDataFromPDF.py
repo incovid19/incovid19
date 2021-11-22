@@ -554,3 +554,4 @@ def ExtractFromPDF(StateCode = "AP",Date = "2021-11-19"):
 #ExtractFromPDF(StateCode = "MH",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "PB",Date = "2021-11-15")
 #ExtractFromPDF(StateCode = "LA",Date = "2021-11-18")
+ExtractFromPDF(StateCode = "KA",Date = "2021-11-21")
