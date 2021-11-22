@@ -102,13 +102,13 @@ def getKAData(file_path,date,StateCode):
     # print(df_districts)
     for col in df_districts.columns:
         df_districts[col] = df_districts[col].astype(str).str.replace("*","")
-    df_districts.dropna(axis=0,inplace=True)
+    df_districts.dropna(inplace=True)
     # print(df_districts)
     # a=b
     
     df_summary = df_districts
     
-    df_districts = df_districts[:-2]
+    df_districts = df_districts[:-3]
     # print(df_districts)
     # df = df[]
 
@@ -119,7 +119,7 @@ def getKAData(file_path,date,StateCode):
     
 
     df_summary.rename(columns={"District":"State/UT"},inplace=True)
-    df_summary = df_summary.iloc[-2,:] #testcode needs to be updated later
+    df_summary = df_summary.iloc[-3,:] #testcode needs to be updated later
     
     print(df_districts)
     print(df_summary)
