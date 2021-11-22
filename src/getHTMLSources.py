@@ -176,3 +176,4 @@ def getSources(source, date):
 
 # df = pd.read_csv("../sources.csv")
 # getSources(df, (datetime.today() - timedelta(0)).date())
+getSources()

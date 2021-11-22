@@ -189,7 +189,7 @@ def getHRData(file_path,date,StateCode):
     # if df_districts['Recovered'].str.contains('[').any():
     df_districts["Recovered"] = df_districts["Recovered"].str.split("[").str[0]
     # if df_districts['Deceased'].str.contains('[').any():
-    df_districts["Deceased"] = df_districts["Deceased"].str.split("[").str[0]
+    # df_districts["Deceased"] = df_districts["Deceased"].str.split("[").str[0]
     # df_districts["Confirmed"] = df_districts["Confirmed"].str.split("[").str[0]
     df_summary = df_districts
     df_districts = df_districts[:-1]
