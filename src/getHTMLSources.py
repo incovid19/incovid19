@@ -87,28 +87,31 @@ def getSources(source, date):
                     StatusMsg(source["StateCode"][idx], str(date), "ERR", "Fatal Error in Main Loop", program="GetSource")
             if source["StateDataSourceType"][idx] == "json":
                 if source["StateCode"][idx] == "MH":
-                    response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date')
-                    if response.status_code == 200:
-                        data = json.loads(response.content)
-                        json_object = json.dumps(data)
-                        source_date = datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()
-                        with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
-                            outfile.write(json_object)
-                        response_total = requests.get(source["StateDataURL"][idx] + '/dbd-kpi')
-                        if response_total.status_code == 200:
-                            json_object_total = json.dumps(json.loads(response_total.content)[0])
-                            with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
-                                outfile.write(json_object_total)
-                        response_total = requests.get(source["StateDataURL"][idx] + '/d_testing')
-                        if response_total.status_code == 200:
-                            json_object_total = json.dumps(json.loads(response_total.content)[0])
-                            with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
-                                outfile.write(json_object_total)
-                        StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
-                        if source_date != date:
+                    try:
+                        response = requests.get(source["StateDataURL"][idx] + '/dbd-cases-file?_by=District&_by=Date',timeout=10)
+                        if response.status_code == 200:
+                            data = json.loads(response.content)
+                            json_object = json.dumps(data)
+                            source_date = datetime.fromtimestamp(int(data[0]['Date']) / 1000).date()
+                            with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + ".json", "w") as outfile:
+                                outfile.write(json_object)
+                            response_total = requests.get(source["StateDataURL"][idx] + '/dbd-kpi')
+                            if response_total.status_code == 200:
+                                json_object_total = json.dumps(json.loads(response_total.content)[0])
+                                with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + "_total.json", "w") as outfile:
+                                    outfile.write(json_object_total)
+                            response_total = requests.get(source["StateDataURL"][idx] + '/d_testing')
+                            if response_total.status_code == 200:
+                                json_object_total = json.dumps(json.loads(response_total.content)[0])
+                                with open('../INPUT/' + str(source_date) + '/' + source["StateCode"][idx] + "_testing.json", "w") as outfile:
+                                    outfile.write(json_object_total)
+                            StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
+                            if source_date != date:
+                                StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
+                        else:
                             StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
-                    else:
-                        StatusMsg(source["StateCode"][idx], str(date), "ERR", "File Not Found", program="GetSource")
+                    except:
+                        print("Timeout")
             elif source["StateDataSourceType"][idx] == "pdf":
                 try:
                     if source["StateCode"][idx] == "HR":
