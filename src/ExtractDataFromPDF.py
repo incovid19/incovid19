@@ -1,5 +1,6 @@
 # import tabula
 import pandas as pd
+import numpy as np
 # !pip install tabula-py
 import camelot
 import os
@@ -88,6 +89,7 @@ def getKAData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
+    # df_districts = df_districts.replace("nan",np.nan)
     # print(df_districts)
     
     # a=b
@@ -98,17 +100,18 @@ def getKAData(file_path,date,StateCode):
     col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
-    
+    df_districts.dropna(how="all",inplace=True)
     # print(df_districts)
+    # a=b
     for col in df_districts.columns:
         df_districts[col] = df_districts[col].astype(str).str.replace("*","")
-    df_districts.dropna(inplace=True)
+    # df_districts.dropna(inplace=True)
     # print(df_districts)
     # a=b
     
     df_summary = df_districts
     
-    df_districts = df_districts[:-3]
+    df_districts = df_districts[:-1]
     # print(df_districts)
     # df = df[]
 
@@ -119,7 +122,7 @@ def getKAData(file_path,date,StateCode):
     
 
     df_summary.rename(columns={"District":"State/UT"},inplace=True)
-    df_summary = df_summary.iloc[-3,:] #testcode needs to be updated later
+    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     
     print(df_districts)
     print(df_summary)
@@ -494,7 +497,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
-def ExtractFromPDF(StateCode = "AP",Date = "2021-11-19"):
+def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     try:
         filepath = "../INPUT/{0}/{1}.pdf".format(Date,StateCode)
         if StateCode == "KA":
@@ -554,4 +557,4 @@ def ExtractFromPDF(StateCode = "AP",Date = "2021-11-19"):
 #ExtractFromPDF(StateCode = "MH",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "PB",Date = "2021-11-15")
 #ExtractFromPDF(StateCode = "LA",Date = "2021-11-18")
-#ExtractFromPDF(StateCode = "KA",Date = "2021-11-21")
+# ExtractFromPDF(StateCode = "KA",Date = "2021-11-22")
