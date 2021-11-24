@@ -147,7 +147,7 @@ def getSources(source, date):
                         downloadFile(str(date), source["StateCode"][idx], url)
                     elif source["StateCode"][idx] == "KA":
                         # New code (from twitter)
-                        header = json.load(io.open(r'..\config\twitter.json'))
+                        header = json.load(io.open(r'../config/twitter.json'))
                         response = requests.get(
                             "https://api.twitter.com/2/tweets/search/recent?query=(Media Bulletin)(from:DHFWKA)&tweet.fields=created_at,entities",
                             headers=header
