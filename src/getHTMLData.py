@@ -108,7 +108,11 @@ def gujarat(state, date, path):
     df['District'].replace(dist_map, inplace=True)
 
     df['Recovered'] = df['Recovered'].astype(int)
-    df['Deceased'] = df['Deceased'].astype(int)
+    try:
+        df['Deceased'] = df['Deceased'].astype(int)
+    except:
+        df['Deceased'] = df['Deceased'].str.split().str[-1]
+        df['Deceased'] = df['Deceased'].astype(int)
     df['Tested'] = df['Tested'].astype(int)
 
     df['Confirmed'] = df['Active'].astype(int) + df['Recovered'] + df['Deceased']
@@ -430,4 +434,4 @@ def ExtractFromHTML(state, date):
 
 #ExtractFromHTML(state="TR", date="2021-11-22")
 #ExtractFromHTML(state="KL", date="2021-11-22")
-#ExtractFromHTML(state="MH", date="2021-11-22")
+ExtractFromHTML(state="GJ", date="2021-11-23")
