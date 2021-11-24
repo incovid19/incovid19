@@ -128,11 +128,20 @@ def get_image(state, date, search_query):
                             continue
                     if len(images) > 0:
                         return images
+            else:
+                try:
+                    images = []
+                    for i in range(img_count[state]):
+                        images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
+                    return images
+                except Exception:
+                    return None
     else:
         try:
             images = []
             for i in range(img_count[state]):
                 images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
+                print(images)
             return images
         except Exception:
             return None
@@ -695,11 +704,11 @@ def manipur(state, date, query):
         last_updated = datetime.now()
     total = False
     for i, text in enumerate(page[:-1]):
-        if (text.description == "tested") and not total:
+        if (text.description == "tested") and (text.bounding_poly.vertices[0].x > 300) and not total:
             test_x1, test_x2 = text.bounding_poly.vertices[0].x - 25, text.bounding_poly.vertices[1].x + 25
-        if (text.description == "positives") and not total:
+        if (text.description == "positives") and (text.bounding_poly.vertices[0].x > 300) and not total:
             total_x1, total_x2 = text.bounding_poly.vertices[0].x - 20, text.bounding_poly.vertices[1].x + 15
-        if (text.description == "deaths") and not total:
+        if (text.description == "deaths") and (text.bounding_poly.vertices[0].x > 300) and not total:
             dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 15, text.bounding_poly.vertices[1].x + 10
         if text.description == 'District':
             x, x2 = text.bounding_poly.vertices[0].x - 7, text.bounding_poly.vertices[1].x + 45
