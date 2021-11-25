@@ -584,7 +584,7 @@ def himachal_pradesh(state, date, query):
     total = False
     for i, text in enumerate(page[:-1]):
         if (text.description == "Total") and not total:
-            total_x1, total_x2 = text.bounding_poly.vertices[0].x, text.bounding_poly.vertices[1].x
+            total_x1, total_x2 = text.bounding_poly.vertices[0].x - 15, text.bounding_poly.vertices[1].x + 15
         if (text.description == "Cured") and not total:
             # if (page[i + 1].description in ["Deaths", "Confirmed", "Migrated"]) or (page[i - 1].description in ["Sampling"]):
             recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 35, text.bounding_poly.vertices[1].x + 25
@@ -1094,9 +1094,9 @@ def ExtractDataFromImage(state, date, handle, term):
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-11-16', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-11-09', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-# ExtractDataFromImage('CT', '2021-11-21', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-11-22', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-11-22', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('CT', '2021-11-23', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+# ExtractDataFromImage('HP', '2021-11-24', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('MN', '2021-11-24', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-14', 'diprjk', 'Media Bulletin')
 
