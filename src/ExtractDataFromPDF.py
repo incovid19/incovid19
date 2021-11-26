@@ -28,7 +28,7 @@ def getAPData(file_path,date,StateCode):
     df_districts.columns = df_districts.columns.str.replace("\n","")
     col_dict = {"TotalPositives":"Confirmed","TotalRecovered":"Recovered","TotalDeceased":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['S.No','PositivesLast 24 Hrs','TotalActive Cases'],inplace=True)
+    # df_districts.drop(columns=['S.No','PositivesLast 24 Hrs','TotalActive Cases'],inplace=True)
     df_districts = df_districts[df_districts['District']!="Total AP Cases"]
     df_summary = df_districts
     df_districts = df_districts[:-1]
@@ -61,7 +61,7 @@ def getRJData(file_path,date,StateCode):
                 "CumulativeDeath":"Deceased","CumulativeRecovered/ Discharged":"Recovered"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
-    df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
+    # df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
     df_districts.dropna(how="all",inplace=True)
     # print(df_districts)
     # a=b
@@ -102,7 +102,8 @@ def getKAData(file_path,date,StateCode):
     
     col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons'],inplace=True)
+    print(df_districts.columns)
+    # df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
     df_districts.dropna(how="all",inplace=True)
     # print(df_districts)
     # a=b
@@ -148,7 +149,7 @@ def getTNData(file_path,date,StateCode):
     
     col_dict = {"Total Positive Cases":"Confirmed","Discharged":"Recovered","Death":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
+    # df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
     df_summary = df_districts
     print(df_tests)
     # a=b
@@ -186,7 +187,7 @@ def getHRData(file_path,date,StateCode):
     
     col_dict = {"Name of District":"District","Cumulative Positive Cases":"Confirmed","Cumulative     Recovered/ Discharged Cases":"Recovered","No. of Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Sr No','Positive Cases Today','Recovery Rate (%)','No of Active Cases','COVID-19, Vaccination Status  (NHM, Haryana)'],inplace=True)
+    # df_districts.drop(columns=['Sr No','Positive Cases Today','Recovery Rate (%)','No of Active Cases','COVID-19, Vaccination Status  (NHM, Haryana)'],inplace=True)
     # print(df_districts)
     # a=b
     df_districts = df_districts[2:]
@@ -235,7 +236,7 @@ def getWBData(file_path,date,StateCode):
     
     col_dict = {"Total Cases":"Confirmed","Total Discharged":"Recovered","Total Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['S. No','Total Active Cases','Last Reported Case'],inplace=True)
+    # df_districts.drop(columns=['S. No','Total Active Cases','Last Reported Case'],inplace=True)
     df_districts["Confirmed"] = df_districts["Confirmed"].str.split("+").str[0]
     df_districts["Recovered"] = df_districts["Recovered"].str.split("+").str[0]
     df_districts["Deceased"] = df_districts["Deceased"].str.split("+").str[0]
@@ -275,7 +276,7 @@ def getMHData(file_path,date,StateCode):
   
     col_dict = {"District/Municipal Corporation":"District","COVID-19 cases":"Confirmed","Recovered patients":"Recovered","Deaths":"Deceased","District/MunicipalCorporation":"District"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Sr. No.','Deaths due to other causes',  'Active cases'],inplace=True)
+    # df_districts.drop(columns=['Sr. No.','Deaths due to other causes',  'Active cases'],inplace=True)
     
     df_summary = df_districts
     df_districts = df_districts[:-1]
@@ -324,7 +325,7 @@ def getPBData(file_path,date,StateCode):
     col_dict = {"Total ConfirmedCases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
-    df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
+    # df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
     df_summary = df_districts
     df_districts = df_districts[:-1]
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
@@ -353,7 +354,7 @@ def getUKData(file_path,date,StateCode):
     col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_districts['Recovered'] += df_districts['Migrated']
-    df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
+    # df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
     for col in df_districts.columns:
         df_districts[col] = df_districts[col].astype(str).str.replace("*","")
     df_summary = df_districts
@@ -405,7 +406,7 @@ def getNLData(file_path,date,StateCode):
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     # df_districts.columns = df_districts.columns.str.replace("\n","")
        
-    df_districts.drop(columns=list(string.ascii_lowercase[:10]),inplace=True)
+    # df_districts.drop(columns=list(string.ascii_lowercase[:10]),inplace=True)
     df_summary = df_districts
     df_districts = df_districts[:-1] 
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
@@ -433,7 +434,7 @@ def getLAData(file_path,date,StateCode):
     
     # col_dict = {"b":"District"}
     # df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=list(string.ascii_lowercase[:12]),inplace=True)
+    # df_districts.drop(columns=list(string.ascii_lowercase[:12]),inplace=True)
     df_summary = df_districts
     
     df_districts = df_districts[:-1]
@@ -461,7 +462,7 @@ def getMZData(file_path,date,StateCode):
     df_districts = df_districts[:-1]
     # col_dict = {"b":"District"}
     # df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=list(string.ascii_lowercase[:12]),inplace=True)
+    # df_districts.drop(columns=list(string.ascii_lowercase[:12]),inplace=True)
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Ladakh'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
@@ -565,4 +566,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-22")
 #ExtractFromPDF(StateCode = "ML",Date = "2021-11-23")
 #ExtractFromPDF(StateCode = "TN",Date = "2021-11-23")
-ExtractFromPDF(StateCode = "HR",Date = "2021-11-25")
+ExtractFromPDF(StateCode = "RJ",Date = "2021-11-26")
