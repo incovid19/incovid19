@@ -57,11 +57,14 @@ def getRJData(file_path,date,StateCode):
     df_districts = pd.concat(frames,ignore_index=True)
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
-    col_dict = {"Cumulative Sample":"Tested","Cumulative Positive":"Confirmed","Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased"}
+    col_dict = {"Cumulative Sample":"Tested", "Cumulative Positive":"Confirmed", "Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased","CumulativePositive":"Confirmed",
+                "CumulativeDeath":"Deceased","CumulativeRecovered/ Discharged":"Recovered"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
-    df_districts.drop(columns=['S.No','Today\'s Positive','Today\'s Death','Today\'s  Recovered/Discharged', 'Active  case'],inplace=True)
-
+    df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
+    df_districts.dropna(how="all",inplace=True)
+    # print(df_districts)
+    # a=b
     # df_summary = df_districts
     # df_districts = df_districts[:-4]
     df_summary = df_districts
@@ -99,7 +102,7 @@ def getKAData(file_path,date,StateCode):
     
     col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
+    df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons'],inplace=True)
     df_districts.dropna(how="all",inplace=True)
     # print(df_districts)
     # a=b
@@ -192,7 +195,7 @@ def getHRData(file_path,date,StateCode):
     # if df_districts['Recovered'].str.contains('[').any():
     df_districts["Recovered"] = df_districts["Recovered"].str.split("[").str[0]
     # if df_districts['Deceased'].str.contains('[').any():
-    # df_districts["Deceased"] = df_districts["Deceased"].str.split("[").str[0]
+    df_districts["Deceased"] = df_districts["Deceased"].str.split("[").str[0]
     # df_districts["Confirmed"] = df_districts["Confirmed"].str.split("[").str[0]
     df_summary = df_districts
     df_districts = df_districts[:-1]
@@ -545,7 +548,9 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
-#ExtractFromPDF(StateCode = "LA",Date = "2021-11-16")
+# ExtractFromPDF(StateCode = "LA",Date = "2021-11-24")
+#ExtractFromPDF(StateCode = "RJ",Date = "2021-11-25")
+# ExtractFromPDF(StateCode = "TN",Date = "2021-11-25")
 #ExtractFromPDF(StateCode = "UT",Date = "2021-11-14")
 #ExtractFromPDF(StateCode = "HR",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "KA",Date = "2021-11-04")
@@ -560,3 +565,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-22")
 #ExtractFromPDF(StateCode = "ML",Date = "2021-11-23")
 #ExtractFromPDF(StateCode = "TN",Date = "2021-11-23")
+ExtractFromPDF(StateCode = "HR",Date = "2021-11-25")
