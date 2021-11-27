@@ -149,9 +149,10 @@ def getTNData(file_path,date,StateCode):
     
     col_dict = {"Total Positive Cases":"Confirmed","Discharged":"Recovered","Death":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    # df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
+    df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
     df_summary = df_districts
-    print(df_tests)
+    print(df_districts)
+    print(df_summary)
     # a=b
     df_districts = df_districts[:-4]
     
@@ -565,5 +566,5 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #ExtractFromPDF(StateCode = "LA",Date = "2021-11-18")
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-22")
 #ExtractFromPDF(StateCode = "ML",Date = "2021-11-23")
-#ExtractFromPDF(StateCode = "TN",Date = "2021-11-23")
-ExtractFromPDF(StateCode = "RJ",Date = "2021-11-26")
+# ExtractFromPDF(StateCode = "TN",Date = "2021-11-27")
+#ExtractFromPDF(StateCode = "RJ",Date = "2021-11-26")
