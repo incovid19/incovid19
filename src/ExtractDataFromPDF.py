@@ -107,15 +107,19 @@ def getKAData(file_path,date,StateCode):
     df_districts.dropna(how="all",inplace=True)
     # print(df_districts)
     # a=b
+    # a=b
     for col in df_districts.columns:
         df_districts[col] = df_districts[col].astype(str).str.replace("*","")
     # df_districts.dropna(inplace=True)
     # print(df_districts)
     # a=b
     
-    df_summary = df_districts
-    
-    df_districts = df_districts[:-1]
+    df_summary = df_districts[df_districts["Sl. No"] == "Total"].iloc[0]
+    print(df_summary)
+    df_districts = df_districts[pd.to_numeric(df_districts['Sl. No'], errors='coerce').notnull()]
+    # print(df_districts)
+    # a=b
+    # df_districts = df_districts[:-1]
     # print(df_districts)
     # df = df[]
 
@@ -125,8 +129,8 @@ def getKAData(file_path,date,StateCode):
 
     
 
-    df_summary.rename(columns={"District":"State/UT"},inplace=True)
-    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    # df_summary.rename(columns={"District":"State/UT"},inplace=True)
+    # df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     
     print(df_districts)
     print(df_summary)
@@ -472,6 +476,7 @@ def getMZData(file_path,date,StateCode):
 
 
 def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
+    # print(df_summary['Confirmed'].values)
     utc_dt = datetime.now(timezone.utc)
     df = pd.DataFrame(columns=["Date","State/UTCode","District","tested_last_updated_district","tested_source_district","notesForDistrict",
     "cumulativeConfirmedNumberForDistrict","cumulativeDeceasedNumberForDistrict","cumulativeRecoveredNumberForDistrict",
@@ -482,6 +487,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     if "Confirmed" in df_districts.columns:
         df['cumulativeConfirmedNumberForDistrict'] = df_districts['Confirmed']
         df['cumulativeConfirmedNumberForState'] = df_summary['Confirmed']#.astype(int).sum()
+        # print(df['cumulativeConfirmedNumberForState'])
     if "Tested" in df_summary.index:
         df['cumulativeTestedNumberForState'] = df_summary['Tested'] #.astype(int).sum()
     if "Tested" in df_districts.columns:
@@ -568,3 +574,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #ExtractFromPDF(StateCode = "ML",Date = "2021-11-23")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-11-27")
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-26")
+ExtractFromPDF(StateCode = "KA",Date = "2021-11-27")
