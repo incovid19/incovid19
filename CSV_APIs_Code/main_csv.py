@@ -4,8 +4,9 @@
 
 import pandas as pd
 import numpy as np
-from datetime import datetime
+# from datetime import datetime
 import os
+from datetime import datetime,timedelta
 
 def get_case_time_series(date):
     # source_path="../RAWCSV/2021-11-01"
@@ -243,7 +244,25 @@ def get_state_wise_daily(date):
     state_wise_daily = state_wise_daily.drop_duplicates()
     state_wise_daily.to_csv("/home/swiadmin/test/csv/latest/state_wise_daily.csv",index=False)
 
-date = "2021-11-17"
-get_case_time_series(date)
-getStates_Districts(date)
-get_state_wise_daily(date)
+    
+    
+
+def date_range(start, end):
+    r = (end+timedelta(days=1)-start).days
+    return [start+timedelta(days=i) for i in range(r)]
+ 
+
+start_date = "2021-10-31"
+end_date = "2021-11-28"
+end = datetime.strptime(end_date, '%Y-%m-%d')
+start = datetime.strptime(start_date, '%Y-%m-%d')
+dateList = date_range(start, end)
+
+for date in dateList:
+    get_case_time_series(str(date.date()))
+    getStates_Districts(str(date.date()))
+    get_state_wise_daily(str(date.date()))
+# date = "2021-11-17"
+# get_case_time_series(date)
+# getStates_Districts(date)
+# get_state_wise_daily(date)
