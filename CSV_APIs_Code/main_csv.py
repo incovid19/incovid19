@@ -253,7 +253,7 @@ def date_range(start, end):
  
 
 start_date = "2021-10-31"
-end_date = "2021-11-28"
+end_date = "2021-11-29"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
@@ -262,7 +262,7 @@ for date in dateList:
     get_case_time_series(str(date.date()))
     getStates_Districts(str(date.date()))
     get_state_wise_daily(str(date.date()))
-# date = "2021-11-17"
+# date = "2021-11-29"
 # get_case_time_series(date)
 # getStates_Districts(date)
 # get_state_wise_daily(date)
