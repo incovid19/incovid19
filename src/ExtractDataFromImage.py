@@ -571,22 +571,26 @@ def himachal_pradesh(state, date, query):
 
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
 
-    status_text = "Media Bulletin -COVID-19\n"
+    status_text = "Media Bulletin"
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     page_text = page[0].description
-    date_start = page_text.find(status_text)
-    date_end = page_text.replace(status_text, "").find("\n", date_start)
+    date_start = page_text.find("\n", page_text.find(status_text)) + 1
+    date_end = page_text.find("\n", date_start)
 
-    date_string = page_text[date_start+len(status_text):date_end+len(status_text)].replace(status_text, "")
+    date_string = page_text[date_start:date_end]
     last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d-%m-%Y at %I:%M %p"))
 
     total = False
+    y = 757
+    y2 = 1070
+    x = 40
+    x2 = 125
     for i, text in enumerate(page[:-1]):
-        if (text.description == "Total") and not total:
-            total_x1, total_x2 = text.bounding_poly.vertices[0].x - 15, text.bounding_poly.vertices[1].x + 15
+        # print(text.description)
+        if (text.description == "Total") and (text.bounding_poly.vertices[0].x > x2):
+            total_x1, total_x2 = (text.bounding_poly.vertices[0].x) - 15, text.bounding_poly.vertices[1].x + 15
         if (text.description == "Cured") and not total:
-            # if (page[i + 1].description in ["Deaths", "Confirmed", "Migrated"]) or (page[i - 1].description in ["Sampling"]):
             recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 35, text.bounding_poly.vertices[1].x + 25
             total = True
         if text.description == "Deaths":
@@ -594,6 +598,8 @@ def himachal_pradesh(state, date, query):
         if text.description == 'District':
             x, x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 20
             y = text.bounding_poly.vertices[2].y + 60
+        if (text.description == 'Bilaspur') and (text.bounding_poly.vertices[0].y > 700):
+            y = text.bounding_poly.vertices[0].y - 3
         if (text.description == "Total") and total:
             y2 = text.bounding_poly.vertices[2].y + 15
 
@@ -703,18 +709,21 @@ def manipur(state, date, query):
     except Exception:
         last_updated = datetime.now()
     total = False
+    y = 1355
+    y2 = 1665
+    x = 75
+    x2 = 165
     for i, text in enumerate(page[:-1]):
-        if (text.description == "tested") and (text.bounding_poly.vertices[0].x > 300) and not total:
+        if (text.description == "tested") and (text.bounding_poly.vertices[0].x > 300) and (text.bounding_poly.vertices[0].y < y2):
             test_x1, test_x2 = text.bounding_poly.vertices[0].x - 25, text.bounding_poly.vertices[1].x + 25
-        if (text.description == "positives") and (text.bounding_poly.vertices[0].x > 300) and not total:
+        if (text.description == "positives") and (text.bounding_poly.vertices[0].x > 300) and (text.bounding_poly.vertices[0].y < y2):
             total_x1, total_x2 = text.bounding_poly.vertices[0].x - 20, text.bounding_poly.vertices[1].x + 15
-        if (text.description == "deaths") and (text.bounding_poly.vertices[0].x > 300) and not total:
+        if (text.description == "deaths") and (text.bounding_poly.vertices[0].x > 300) and (text.bounding_poly.vertices[0].y < y2):
             dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 15, text.bounding_poly.vertices[1].x + 10
         if text.description == 'District':
             x, x2 = text.bounding_poly.vertices[0].x - 7, text.bounding_poly.vertices[1].x + 45
             y = text.bounding_poly.vertices[0].y + 14
         if text.description == "TOTAL":
-            total = True
             y2 = text.bounding_poly.vertices[2].y + 2
 
     mn = get_dict(
@@ -1093,10 +1102,10 @@ def ExtractDataFromImage(state, date, handle, term):
 
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-11-16', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2021-11-09', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+ExtractDataFromImage('BR', '2021-11-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-11-23', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-11-24', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-11-24', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('HP', '2021-11-29', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('MN', '2021-11-28', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-14', 'diprjk', 'Media Bulletin')
 
