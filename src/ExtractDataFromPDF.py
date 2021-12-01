@@ -346,14 +346,14 @@ def getPBData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getUKData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'6')
+    table = camelot.read_pdf(file_path,'5')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-2.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-2.csv'.format(date,StateCode))
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
-    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-1.csv'.format(date,StateCode)) 
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","")  
     
     col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated"}
