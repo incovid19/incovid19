@@ -372,11 +372,11 @@ def bihar(state, date, query):
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     for i, text in enumerate(page):
-        if (text.description == "Positive") and (page[i + 1].description == "Cases"):
+        if text.description == "Positive":
             total_x1, total_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 30
-        if (text.description == "Discharged") and (page[i + 1].description == "Dead"):
+        if text.description == "Discharged":
             recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x
-        if (text.description == "Dead") and (page[i + 1].description == "Active"):
+        if text.description == "Dead":
             dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 10, text.bounding_poly.vertices[1].x + 20
         if text.description == 'District':
             x, x1, y = text.bounding_poly.vertices[0].x - 24, text.bounding_poly.vertices[1].x + 60, text.bounding_poly.vertices[2].y + 30
@@ -714,11 +714,11 @@ def manipur(state, date, query):
     x = 75
     x2 = 165
     for i, text in enumerate(page[:-1]):
-        if (text.description == "tested") and (text.bounding_poly.vertices[0].x > 300) and (text.bounding_poly.vertices[0].y < y2):
+        if (text.description == "tested") and (text.bounding_poly.vertices[0].x > 400) and (text.bounding_poly.vertices[0].y < y2):
             test_x1, test_x2 = text.bounding_poly.vertices[0].x - 25, text.bounding_poly.vertices[1].x + 25
-        if (text.description == "positives") and (text.bounding_poly.vertices[0].x > 300) and (text.bounding_poly.vertices[0].y < y2):
+        if (text.description == "positives") and (text.bounding_poly.vertices[0].x > 400) and (text.bounding_poly.vertices[0].y < y2):
             total_x1, total_x2 = text.bounding_poly.vertices[0].x - 20, text.bounding_poly.vertices[1].x + 15
-        if (text.description == "deaths") and (text.bounding_poly.vertices[0].x > 300) and (text.bounding_poly.vertices[0].y < y2):
+        if (text.description == "deaths") and (text.bounding_poly.vertices[0].x > 400) and (text.bounding_poly.vertices[0].y < y2):
             dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 15, text.bounding_poly.vertices[1].x + 10
         if text.description == 'District':
             x, x2 = text.bounding_poly.vertices[0].x - 7, text.bounding_poly.vertices[1].x + 45
@@ -1102,10 +1102,10 @@ def ExtractDataFromImage(state, date, handle, term):
 
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-11-16', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-ExtractDataFromImage('BR', '2021-11-29', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('BR', '2021-11-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-11-23', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-11-29', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-11-28', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('MN', '2021-11-30', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-14', 'diprjk', 'Media Bulletin')
 

@@ -1,8 +1,8 @@
 import pandas as pd
 from datetime import datetime, timedelta
 
-# pd.set_option('display.max_rows', None)
-# pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 
 
 def col_check_state_raw_csv(df):
@@ -61,6 +61,18 @@ def get_7dma_state(state, date):
     for col in cols:
         df[f'7Dma{col}ForState'] = round(df[f'7Dma{col}ForState'] / 1)
         df[f'7Dma{col}ForDistrict'] = round(df[f'7Dma{col}ForDistrict'] / 1)
+    if df['7DmaTestedForState'].isnull().values.all():
+        prev_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(1)).strftime("%Y-%m-%d")
+        test_df = pd.read_csv(f'../RAWCSV/{prev_date}/{state}_final.csv')
+        for dist in list(df['District']):
+            if dist not in list(test_df['District']):
+                test_df = test_df.append({
+                    'District': dist,
+                    '7DmaTestedForState': test_df['7DmaTestedForState'][0]
+                }, ignore_index=True)
+        test_df.sort_values('District', inplace=True)
+        df['7DmaTestedForState'] = test_df['7DmaTestedForState']
+        df['7DmaTestedForDistrict'][df['District'] != 'Unknown'] = test_df['7DmaTestedForDistrict'][test_df['District'] != 'Unknown']
     df.to_csv(f"../RAWCSV/{date}/{state}_final.csv", index=False)
     # print(df)
     # return df
@@ -72,29 +84,5 @@ def get_7dma(date):
         print(state)
         get_7dma_state(state, date)
 
-# from datetime import datetime,timedelta
-def date_range(start, end):
-    r = (end+timedelta(days=1)-start).days
-    return [start+timedelta(days=i) for i in range(r)]
- 
-
-# start_date = "2021-11-02"
-# end_date = "2021-11-02"
-# end = datetime.strptime(end_date, '%Y-%m-%d')
-# start = datetime.strptime(start_date, '%Y-%m-%d')
-# dateList = date_range(start, end)        
-
-# for date in dateList:
-#     print(str(date.date()))
-#     get_7dma(str(date.date()))
-# get_7dma_state('TT', '2021-10-31')
-# get_7dma_state('TT', '2021-11-01')
-# get_7dma_state('TT', '2021-11-02')
-# get_7dma_state('TT', '2021-11-03')
-# get_7dma_state('TT', '2021-11-04')
-# get_7dma_state('TT', '2021-11-05')
-# get_7dma_state('TT', '2021-11-06')
-# get_7dma_state('MH', '2021-11-14')
-# get_7dma_state('MH', '2021-11-15')
-
-
+#get_7dma('2021-11-13')
+# get_7dma_state('KL', '2021-11-01')
