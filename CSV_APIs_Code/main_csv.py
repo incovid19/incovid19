@@ -247,22 +247,22 @@ def get_state_wise_daily(date):
     
     
 
-def date_range(start, end):
-    r = (end+timedelta(days=1)-start).days
-    return [start+timedelta(days=i) for i in range(r)]
+# def date_range(start, end):
+#     r = (end+timedelta(days=1)-start).days
+#     return [start+timedelta(days=i) for i in range(r)]
  
 
-start_date = "2021-10-31"
-end_date = "2021-11-29"
-end = datetime.strptime(end_date, '%Y-%m-%d')
-start = datetime.strptime(start_date, '%Y-%m-%d')
-dateList = date_range(start, end)
+# start_date = "2021-10-31"
+# end_date = "2021-11-29"
+# end = datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
 
-for date in dateList:
-    get_case_time_series(str(date.date()))
-    getStates_Districts(str(date.date()))
-    get_state_wise_daily(str(date.date()))
-# date = "2021-11-29"
-# get_case_time_series(date)
-# getStates_Districts(date)
-# get_state_wise_daily(date)
+# for date in dateList:
+#     get_case_time_series(str(date.date()))
+#     getStates_Districts(str(date.date()))
+#     get_state_wise_daily(str(date.date()))
+date = "2021-11-30"
+get_case_time_series(date)
+getStates_Districts(date)
+get_state_wise_daily(date)
