@@ -156,7 +156,7 @@ def getTNData(file_path,date,StateCode):
     df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
     df_summary = df_districts
     print(df_districts)
-    print(df_summary)
+    # print(df_summary)
     # a=b
     df_districts = df_districts[:-4]
     
@@ -168,7 +168,7 @@ def getTNData(file_path,date,StateCode):
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     df_summary = df_summary.dropna()
-    df_summary["Tested"] = df_tests.loc[3,"DETAILS"][:-1]
+    df_summary["Tested"] = df_tests.loc[4,"DETAILS"][:-1]
     df_summary["Tested"] = df_summary["Tested"].replace("\n","").split()[-1]
     df_summary = df_summary.str.replace(',', '').astype(int)
 
@@ -572,6 +572,6 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #ExtractFromPDF(StateCode = "LA",Date = "2021-11-18")
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-22")
 #ExtractFromPDF(StateCode = "ML",Date = "2021-12-01")
-# ExtractFromPDF(StateCode = "TN",Date = "2021-11-27")
+ExtractFromPDF(StateCode = "TN",Date = "2021-11-30")
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-12-01")
 #ExtractFromPDF(StateCode = "KA",Date = "2021-11-27")
