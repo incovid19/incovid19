@@ -133,6 +133,8 @@ def get_image(state, date, search_query):
                     images = []
                     for i in range(img_count[state]):
                         images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
+                    if None in images:
+                        return None
                     return images
                 except Exception:
                     return None
@@ -141,7 +143,6 @@ def get_image(state, date, search_query):
             images = []
             for i in range(img_count[state]):
                 images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
-                print(images)
             return images
         except Exception:
             return None
@@ -475,6 +476,8 @@ def chhattisgarh(state, date, query):
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     for i, text in enumerate(page[:-1]):
+        if text.description == 'TOTAL':
+            y = text.bounding_poly.vertices[2].y + 10
         if text.description == "POSITIVE":
             total_x1, total_x2 = text.bounding_poly.vertices[0].x + 20, text.bounding_poly.vertices[1].x + 21
             y = text.bounding_poly.vertices[2].y + 46
@@ -484,6 +487,7 @@ def chhattisgarh(state, date, query):
             dead_x1, dead_x2 = text.bounding_poly.vertices[0].x + 25, text.bounding_poly.vertices[1].x + 25
         if text.description == 'जिला':
             x, x1 = text.bounding_poly.vertices[0].x - 37, text.bounding_poly.vertices[1].x + 37
+            y = text.bounding_poly.vertices[2].y + 28
         if text.description == 'महायोग':
             y2 = text.bounding_poly.vertices[2].y
 
@@ -587,9 +591,8 @@ def himachal_pradesh(state, date, query):
     x = 40
     x2 = 125
     for i, text in enumerate(page[:-1]):
-        # print(text.description)
-        if (text.description == "Total") and (text.bounding_poly.vertices[0].x > x2):
-            total_x1, total_x2 = (text.bounding_poly.vertices[0].x) - 15, text.bounding_poly.vertices[1].x + 15
+        if ('Confirm' in text.description) and (text.bounding_poly.vertices[0].y > 500):
+            total_x1, total_x2 = text.bounding_poly.vertices[0].x, text.bounding_poly.vertices[1].x
         if (text.description == "Cured") and not total:
             recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 35, text.bounding_poly.vertices[1].x + 25
             total = True
@@ -1103,9 +1106,9 @@ def ExtractDataFromImage(state, date, handle, term):
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2021-11-16', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-11-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
-# ExtractDataFromImage('CT', '2021-11-23', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-11-29', 'nhm_hp', '#7PMupdate')
-# ExtractDataFromImage('MN', '2021-11-30', 'health_manipur', 'Manipur updates')
+# ExtractDataFromImage('CT', '2021-12-01', 'HealthCgGov', '#ChhattisgarhFightsCorona')
+# ExtractDataFromImage('HP', '2021-12-01', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('MN', '2021-12-01', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-14', 'diprjk', 'Media Bulletin')
 
