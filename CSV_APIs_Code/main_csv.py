@@ -157,6 +157,7 @@ def getStates_Districts(date):
 
     districts_df.reset_index(inplace=True,drop=True)
     districts_df = districts_df.drop_duplicates()
+    districts_df = districts_df.dropna(subset=['Date'])
     districts_df.to_csv("/home/swiadmin/test/csv/latest/districts.csv",index=False)
 
     districts_wise_df.reset_index(inplace=True,drop=True)
@@ -242,6 +243,7 @@ def get_state_wise_daily(date):
     state_wise_daily=pd.concat([state_wise_daily,temp_df_T],axis=0)
     state_wise_daily.reset_index(inplace=True,drop=True)
     state_wise_daily = state_wise_daily.drop_duplicates()
+    state_wise_daily = state_wise_daily.dropna(subset=['Date'])
     state_wise_daily.to_csv("/home/swiadmin/test/csv/latest/state_wise_daily.csv",index=False)
 
     
