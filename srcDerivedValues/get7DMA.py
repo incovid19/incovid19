@@ -91,15 +91,15 @@ def date_range(start, end):
     return [start+timedelta(days=i) for i in range(r)]
  
 
-start_date = "2021-11-06"
-end_date = "2021-12-01"
-end = datetime.strptime(end_date, '%Y-%m-%d')
-start = datetime.strptime(start_date, '%Y-%m-%d')
-dateList = date_range(start, end)
+# start_date = "2021-11-06"
+# end_date = "2021-12-01"
+# end = datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
 
-for date in dateList:
-    print(str(date.date()))
-    get_7dma_state('UT', str(date.date()))
+# for date in dateList:
+#     print(str(date.date()))
+#     get_7dma_state('UT', str(date.date()))
 # get_7dma_state('KL', '2021-11-09')
 # get_7dma_state('KL', '2021-11-10')
 # get_7dma_state('TN', '2021-11-22')
