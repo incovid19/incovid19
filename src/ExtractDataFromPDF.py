@@ -168,7 +168,7 @@ def getTNData(file_path,date,StateCode):
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     df_summary = df_summary.dropna()
-    df_summary["Tested"] = df_tests.loc[5,"DETAILS"][:-1]
+    df_summary["Tested"] = df_tests.loc[4,"DETAILS"][:-1]
     df_summary["Tested"] = df_summary["Tested"].replace("\n","").split()[-1]
     df_summary = df_summary.str.replace(',', '').astype(int)
 
