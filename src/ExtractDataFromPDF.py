@@ -148,14 +148,17 @@ def getTNData(file_path,date,StateCode):
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
+    df_tests['COVID-19 STATISTICS'] = df_tests['COVID-19 STATISTICS'].str.replace("\n","")
+    df_tests['COVID-19 STATISTICS'] = df_tests['COVID-19 STATISTICS'].str.replace("*","")
     # print(df_tests)
+    # print(df_tests[df_tests['COVID-19 STATISTICS'] == 'Total Number of samples tested by  RT-PCR today/ till date']['DETAILS'].values)
     # a=b
     
     col_dict = {"Total Positive Cases":"Confirmed","Discharged":"Recovered","Death":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_districts.drop(columns=['Sl. No','Active Cases'],inplace=True)
     df_summary = df_districts
-    print(df_districts)
+    # print(df_districts)
     # print(df_summary)
     # a=b
     df_districts = df_districts[:-4]
@@ -168,12 +171,13 @@ def getTNData(file_path,date,StateCode):
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     df_summary = df_summary.dropna()
-    df_summary["Tested"] = df_tests.loc[4,"DETAILS"][:-1]
-    df_summary["Tested"] = df_summary["Tested"].replace("\n","").split()[-1]
+    df_summary["Tested"] = df_tests[df_tests['COVID-19 STATISTICS'] == 'Total Number of samples tested by  RT-PCR today/ till date']['DETAILS'].values[0]#df_tests.loc[4,"DETAILS"][:-1]
+    # print(df_summary["Tested"])
+    df_summary["Tested"] = df_summary["Tested"].replace("\n","").split()[-1].replace("@","")
     df_summary = df_summary.str.replace(',', '').astype(int)
 
     # df_districts["Tested"] = df_summary["Tested"]
-    print(df_summary)
+    # print(df_summary)
     # a=b 
     return df_summary,df_districts
 
@@ -558,7 +562,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-04")
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-25")
-# ExtractFromPDF(StateCode = "TN",Date = "2021-12-03")
+ExtractFromPDF(StateCode = "TN",Date = "2021-12-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2021-11-14")
 #ExtractFromPDF(StateCode = "HR",Date = "2021-11-02")
 #ExtractFromPDF(StateCode = "KA",Date = "2021-11-04")
