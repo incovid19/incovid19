@@ -195,10 +195,29 @@ def getSources(source, date):
                             # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
                             downloadFile(str(date), source["StateCode"][idx], url)
                         except Exception:
-                            url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
-                                "%-d_%b_%y.pdf")
-                            # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
-                            downloadFile(str(date), source["StateCode"][idx], url)
+                            try:
+                                url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
+                                    "%-d_%b_%y.pdf")
+                                # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
+                                downloadFile(str(date), source["StateCode"][idx], url)
+                            except Exception:
+                                if ((int(str(date)[-2:]) == 11) or
+                                        (int(str(date)[-2:]) == 12) or
+                                        (int(str(date)[-2:]) == 13) or
+                                        (int(str(date)[-2:]) % 10 >= 4) or
+                                        (int(str(date)[-2:]) % 10 == 0)):
+                                    url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
+                                        "%-dth_%b_%y.pdf")
+                                elif int(str(date)[-2:]) % 10 == 3:
+                                    url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
+                                        "%-drd_%b_%y.pdf")
+                                elif int(str(date)[-2:]) % 10 == 2:
+                                    url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
+                                        "%-dnd_%b_%y.pdf")
+                                elif int(str(date)[-2:]) % 10 == 1:
+                                    url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
+                                        "%-dst_%b_%y.pdf")
+
                     elif source["StateCode"][idx] == "UT":
                         url = 'https://health.uk.gov.in/files/' + date.strftime("%Y.%m.%d_Health_Bulletin.pdf")
                         downloadFile(str(date), source["StateCode"][idx], url)
