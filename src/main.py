@@ -20,6 +20,7 @@ from getHTMLData import ExtractFromHTML
 import pandas as pd
 # today = "2021-11-05"
 print("getSources for:"+ str(today))
+# a=b
 source = pd.read_csv(r"../sources.csv")
 # print(source)
 # a=b
