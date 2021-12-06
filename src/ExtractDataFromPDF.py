@@ -577,5 +577,5 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-22")
 #ExtractFromPDF(StateCode = "ML",Date = "2021-12-01")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-03")
-# ExtractFromPDF(StateCode = "RJ",Date = "2021-12-04")
+ExtractFromPDF(StateCode = "RJ",Date = "2021-12-06")
 #ExtractFromPDF(StateCode = "KA",Date = "2021-11-27")
