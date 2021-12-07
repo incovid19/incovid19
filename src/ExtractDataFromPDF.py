@@ -360,8 +360,10 @@ def getUKData(file_path,date,StateCode):
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","")  
     
-    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated"}
+    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated","Migrated/Others":"Migrated"}
     df_districts.rename(columns=col_dict,inplace=True)
+    print(df_districts)
+    # a=b
     df_districts['Recovered'] += df_districts['Migrated']
     # df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
     for col in df_districts.columns:
@@ -560,8 +562,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
-# ExtractFromPDF(StateCode = "ML",Date = "2021-12-04")
-#ExtractFromPDF(StateCode = "RJ",Date = "2021-11-25")
+#ExtractFromPDF(StateCode = "LA",Date = "2021-12-06")
+ExtractFromPDF(StateCode = "UT",Date = "2021-12-06")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-12-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2021-11-14")
 #ExtractFromPDF(StateCode = "HR",Date = "2021-11-02")
@@ -577,5 +579,5 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #ExtractFromPDF(StateCode = "RJ",Date = "2021-11-22")
 #ExtractFromPDF(StateCode = "ML",Date = "2021-12-01")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-03")
-ExtractFromPDF(StateCode = "RJ",Date = "2021-12-06")
+# ExtractFromPDF(StateCode = "RJ",Date = "2021-12-06")
 #ExtractFromPDF(StateCode = "KA",Date = "2021-11-27")
