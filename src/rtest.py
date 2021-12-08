@@ -18,6 +18,6 @@ from rmain import rscheduler
 
 scheduler = Scheduler(connection=Redis()) # Get a scheduler for the "default" queue
 
-job = scheduler.enqueue_in(timedelta(hours=1),rscheduler)
+job = scheduler.schedule(scheduled_time=datetime.utcnow(), func=rscheduler, repeat=None, interval=14400)
 
 print("Enqueued job ",job)
