@@ -190,8 +190,7 @@ def getSources(source, date):
                         downloadFile(str(date), source["StateCode"][idx], url)
                     elif source["StateCode"][idx] == "ML":
                         try:
-                            url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime(
-                                "%-d_%b_%Y.pdf")
+                            url = 'https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_' + date.strftime("%-d_%b_%Y.pdf")
                             # https://meghalaya.gov.in/sites/default/files/announcement/District_Wise_7_Nov_2021.pdf
                             downloadFile(str(date), source["StateCode"][idx], url)
                         except Exception:
