@@ -7,6 +7,99 @@ import numpy as np
 # from datetime import datetime
 import os
 from datetime import datetime,timedelta
+import requests
+
+def vaccination_numbers_api_csv(state_name,Date):
+    
+    if state_name=="Dadra and Nagar Haveli and Daman and Diu":
+        vaccination_number_DNH=vaccination_numbers_api_csv("Dadra and Nagar Haveli",Date)
+        vaccination_number_DND=vaccination_numbers_api_csv("Daman and Diu",Date)
+                
+        First_Dose_Administered=vaccination_number_DNH[0]+vaccination_number_DND[0]
+        Second_Dose_Administered=vaccination_number_DNH[1]+vaccination_number_DND[1]
+        Total_Doses_Administered=vaccination_number_DNH[2]+vaccination_number_DND[2]
+        Sessions=vaccination_number_DNH[3]+vaccination_number_DND[3]
+        Sites=vaccination_number_DNH[4]+vaccination_number_DND[4]
+        Male_Doses_Administered=vaccination_number_DNH[5]+vaccination_number_DND[5]
+        Female_Doses_Administered=vaccination_number_DNH[6]+vaccination_number_DND[6]
+        Transgender_Doses_Administered=vaccination_number_DNH[7]+vaccination_number_DND[7]
+        Covaxin_Doses_Administered=vaccination_number_DNH[8]+vaccination_number_DND[8]
+        CoviShield_Doses_Administered=vaccination_number_DNH[9]+vaccination_number_DND[9]
+        Sputnik_Doses_Administered=vaccination_number_DNH[10]+vaccination_number_DND[10]
+        aefi_Doses_Administered=vaccination_number_DNH[11]+vaccination_number_DND[11]
+        years_18_44=vaccination_number_DNH[12]+vaccination_number_DND[12]
+        years_45_60=vaccination_number_DNH[13]+vaccination_number_DND[13]
+        years_60_plus=vaccination_number_DNH[14]+vaccination_number_DND[14]
+        
+        
+        return(First_Dose_Administered,Second_Dose_Administered,Total_Doses_Administered,
+            Sessions,Sites,Male_Doses_Administered,Female_Doses_Administered,Transgender_Doses_Administered,
+           Covaxin_Doses_Administered,CoviShield_Doses_Administered,Sputnik_Doses_Administered,
+           Sputnik_Doses_Administered,aefi_Doses_Administered,years_18_44,years_45_60,years_60_plus)
+        
+    if not isinstance(Date,str):
+        Date=Date.strftime("%Y-%m-%d")
+    
+    cowin_codes=pd.read_csv("../CSV/CowinAppStateAndDistrictCode.csv")
+#     print(state_name)
+    state_cumulative_vaccinated1=0
+    First_Dose_Administered=0
+    Second_Dose_Administered=0
+    Total_Doses_Administered=0
+    Sessions=0
+    Sites=0
+    Male_Doses_Administered=0
+    Female_Doses_Administered=0
+    Transgender_Doses_Administered=0
+    Covaxin_Doses_Administered=0
+    CoviShield_Doses_Administered=0
+    Sputnik_Doses_Administered=0
+    Sputnik_Doses_Administered=0
+    aefi_Doses_Administered=0
+    years_18_44=0
+    years_45_60=0
+    years_60_plus=0
+        
+    #State Numbers
+    if state_name=="Dadra and Nagar Haveli":
+        cowin_state_code=8
+    elif state_name=="Daman and Diu":
+        cowin_state_code=37
+    elif state_name=="India":
+        cowin_state_code=None
+    else:
+        cowin_state_code=cowin_codes.loc[cowin_codes["state_name"]==state_name,"state_id"]
+        cowin_state_code.reset_index(inplace=True,drop=True)
+        cowin_state_code=list(set(cowin_state_code))[0]
+    
+    if state_name!="India":
+        api_url_state="https://api.cowin.gov.in/api/v1/reports/v2/getPublicReports?state_id="+str(cowin_state_code)+"&date="+Date
+        api_data_state=requests.get(api_url_state)
+    else:
+        api_url_state="https://api.cowin.gov.in/api/v1/reports/v2/getPublicReports?date="+Date
+        api_data_state=requests.get(api_url_state)
+        
+    First_Dose_Administered=api_data_state.json()["topBlock"]["vaccination"]["tot_dose_1"]
+    Second_Dose_Administered=api_data_state.json()["topBlock"]["vaccination"]["tot_dose_2"]
+    Total_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["total"]
+    Sessions=api_data_state.json()["topBlock"]["sessions"]["total"]
+    Sites=api_data_state.json()["topBlock"]["sites"]["total"]
+    Male_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["male"]
+    Female_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["female"]
+    Transgender_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["others"]
+    Covaxin_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["covaxin"]
+    CoviShield_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["covishield"]
+    Sputnik_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["sputnik"]
+    aefi_Doses_Administered=api_data_state.json()["topBlock"]["vaccination"]["aefi"]
+    years_18_44=api_data_state.json()["vaccinationByAge"]["vac_18_45"]
+    years_45_60=api_data_state.json()["vaccinationByAge"]["vac_45_60"]
+    years_60_plus=api_data_state.json()["vaccinationByAge"]["above_60"]
+       
+        
+    return (First_Dose_Administered,Second_Dose_Administered,Total_Doses_Administered,
+            Sessions,Sites,Male_Doses_Administered,Female_Doses_Administered,Transgender_Doses_Administered,
+           Covaxin_Doses_Administered,CoviShield_Doses_Administered,Sputnik_Doses_Administered,
+            aefi_Doses_Administered,years_18_44,years_45_60,years_60_plus)
 
 def get_case_time_series(date):
     # source_path="../RAWCSV/2021-11-01"
@@ -246,25 +339,230 @@ def get_state_wise_daily(date):
     state_wise_daily = state_wise_daily.dropna(subset=['Date'])
     state_wise_daily.to_csv("/home/swiadmin/test/csv/latest/state_wise_daily.csv",index=False)
 
-    
-    
+def get_vaccine_district_final(date):
+    dates_list = [date]
+    STATE_NAMES = {
+      'AP': 'Andhra Pradesh',
+      'AR': 'Arunachal Pradesh',
+      'AS': 'Assam',
+      'BR': 'Bihar',
+      'CT': 'Chhattisgarh',
+      'GA': 'Goa',
+      'GJ': 'Gujarat',
+      'HR': 'Haryana',
+      'HP': 'Himachal Pradesh',
+      'JH': 'Jharkhand',
+      'KA': 'Karnataka',
+      'KL': 'Kerala',
+      'MP': 'Madhya Pradesh',
+      'MH': 'Maharashtra',
+      'MN': 'Manipur',
+      'ML': 'Meghalaya',
+      'MZ': 'Mizoram',
+      'NL': 'Nagaland',
+      'OR': 'Odisha',
+      'PB': 'Punjab',
+      'RJ': 'Rajasthan',
+      'SK': 'Sikkim',
+      'TN': 'Tamil Nadu',
+      'TG': 'Telangana',
+      'TR': 'Tripura',
+      'UT': 'Uttarakhand',
+      'UP': 'Uttar Pradesh',
+      'WB': 'West Bengal',
+      'AN': 'Andaman and Nicobar Islands',
+      'CH': 'Chandigarh',
+      'DN': 'Dadra and Nagar Haveli and Daman and Diu',
+      'DL': 'Delhi',
+      'JK': 'Jammu and Kashmir',
+      'LA': 'Ladakh',
+      'LD': 'Lakshadweep',
+      'PY': 'Puducherry',
+      'TT': 'India',
+     # [UNASSIGNED_STATE_CODE]: 'Unassigned',
+    }
 
-def date_range(start, end):
-    r = (end+timedelta(days=1)-start).days
-    return [start+timedelta(days=i) for i in range(r)]
+    #Change the date here to get historical dates
+    # date_=datetime.strptime('2021-12-04',"%Y-%m-%d")
+    # dates_list= [date_+timedelta(days=i) for i in range(4)]
+    # dates_list
+
+    source_path="../RAWCSV"
+
+    for Date in dates_list:
+        tdate = Date
+        date=tdate.strftime("%d/%m/%Y")
+        if not isinstance(Date,str):
+            Date=Date.strftime("%Y-%m-%d")
+        print(Date)
+        # /home/swiadmin/test/csv/latest/
+        cowin_vaccine_data_districtwise_prev=pd.read_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_districtwise.csv",header=[0,1])
+        try:
+            cowin_vaccine_data_districtwise_prev = cowin_vaccine_data_districtwise_prev.drop([date],axis=1)
+        except:
+            pass
+        cowin_vaccine_data_districtwise_master=pd.DataFrame()
+        for state in STATE_NAMES.keys():
+            if state=="TT":
+                continue
+    #         print(state)
+            state_=pd.read_csv(f"{source_path}/{Date}/{state}_final.csv")
+            state_.dropna(subset=["District"],axis=0,inplace=True)
+            state_.reset_index(inplace=True,drop=True)
+            temp_state_df=pd.DataFrame()
+            temp_state_df["District"]=state_["District"]
+            temp_state_df["State_Code"]=state
+            temp_state_df["State"]=temp_state_df["State_Code"].map(STATE_NAMES)
+            temp_state_df["District_Key"]=temp_state_df.apply(lambda rw: rw["State_Code"]+"_"+rw["District"],axis=1)
+            temp_state_df["First Dose Administered"]=state_["cumulativeVaccinated1NumberForDistrict"]
+            temp_state_df["Second Dose Administered"]=state_["cumulativeVaccinated2NumberForDistrict"]
+            temp_state_df["Total Dose Administered"]=temp_state_df["First Dose Administered"]+temp_state_df["Second Dose Administered"]
+            cowin_vaccine_data_districtwise_master=pd.concat([cowin_vaccine_data_districtwise_master,temp_state_df],axis=0)
+
+        # if not isinstance(Date,str):
+
+
+        columns=pd.MultiIndex.from_tuples(zip(["District","State_Code","State",
+                    "District_Key",date,date,date],
+                   [" "," "," "," ","Total Doses Administered",
+                    "First Dose Administered","Second Dose Administered"
+                   ]))
+        cowin_vaccine_data_districtwise_master.columns=columns
+        cowin_vaccine_data_districtwise_master.reset_index(inplace=True,drop=True)
+
+        cowin_vaccine_data_districtwise_latest=pd.merge(cowin_vaccine_data_districtwise_prev,cowin_vaccine_data_districtwise_master,
+                                                       left_on=[("State_Code"," "),("State"," "),("District_Key"," "),("District"," ")],
+                                                       right_on=[("State_Code"," "),("State"," "),("District_Key"," "),("District"," ")],
+                                                       how="left")
+        cowin_vaccine_data_districtwise_latest = cowin_vaccine_data_districtwise_latest.drop_duplicates()
+        cowin_vaccine_data_districtwise_latest.to_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_districtwise.csv",index=False)
+
+
+def get_vaccine_state_csv(date):
+    dates_list = [date]
+    STATE_NAMES = {
+      'AP': 'Andhra Pradesh',
+      'AR': 'Arunachal Pradesh',
+      'AS': 'Assam',
+      'BR': 'Bihar',
+      'CT': 'Chhattisgarh',
+      'GA': 'Goa',
+      'GJ': 'Gujarat',
+      'HR': 'Haryana',
+      'HP': 'Himachal Pradesh',
+      'JH': 'Jharkhand',
+      'KA': 'Karnataka',
+      'KL': 'Kerala',
+      'MP': 'Madhya Pradesh',
+      'MH': 'Maharashtra',
+      'MN': 'Manipur',
+      'ML': 'Meghalaya',
+      'MZ': 'Mizoram',
+      'NL': 'Nagaland',
+      'OR': 'Odisha',
+      'PB': 'Punjab',
+      'RJ': 'Rajasthan',
+      'SK': 'Sikkim',
+      'TN': 'Tamil Nadu',
+      'TG': 'Telangana',
+      'TR': 'Tripura',
+      'UT': 'Uttarakhand',
+      'UP': 'Uttar Pradesh',
+      'WB': 'West Bengal',
+      'AN': 'Andaman and Nicobar Islands',
+      'CH': 'Chandigarh',
+      'DN': 'Dadra and Nagar Haveli and Daman and Diu',
+      'DL': 'Delhi',
+      'JK': 'Jammu and Kashmir',
+      'LA': 'Ladakh',
+      'LD': 'Lakshadweep',
+      'PY': 'Puducherry',
+      'TT': 'India',
+     # [UNASSIGNED_STATE_CODE]: 'Unassigned',
+    }
+
+    #Creating the mapping dictionary for multiple districts addition scenario
+    cowin_codes=pd.read_csv("../CSV/CowinAppStateAndDistrictCode.csv")
+    cowin_codes_map={}
+    cowin_codes["district_id_add"]=cowin_codes[["district_id_add"]].fillna("NULL")
+
+    for i,d_id in enumerate(cowin_codes["district_id"]):
+    #     print(d_id)
+        add_dist_id=cowin_codes.loc[i,"district_id_add"]
+        if add_dist_id !="NULL":
+            cowin_codes_map[str(int(d_id))]=[str(int(add_dist_id)),str(int(d_id))]
+        else:
+            cowin_codes_map[str(int(d_id))]=[str(int(d_id))]
+
+    #Change the date here to get historical dates
+    # date_=datetime.strptime('2021-11-01',"%Y-%m-%d")
+    # dates_list= [date_+timedelta(days=i) for i in range(37)]
+    # dates_list
+
+    #loop using the new vaccination_numbers_api_csv
+    df_prev=pd.read_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_statewise.csv",)
+    for Date in dates_list:
+    #     path=f"./Historical Data/CSV_api/{Date.strftime('%Y-%m-%d')}"
+    #     os.makedirs(path, exist_ok=True)
+        print(Date)
+        i=0
+        for _,state in STATE_NAMES.items(): #:["Uttar Pradesh"]
+            i+=1
+            print(i,state)
+            df=pd.DataFrame(columns=["Updated On","State","Total Doses Administered",
+                                     "Sessions","Sites","First Dose Administered","Second Dose Administered",
+                                     "Male (Doses Administered)","Female (Doses Administered)","Transgender (Doses Administered)",
+                                     "Covaxin (Doses Administered)","CoviShield (Doses Administered)","Sputnik V (Doses Administered)",
+                                     "AEFI","18-44 Years (Doses Administered)","45-60 Years (Doses Administered)","60+ Years (Doses Administered)"
+                                     ])
+
+            vacc_data=vaccination_numbers_api_csv(state,Date)
+            df.loc[i,"Updated On"]=Date.date()
+            df.loc[i,"State"]=state
+            df.loc[i,"Total Doses Administered"]=vacc_data[2]
+            df.loc[i,"Sessions"]=vacc_data[3]
+            df.loc[i,"Sites"]=vacc_data[4]
+            df.loc[i,"First Dose Administered"]=vacc_data[0]
+            df.loc[i,"Second Dose Administered"]=vacc_data[1]
+            df.loc[i,"Male (Doses Administered)"]=vacc_data[5]
+            df.loc[i,"Female (Doses Administered)"]=vacc_data[6]
+            df.loc[i,"Transgender (Doses Administered)"]=vacc_data[7]
+            df.loc[i,"Covaxin (Doses Administered)"]=vacc_data[8]
+            df.loc[i,"CoviShield (Doses Administered)"]=vacc_data[9]
+            df.loc[i,"Sputnik V (Doses Administered)"]=vacc_data[10]
+            df.loc[i,"AEFI"]=vacc_data[11]
+            df.loc[i,"18-44 Years (Doses Administered)"]=vacc_data[12]
+            df.loc[i,"45-60 Years (Doses Administered)"]=vacc_data[13]
+            df.loc[i,"60+ Years (Doses Administered)"]=vacc_data[14]
+
+            df_prev=pd.concat([df_prev,df],axis=0)
+            df_prev.reset_index(inplace=True,drop=True)
+    df_prev.to_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_statewise.csv",index=False)
+
+# df_prev.to_csv("cowin_vaccine_data_statewise_latest.csv",index=False)
+        
+        
+        
+
+# def date_range(start, end):
+#     r = (end+timedelta(days=1)-start).days
+#     return [start+timedelta(days=i) for i in range(r)]
  
 
-start_date = "2021-10-31"
-end_date = "2021-12-03"
-end = datetime.strptime(end_date, '%Y-%m-%d')
-start = datetime.strptime(start_date, '%Y-%m-%d')
-dateList = date_range(start, end)
+# start_date = "2021-12-03"
+# end_date = "2021-12-06"
+# end = datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
 
-for date in dateList:
-    get_case_time_series(str(date.date()))
-    getStates_Districts(str(date.date()))
-    get_state_wise_daily(str(date.date()))
+# for date in dateList:
+#     get_case_time_series(str(date.date()))
+#     getStates_Districts(str(date.date()))
+#     get_state_wise_daily(str(date.date()))
 # date = "2021-11-30"
-# get_case_time_series(date)
-# getStates_Districts(date)
-# get_state_wise_daily(date)
+date = (datetime.now() - timedelta(days=1)).date()
+get_case_time_series(str(date))
+getStates_Districts(str(date))
+get_state_wise_daily(str(date))
+get_vaccine_district_final(date)
+get_vaccine_state_csv(date)
