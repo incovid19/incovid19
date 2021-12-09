@@ -517,7 +517,7 @@ def get_vaccine_state_csv(date):
                                      ])
 
             vacc_data=vaccination_numbers_api_csv(state,Date)
-            df.loc[i,"Updated On"]=Date.date()
+            df.loc[i,"Updated On"]=Date
             df.loc[i,"State"]=state
             df.loc[i,"Total Doses Administered"]=vacc_data[2]
             df.loc[i,"Sessions"]=vacc_data[3]
