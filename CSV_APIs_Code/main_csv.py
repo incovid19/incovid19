@@ -549,8 +549,8 @@ def get_vaccine_state_csv(date):
 #     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-12-03"
-# end_date = "2021-12-06"
+# start_date = "2021-11-01"
+# end_date = "2021-12-09"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)
@@ -559,6 +559,8 @@ def get_vaccine_state_csv(date):
 #     get_case_time_series(str(date.date()))
 #     getStates_Districts(str(date.date()))
 #     get_state_wise_daily(str(date.date()))
+#     get_vaccine_district_final(date)
+#     get_vaccine_state_csv(date)
 # date = "2021-11-30"
 date = (datetime.now() - timedelta(days=1)).date()
 get_case_time_series(str(date))
