@@ -107,4 +107,6 @@ def date_range(start, end):
 # get_7dma_state('KL', '2021-11-10')
 # get_7dma_state('WB', '2021-11-13')
 # get_7dma_state('HR', '2021-11-06')
-# get_7dma_state('HR', '2021-11-13')
+# get_7dma_state('JK', '2021-11-12')
+# get_7dma_state('JK', '2021-11-15')
+# get_7dma_state('AR', '2021-11-27')
