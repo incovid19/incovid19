@@ -66,7 +66,8 @@ def getRJData(file_path,date,StateCode):
     # print(df_districts)
     # a=b
     # df_summary = df_districts
-    df_districts = df_districts[:-4]
+    # df_districts = df_districts[:-1]
+    # df_districts = df_districts[:-4]
     # print(df_districts)
     # a=b
     df_summary = df_districts
@@ -573,4 +574,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-25")
 # ExtractFromPDF(StateCode = "AP",Date = "2021-11-27")
 # ExtractFromPDF(StateCode = "PB",Date = "2021-12-08")
-# ExtractFromPDF(StateCode = "RJ",Date = "2021-12-13")
+ExtractFromPDF(StateCode = "RJ",Date = "2021-12-13")
