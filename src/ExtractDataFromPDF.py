@@ -564,8 +564,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
-# ExtractFromPDF(StateCode = "LA",Date = "2021-12-11")
-# ExtractFromPDF(StateCode = "UT",Date = "2021-12-11")
+# ExtractFromPDF(StateCode = "LA",Date = "2021-12-12")
+# ExtractFromPDF(StateCode = "UT",Date = "2021-12-12")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-12")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
