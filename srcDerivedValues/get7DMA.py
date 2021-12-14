@@ -86,20 +86,20 @@ def get_7dma(date):
 
 #get_7dma('2021-11-13')
 
-def date_range(start, end):
-    r = (end+timedelta(days=1)-start).days
-    return [start+timedelta(days=i) for i in range(r)]
+# def date_range(start, end):
+#     r = (end+timedelta(days=1)-start).days
+#     return [start+timedelta(days=i) for i in range(r)]
  
 
-start_date = "2021-11-12"
-end_date = "2021-11-18"
-end = datetime.strptime(end_date, '%Y-%m-%d')
-start = datetime.strptime(start_date, '%Y-%m-%d')
-dateList = date_range(start, end)
+# start_date = "2021-11-12"
+# end_date = "2021-11-18"
+# end = datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
 
-for date in dateList:
-    print(str(date.date()))
-    get_7dma_state('JK', str(date.date()))
+# for date in dateList:
+#     print(str(date.date()))
+#     get_7dma_state('JK', str(date.date()))
     # get_7dma_state('PB', str(date.date()))
 #     get_7dma_state('GJ', str(date.date()))
     
