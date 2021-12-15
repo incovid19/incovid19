@@ -22,8 +22,8 @@ def get_7dma_state(state, date):
     for col in cols:
         df[f'7Dma{col}ForState'] = round(df[f'7Dma{col}ForState'] / 7)
         df[f'7Dma{col}ForDistrict'] = round(df[f'7Dma{col}ForDistrict'] / 7)
-    df.to_csv(f"../RAWCSV_7DMA/{state}_final.csv", index=False)
-    #return df
+    # df.to_csv(f"../RAWCSV_7DMA/{state}_final.csv", index=False)
+    return df
 
 
 def get_7dma(date):
@@ -33,14 +33,4 @@ def get_7dma(date):
         get_7dma_state(state, date)
 
 
-# get_7dma_state("TN", "2021-10-31")
-# get_7dma_state("TN", "2021-11-01")
-# get_7dma_state("TN", "2021-11-02")
-# get_7dma_state("TN", "2021-11-03")
-# get_7dma_state("TN", "2021-11-04")
-# get_7dma_state("TN", "2021-11-05")
-print("running 7 DMA")
-get_7dma_state("TN", "2021-11-06")
-# get_7dma_state("TN", "2021-11-07")
-
-
+# get_7dma('2021-11-10')
