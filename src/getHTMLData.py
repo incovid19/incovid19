@@ -306,6 +306,7 @@ def india(state, date, path):
 
     # sum_URL = "https://www.mygov.in/covid-19"
     # sum_file_name, sum_headers = urllib.request.urlretrieve(sum_URL)
+    #sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
     sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
 
     STATES = soup.find_all("div", {"class": "field field-name-field-select-state field-type-list-text field-label-above"})
