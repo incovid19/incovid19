@@ -97,6 +97,8 @@ def getSources(source, date):
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT_State.html")
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT_State" + "_" + datetime.now().strftime("%H_%M") + ".html")
                         file_name, headers = urllib.request.urlretrieve("https://www.mygov.in/covid-19")
+                        with open(r"../INPUT/" + str(source_date) + "/TT.html", 'w', encoding='utf8') as fp:        
+                            fp.write(page_content)
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT.html")
                         copyfile(file_name, r"../INPUT/" + str(source_date) + "/TT" + "_" + datetime.now().strftime("%H_%M") + ".html")
                         StatusMsg(source["StateCode"][idx], str(source_date), "OK", "File Downloaded from" + source["StateDataURL"][idx], program="GetSource")
