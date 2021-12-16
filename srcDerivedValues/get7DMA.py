@@ -66,6 +66,7 @@ def get_7dma_state(state, date):
     if df['7DmaTestedForState'].isnull().values.all():
         prev_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(1)).strftime("%Y-%m-%d")
         test_df = pd.read_csv(f'../RAWCSV/{prev_date}/{state}_final.csv')
+        test_df.set_index('District', inplace=True, drop=False)
         for dist in list(df['District']):
             if dist not in list(test_df['District']):
                 test_df = test_df.append({
