@@ -66,7 +66,6 @@ def get_7dma_state(state, date):
     if df['7DmaTestedForState'].isnull().values.all():
         prev_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(1)).strftime("%Y-%m-%d")
         test_df = pd.read_csv(f'../RAWCSV/{prev_date}/{state}_final.csv')
-        test_df.set_index('District', inplace=True, drop=False)
         for dist in list(df['District']):
             if dist not in list(test_df['District']):
                 test_df = test_df.append({
@@ -74,6 +73,7 @@ def get_7dma_state(state, date):
                     '7DmaTestedForState': test_df['7DmaTestedForState'][0]
                 }, ignore_index=True)
         test_df.sort_values('District', inplace=True)
+        test_df.set_index('District', inplace=True, drop=False)
         df['7DmaTestedForState'] = test_df['7DmaTestedForState']
         df['7DmaTestedForDistrict'][df['District'] != 'Unknown'] = test_df['7DmaTestedForDistrict'][test_df['District'] != 'Unknown']
     df.to_csv(f"../RAWCSV/{date}/{state}_final.csv", index=False)
@@ -92,24 +92,22 @@ def get_7dma(date):
 #     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-10-31"
-# end_date = "2021-11-30"
+# start_date = "2021-12-01"
+# end_date = "2021-12-15"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)
 
 # for date in dateList:
 #     print(str(date.date()))
-#     get_7dma_state('MH', str(date.date()))
+#     get_7dma_state('BR', str(date.date()))
 
-#get_7dma_state('MH', str(date.date()))
-    
-#get_7dma_state('GJ', str(date.date()))
-    
-# get_7dma_state('MH', '2021-11-11')
-# get_7dma_state('TN', '2021-12-04')
-get_7dma_state('MN', '2021-11-06')
-# get_7dma_state('MN', '2021-11-16')
+# get_7dma_state('UT', '2021-12-15')
+# get_7dma_state('BR', '2021-12-14')
+# get_7dma_state('CT', '2021-12-14')
+# get_7dma_state('JK', '2021-12-14')
+# get_7dma_state('MN', '2021-12-14')
+# get_7dma_state('HP', '2021-12-14')
 
 #get_7dma('2021-11-13')
-# get_7dma_state('MH', '2021-11-08')
+# get_7dma_state('WB', '2021-11-14')
