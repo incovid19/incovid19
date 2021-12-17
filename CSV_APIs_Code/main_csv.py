@@ -517,7 +517,7 @@ def get_vaccine_state_csv(date):
                                      ])
 
             vacc_data=vaccination_numbers_api_csv(state,Date)
-            df.loc[i,"Updated On"]=Date
+            df.loc[i,"Updated On"]=Date.date()
             df.loc[i,"State"]=state
             df.loc[i,"Total Doses Administered"]=vacc_data[2]
             df.loc[i,"Sessions"]=vacc_data[3]
@@ -549,18 +549,18 @@ def get_vaccine_state_csv(date):
 #     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-11-30"
-# end_date = "2021-12-14"
+# start_date = "2021-11-01"
+# end_date = "2021-12-16"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)
 
 # for date in dateList:
-#     get_case_time_series(str(date.date()))
-#     getStates_Districts(str(date.date()))
-#     get_state_wise_daily(str(date.date()))
-#     get_vaccine_district_final(date)
-#     get_vaccine_state_csv(date)
+    # get_case_time_series(str(date.date()))
+    # getStates_Districts(str(date.date()))
+    # get_state_wise_daily(str(date.date()))
+    # get_vaccine_district_final(date)
+    # get_vaccine_state_csv(date)
 # date = "2021-11-30"
 date = (datetime.now() - timedelta(days=1)).date()
 get_case_time_series(str(date))
