@@ -2,7 +2,7 @@ import os
 import datetime
 import timedelta
 
-today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
+today = (datetime.datetime.now() - timedelta.Timedelta(days=0)).date()
 # present = datetime.datetime.now().date()
 
 folders = ["INPUT","RAWCSV","LOG"]
@@ -18,7 +18,7 @@ from ExtractDataFromPDF import ExtractFromPDF
 from ExtractStateMyGov import ExtractStateMyGov
 from getHTMLData import ExtractFromHTML
 import pandas as pd
-# today = "2021-11-05"
+# today = "2021-12-19"
 print("getSources for:"+ str(today))
 # a=b
 source = pd.read_csv(r"../sources.csv")
