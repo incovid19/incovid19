@@ -2,7 +2,7 @@ import os
 import datetime
 import timedelta
 
-today = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
+today = (datetime.datetime.now() - timedelta.Timedelta(days=0)).date()
 # present = datetime.datetime.now().date()
 
 folders = ["INPUT","RAWCSV","LOG"]
