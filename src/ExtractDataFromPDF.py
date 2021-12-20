@@ -117,8 +117,8 @@ def getKAData(file_path,date,StateCode):
     # print(df_districts)
     # a=b
     
-    # df_summary = df_districts[df_districts["Sl. No"] == "Total"].iloc[0]
-    df_summary = df_districts[df_districts["District"] == "Total"].iloc[0]
+    df_summary = df_districts[df_districts["Sl. No"] == "Total"].iloc[0]
+    # df_summary = df_districts[df_districts["District"] == "Total"].iloc[0]
     # print(df_summary)
     # a=b
     df_districts = df_districts[pd.to_numeric(df_districts['Sl. No'], errors='coerce').notnull()]
@@ -578,3 +578,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "PB",Date = "2021-12-15")
 # ExtractFromPDF(StateCode = "LA",Date = "2021-12-18")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-18")
+# ExtractFromPDF(StateCode = "KA",Date = "2021-12-19")
