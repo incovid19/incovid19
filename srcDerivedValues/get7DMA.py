@@ -87,30 +87,30 @@ def get_7dma(date):
         print(state)
         get_7dma_state(state, date)
         
-states = ["BR", "CT", "HP", "MN", "ML", "NL", "PB", "LA", "UT", "JK" ,"RJ" , "HR"]
+# states = ["MN"]
 
-def date_range(start, end):
-    r = (end+timedelta(days=1)-start).days
-    return [start+timedelta(days=i) for i in range(r)]
+# def date_range(start, end):
+#     r = (end+timedelta(days=1)-start).days
+#     return [start+timedelta(days=i) for i in range(r)]
  
 
-start_date = "2021-11-01"
-end_date = "2021-12-19"
-end = datetime.strptime(end_date, '%Y-%m-%d')
-start = datetime.strptime(start_date, '%Y-%m-%d')
-dateList = date_range(start, end)
+# start_date = "2021-10-31"
+# end_date = "2021-12-21"
+# end = datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
 
-for date in dateList:
-    print(str(date.date()))
-    for state in states:
-        get_7dma_state(state, str(date.date()))
+# for date in dateList:
+#     print(str(date.date()))
+#     for state in states:
+#         get_7dma_state(state, str(date.date()))
 
 # get_7dma_state('UT', '2021-12-15')
 # get_7dma_state('BR', '2021-12-14')
 # get_7dma_state('CT', '2021-12-14')
 # get_7dma_state('JK', '2021-12-14')
-# get_7dma_state('MN', '2021-12-14')
-# get_7dma_state('HP', '2021-12-14')
+# get_7dma_state('MN', '2021-11-06')
+# get_7dma_state('LA', '2021-11-04')
 
 #get_7dma('2021-11-13')
 # get_7dma_state('WB', '2021-11-14')
