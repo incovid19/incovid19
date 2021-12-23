@@ -82,11 +82,15 @@ def get_detected_text(image, col, state):
         semiformatted_txt = unformatted_txt.split("\n")
         # print(semiformatted_txt)
         for text in semiformatted_txt:
+            if (state == 'Puducherry') and (")" not in text) and (col != 'tested'):
+                continue
             text = text.replace('.', '')
             text = text.replace(',', '')
             text = text.replace('*', '')
             text = text.replace('I', '1')
             text = text.replace('€', '6')
+            text = text.replace('(', '')
+            text = text.replace(')', '')
             text = text.split(" ")
             for i in text:
                 try:
@@ -106,6 +110,7 @@ def get_image(state, date, search_query):
         'MN': 3,
         'RJ': 1,
         'JK': 4,
+        'PY': 1,
     }
     query = search_query + '&expansions=attachments.media_keys&media.fields=url&tweet.fields=created_at'
     response = requests.get("https://api.twitter.com/2/tweets/search/recent?query=" + query, headers=header)
@@ -128,12 +133,22 @@ def get_image(state, date, search_query):
                             continue
                     if len(images) > 0:
                         return images
+                else:
+                    try:
+                        images = []
+                        for i in range(img_count[state]):
+                            images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
+                        if any(img is None for img in images):
+                            return None
+                        return images
+                    except Exception:
+                        return None
             else:
                 try:
                     images = []
                     for i in range(img_count[state]):
                         images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
-                    if None in images:
+                    if any(img is None for img in images):
                         return None
                     return images
                 except Exception:
@@ -193,6 +208,7 @@ def arunachal_pradesh(state, date, query):
     page_text = page[0].description
     date_start = page_text.find(status_text)
     date_end = page_text.find("M", date_start)
+    print(page_text)
 
     date_string = page_text[date_start:date_end+1].replace(status_text, "").replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace(".", "")
     last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B %Y (updated at  %I%M %p"))
@@ -978,8 +994,8 @@ def jammu_kashmir(state, date, query):
 
     cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image_concat([test_image, image]))
 
-    page = client.document_text_detection(image=get_bytes(image)).text_annotations
-    page_text = page[0].description
+    # page = client.document_text_detection(image=get_bytes(image)).text_annotations
+    # page_text = page[0].description
 
     for i, text in enumerate(page[:-1]):
         if text.description == "Total":
@@ -1062,6 +1078,123 @@ def jammu_kashmir(state, date, query):
     return ["OK", "Data successfully extracted for " + state + added_status_message]
 
 
+# Extract data for Pondicherry
+def pondicherry(state, date, query):
+    state_name = "Puducherry"
+    client = vision.ImageAnnotatorClient()
+    image = get_image(state, date, query)
+    if image is None:
+        return ['ERR', 'Source not accessible']
+
+    image = image[0]
+
+    page = client.document_text_detection(image=get_bytes(image)).text_annotations
+    page_text = page[0].description
+
+    status_text = "Government of Puducherry"
+    date_end = page_text.find(status_text)
+    page_text = page_text.replace(status_text, "")
+
+    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(page_text[:date_end], "%d.%m.%Y\n%I.%M %p\n"))
+
+    cv2.imwrite('../INPUT/' + date + "/" + state + ".jpeg", image)
+
+    page = client.document_text_detection(image=get_bytes(image)).text_annotations
+    page_text = page[0].description
+
+    for i, text in enumerate(page[:-1]):
+        if text.description == "TESTED":
+            total_x1, total_x2 = text.bounding_poly.vertices[0].x - 20, text.bounding_poly.vertices[1].x + 20
+        if text.description == "Death":
+            dead_x1, dead_x2 = text.bounding_poly.vertices[0].x - 40, text.bounding_poly.vertices[1].x
+        if text.description == "Recovered":
+            recover_x1, recover_x2 = text.bounding_poly.vertices[0].x - 30, text.bounding_poly.vertices[1].x
+        if text.description == 'New':
+            x, x2 = text.bounding_poly.vertices[0].x - 50, text.bounding_poly.vertices[1].x + 20
+            y = text.bounding_poly.vertices[2].y + 40
+        if text.description == "STATISTICS":
+            y2 = text.bounding_poly.vertices[2].y - 20
+            if text.bounding_poly.vertices[1].x < 300:
+                tested_x1 = text.bounding_poly.vertices[1].x
+                tested_x2 = text.bounding_poly.vertices[1].x + 60
+                tested_y1 = text.bounding_poly.vertices[2].y
+                tested_y2 = text.bounding_poly.vertices[2].y + 50
+
+    py = get_dict(
+        image,
+        districts=[x, x2, y, y2],
+        total=[x, x2, y, y2],
+        recovered=[recover_x1, recover_x2, y, y2],
+        dead=[dead_x1, dead_x2, y, y2],
+        tested=[tested_x1, tested_x2, tested_y1, tested_y2],
+    )
+    data_source = ''
+
+    for col in py.keys():
+        py[col]['image']['bytes'] = get_bytes(py[col]['image']['source'])
+        py[col]['data'] = get_detected_text(py[col]['image']['bytes'], col, state_name)
+
+    py_data = []
+
+    single_digit = any(x < 10 for x in py['dead']['data'])
+    single_digit = any(x < 10 for x in py['total']['data'])
+    single_digit = any(x < 10 for x in py['recovered']['data'])
+
+    if len(py['districts']['data']) < 5:
+        return ['ERR', 'Data Extraction error - Districts not detected']
+
+    tested = py['tested']['data'][1]
+
+    py['recovered']['data'].append(sum(py['recovered']['data']))
+    py['dead']['data'].append(sum(py['dead']['data']))
+    py['total']['data'].append(sum(py['total']['data']))
+
+    if len(py['districts']['data']) > len(py['dead']['data']):
+        for i in range(len(py['districts']['data']) - len(py['dead']['data'])):
+            py['dead']['data'].insert(len(py['dead']['data']) - 1, 0)
+            single_digit = True
+
+    if len(py['districts']['data']) > len(py['total']['data']):
+        for i in range(len(py['districts']['data']) - len(py['total']['data'])):
+            py['total']['data'].insert(len(py['total']['data']) - 1, 0)
+            single_digit = True
+
+    if len(py['districts']['data']) > len(py['recovered']['data']):
+        for i in range(len(py['districts']['data']) - len(py['recovered']['data'])):
+            py['recovered']['data'].insert(len(py['recovered']['data']) - 1, 0)
+            single_digit = True
+
+    for i in range(len(py['districts']['data'])-1):
+        py_data.append({
+            'Date': date,
+            'State/UTCode': state,
+            'District': py['districts']['data'][i],
+            'tested_last_updated_district': last_updated,
+            'tested_source_district': data_source,
+            'notesForDistrict': None,
+            'cumulativeConfirmedNumberForDistrict': py['total']['data'][i],
+            'cumulativeDeceasedNumberForDistrict': py['dead']['data'][i],
+            'cumulativeRecoveredNumberForDistrict': py['recovered']['data'][i],
+            'cumulativeTestedNumberForDistrict': None,
+            'last_updated': datetime.now(),
+            'tested_last_updated_state': last_updated,
+            'tested_source_state': data_source,
+            'notesForState': None
+        })
+
+    py_df = pd.DataFrame(data=py_data)
+    py_df['cumulativeConfirmedNumberForState'] = py['total']['data'][-1]
+    py_df['cumulativeDeceasedNumberForState'] = py['dead']['data'][-1]
+    py_df['cumulativeRecoveredNumberForState'] = py['recovered']['data'][-1]
+    py_df['cumulativeTestedNumberForState'] = tested
+
+    added_status_message = ""
+    py_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
+    if single_digit:
+        added_status_message = ". Single digits present in extracted data deaths column. Needs to be manually verified"
+    return ["OK", "Data successfully extracted for " + state + added_status_message]
+
+
 def ExtractDataFromImage(state, date, handle, term):
     print("Executing image Extract")
     states = {
@@ -1072,6 +1205,7 @@ def ExtractDataFromImage(state, date, handle, term):
         'MN': manipur,
         'RJ': rajasthan,
         'JK': jammu_kashmir,
+        'PY': pondicherry,
         # 'LA': ladakh,
     }
     query = '(' + term.replace(" ", '%20').replace(':', '%3A').replace('#', '%23').replace('@', '%40') + ')' + '(from:' + handle + ')'
@@ -1104,11 +1238,17 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2021-11-16', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('AR', '2021-11-08', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-11-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-12-01', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2021-12-01', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-12-04', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
-# ExtractDataFromImage('JK', '2021-11-14', 'diprjk', 'Media Bulletin')
+# ExtractDataFromImage('JK', '2021-11-05', 'diprjk', 'Media Bulletin')
+# ExtractDataFromImage('PY', '2021-12-02', '', '')
+
+# For PY, no twitter source so sources.csv can contain '' (empty strings).
+# Image needs to saved in the INPUT folder for that particular date in the format PY_1.jpg
+# This format along with the extension is necessary since the code will only read this format.
+# Any other format will throw an error
 
