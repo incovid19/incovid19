@@ -1245,7 +1245,24 @@ def ExtractDataFromImage(state, date, handle, term):
 # ExtractDataFromImage('MN', '2021-12-04', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-05', 'diprjk', 'Media Bulletin')
-# ExtractDataFromImage('PY', '2021-12-02', '', '')
+# ExtractDataFromImage('PY', '2021-11-01', '', '')
+# ExtractDataFromImage('PY', '2021-11-02', '', '')
+def date_range(start, end):
+    r = (end+timedelta(days=1)-start).days
+    return [start+timedelta(days=i) for i in range(r)]
+ 
+
+start_date = "2021-11-04"
+end_date = "2021-12-22"
+end = datetime.strptime(end_date, '%Y-%m-%d')
+start = datetime.strptime(start_date, '%Y-%m-%d')
+dateList = date_range(start, end)
+
+for date in dateList:
+    print(str(date.date()))
+    ExtractDataFromImage('PY', str(date.date()), '', '')
+    
+
 
 # For PY, no twitter source so sources.csv can contain '' (empty strings).
 # Image needs to saved in the INPUT folder for that particular date in the format PY_1.jpg
