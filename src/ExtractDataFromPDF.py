@@ -143,13 +143,13 @@ def getKAData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getTNData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='2,7')
+    table = camelot.read_pdf(file_path,pages='2,9')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
 
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-9-table-1.csv'.format(date,StateCode))
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
@@ -574,10 +574,10 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-12")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
-# ExtractFromPDF(StateCode = "TN",Date = "2021-10-26")
+ExtractFromPDF(StateCode = "TN",Date = "2021-12-26")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-25")
 # ExtractFromPDF(StateCode = "AP",Date = "2021-11-27")
 # ExtractFromPDF(StateCode = "PB",Date = "2021-12-15")
-# ExtractFromPDF(StateCode = "LA",Date = "2021-12-22")
+ExtractFromPDF(StateCode = "LA",Date = "2021-12-26")
 # ExtractFromPDF(StateCode = "RJ",Date = "2021-12-26")
 # ExtractFromPDF(StateCode = "NL",Date = "2021-12-19")
