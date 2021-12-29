@@ -22,6 +22,7 @@ def ExtractNoSource(df, state, date):
                 "cumulativeConfirmedNumberForState",
                 "cumulativeDeceasedNumberForState",
                 "cumulativeRecoveredNumberForState",
+                "cumulativeTestedNumberForState"
             ]
         )
         for district in list(state['District']):
