@@ -22,7 +22,7 @@ def ExtractNoSource(df, state, date):
                 "cumulativeConfirmedNumberForState",
                 "cumulativeDeceasedNumberForState",
                 "cumulativeRecoveredNumberForState",
-                "cumulativeTestedNumberForState"
+                "cumulativeTestedNumberForState",
             ]
         )
         for district in list(state['District']):
@@ -52,6 +52,7 @@ def ExtractStateMyGov(state, date, no_source=False):
             "cumulativeConfirmedNumberForDistrict",
             "cumulativeDeceasedNumberForDistrict",
             "cumulativeRecoveredNumberForDistrict",
+            "cumulativeTestedNumberForState",
             "last_updated",
         ]
     )
@@ -82,7 +83,7 @@ def ExtractStateMyGov(state, date, no_source=False):
     state_df["cumulativeConfirmedNumberForState"] = state_df['cumulativeConfirmedNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeConfirmedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df["cumulativeDeceasedNumberForState"] = state_df['cumulativeDeceasedNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeDeceasedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df["cumulativeRecoveredNumberForState"] = state_df['cumulativeRecoveredNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeRecoveredNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
-    state_df['cumulativeTestedNumberForState'] = None
+    state_df['cumulativeTestedNumberForState'] = ind["cumulativeTestedNumberForState"] * len(districts)
 
     if no_source:
         state_df = ExtractNoSource(state_df, state, datetime.strptime(date, "%Y-%m-%d"))
