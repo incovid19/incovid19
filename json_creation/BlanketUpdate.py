@@ -189,7 +189,7 @@ def CreateJson(date):
 
     with open('Updated/data-'+date+'.min.json', 'w') as json_file:
         json.dump(remove_null_bool(data_min_json), json_file)
-    print("Completed:"+date)
+    # print("Completed:"+date)
 
 
 # In[4]:
@@ -208,7 +208,7 @@ import requests
 #ASHA ... To run previous dates, use data.swi.min.json OR the resp date JSON, so that the data.min.json is not disturbed..
 
 def ts_json(fileName):
-    print (fileName)
+    # print (fileName)
     with open(fileName) as f:
         data_min = json.load(f)
         f.close()
@@ -293,8 +293,8 @@ def date_range(start, end):
     return [start+timedelta(days=i) for i in range(r)]
  
 
-start_date = "2021-10-31"
-end_date = "2021-12-29"
+start_date = "2021-12-30"
+end_date = "2021-12-30"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
