@@ -6,9 +6,10 @@ import camelot
 import os
 import string
 import pytz
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from tzlocal import get_localzone
 from StatusMsg import StatusMsg
+# from datetime import datetime,timedelta
 #programe extracts the tabels from the PDF files.
 # Need some Preprocessing to convert to RawCSV
 #Have Done for KA and HR for reference
@@ -367,7 +368,9 @@ def getUKData(file_path,date,StateCode):
     
     col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated","Migrated/Others":"Migrated"}
     df_districts.rename(columns=col_dict,inplace=True)
-    print(df_districts)
+    df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
+    df_districts["Recovered"] = df_districts["Recovered"].astype(str).str.split("*").str[0].astype(int)
+    # print(df_districts)
     # a=b
     df_districts['Recovered'] += df_districts['Migrated']
     # df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
@@ -567,9 +570,24 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
-# ExtractFromPDF(StateCode = "UT",Date = "2021-12-31")
+
+        
+
+# def date_range(start, end):
+#     r = (end+timedelta(days=1)-start).days
+#     return [start+timedelta(days=i) for i in range(r)]
+ 
+
+# start_date = "2021-11-06"
+# end_date = "2021-12-30"
+# end = datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
+        
+# for date in dateList:
+#     ExtractFromPDF(StateCode = "PB",Date = str(date.date()))
 # ExtractFromPDF(StateCode = "TN",Date = "2021-12-24")
-# ExtractFromPDF(StateCode = "LA",Date = "2021-12-30")
+# ExtractFromPDF(StateCode = "LA",Date = "2022-01-01")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-30")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
