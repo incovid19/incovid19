@@ -586,8 +586,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         
 # for date in dateList:
 #     ExtractFromPDF(StateCode = "PB",Date = str(date.date()))
-# ExtractFromPDF(StateCode = "TN",Date = "2021-12-24")
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-01")
+ExtractFromPDF(StateCode = "ML",Date = "2022-01-02")
+ExtractFromPDF(StateCode = "UT",Date = "2022-01-02")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-30")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
