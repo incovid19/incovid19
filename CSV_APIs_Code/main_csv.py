@@ -104,6 +104,7 @@ def vaccination_numbers_api_csv(state_name,Date):
 def get_case_time_series(date):
     # source_path="../RAWCSV/2021-11-01"
     case_time_series_df=pd.read_csv("/home/swiadmin/test/csv/latest/case_time_series.csv")
+    case_time_series_df = case_time_series_df[case_time_series_df["Date_YMD"] != date]
     TT_final_df=pd.read_csv("../RAWCSV/"+ date +"/TT_final.csv")
 
     v=TT_final_df.loc[0,["Date","Date","deltaConfirmedForState","cumulativeConfirmedNumberForState","deltaRecoveredForState","cumulativeRecoveredNumberForState","deltaDeceasedForState","cumulativeDeceasedNumberForState"]]
@@ -117,12 +118,15 @@ def get_case_time_series(date):
     new_case_time_series_df = new_case_time_series_df.drop_duplicates()
     # dest_path=f"./{v[0]}"
     # os.makedirs(dest_path, exist_ok=True)
+    new_case_time_series_df = new_case_time_series_df.sort_values(by=['Date_YMD'])
     new_case_time_series_df.to_csv("/home/swiadmin/test/csv/latest/case_time_series.csv",index=False)
 
 
 def getStates_Districts(date):
     states_df=pd.read_csv("/home/swiadmin/test/csv/latest/states.csv")
+    states_df = states_df[states_df["Date"] != date]
     districts_df=pd.read_csv("/home/swiadmin/test/csv/latest/districts.csv")
+    districts_df = districts_df[districts_df["Date"] != date]
 
     STATE_NAMES = {
         'TT': 'India',
@@ -246,11 +250,13 @@ def getStates_Districts(date):
 
     states_df.reset_index(inplace=True,drop=True)
     states_df = states_df.drop_duplicates()
+    states_df = states_df.sort_values(by=['Date'])
     states_df.to_csv("/home/swiadmin/test/csv/latest/states.csv",index=False)
 
     districts_df.reset_index(inplace=True,drop=True)
     districts_df = districts_df.drop_duplicates()
     districts_df = districts_df.dropna(subset=['Date'])
+    districts_df = districts_df.sort_values(by=['Date'])
     districts_df.to_csv("/home/swiadmin/test/csv/latest/districts.csv",index=False)
 
     districts_wise_df.reset_index(inplace=True,drop=True)
@@ -308,6 +314,7 @@ def get_state_wise_daily(date):
 
     
     state_wise_daily=pd.read_csv("/home/swiadmin/test/csv/latest/state_wise_daily.csv")
+    state_wise_daily = state_wise_daily[state_wise_daily["Date_YMD"] != date]
     # state_wise_daily=state_wise_daily.drop(["DD","UN"],axis=1)
     TT_final_df=pd.read_csv("../RAWCSV/"+ date +"/TT_final.csv")
     temp_df=TT_final_df[["District",'deltaConfirmedForDistrict','deltaRecoveredForDistrict','deltaDeceasedForDistrict']]
@@ -337,6 +344,7 @@ def get_state_wise_daily(date):
     state_wise_daily.reset_index(inplace=True,drop=True)
     state_wise_daily = state_wise_daily.drop_duplicates()
     state_wise_daily = state_wise_daily.dropna(subset=['Date'])
+    state_wise_daily = state_wise_daily.sort_values(by=['Date'])
     state_wise_daily.to_csv("/home/swiadmin/test/csv/latest/state_wise_daily.csv",index=False)
 
 def get_vaccine_district_final(date):
@@ -501,6 +509,7 @@ def get_vaccine_state_csv(date):
 
     #loop using the new vaccination_numbers_api_csv
     df_prev=pd.read_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_statewise.csv",)
+    df_prev = df_prev[df_prev["Updated On"] != date]
     for Date in dates_list:
     #     path=f"./Historical Data/CSV_api/{Date.strftime('%Y-%m-%d')}"
     #     os.makedirs(path, exist_ok=True)
@@ -537,6 +546,8 @@ def get_vaccine_state_csv(date):
 
             df_prev=pd.concat([df_prev,df],axis=0)
             df_prev.reset_index(inplace=True,drop=True)
+    df_prev["Updated On"] = df_prev["Updated On"].astype("str")        
+    df_prev = df_prev.sort_values(by=['Updated On'])
     df_prev.to_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_statewise.csv",index=False)
 
 # df_prev.to_csv("cowin_vaccine_data_statewise_latest.csv",index=False)
