@@ -294,7 +294,7 @@ def date_range(start, end):
  
 
 start_date = "2021-10-31"
-end_date = "2022-01-01"
+end_date = "2022-01-03"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
