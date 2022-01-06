@@ -367,12 +367,13 @@ def getUKData(file_path,date,StateCode):
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","")  
     
-    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated","Migrated/Others":"Migrated"}
+    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated","Migrated/Others":"Migrated","Cumulative Samples Tested":"Tested"}
     df_districts.rename(columns=col_dict,inplace=True)
+    df_tests.rename(columns=col_dict,inplace=True)
+    df_tests = df_tests[['District',"Tested"]]
     df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
     df_districts["Recovered"] = df_districts["Recovered"].astype(str).str.split("*").str[0].astype(int)
-    # print(df_districts)
-    # a=b
+    
     df_districts['Recovered'] += df_districts['Migrated']
     # df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
     for col in df_districts.columns:
@@ -382,9 +383,17 @@ def getUKData(file_path,date,StateCode):
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Uttarakhand'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
+    df_tests['District'].replace(dist_map,inplace=True)
+
+    df_total = pd.merge(df_districts, df_tests, on='District', how='inner')
+    # print(df_districts)
+    # print(df_tests)
+    # print(df_total)
+    # a=b
+
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-    df_summary["Tested"] = int(df_tests.iloc[-1,-2])
-    return df_summary,df_districts
+    df_summary["Tested"] = int(df_tests.iloc[-1,-1])
+    return df_summary,df_total
 
 # def getNLData(file_path,date,StateCode):
 #     table = camelot.read_pdf(file_path,'1')
@@ -520,7 +529,8 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     df['cumulativeDeceasedNumberForState'] = df_summary['Deceased'] #.astype(int).sum()
     IST = pytz.timezone('Asia/Kolkata')
     df['last_updated'] = utc_dt.astimezone(IST).isoformat()
-
+    # print(df.head(1))
+    # a=b
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
 
 
@@ -589,8 +599,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         
 # for date in dateList:
 #     ExtractFromPDF(StateCode = "PB",Date = str(date))
-# ExtractFromPDF(StateCode = "ML",Date = "2022-01-05")
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-05")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-01-02")
+# ExtractFromPDF(StateCode = "UT",Date = "2021-10-31")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-30")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
