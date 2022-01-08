@@ -18,7 +18,7 @@ from ExtractDataFromPDF import ExtractFromPDF
 from ExtractStateMyGov import ExtractStateMyGov
 from getHTMLData import ExtractFromHTML
 import pandas as pd
-# today = "2021-12-19"
+# today = datetime.datetime.strptime("2022-01-06", "%Y-%M-%d").date()
 print("getSources for:"+ str(today))
 # a=b
 source = pd.read_csv(r"../sources.csv")
