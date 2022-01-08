@@ -1,3 +1,4 @@
 #!/bin/sh
 cp -a ./. /data/incovid19/
-tail -f /dev/null
+cd /data/incovid19/
+jupyter lab --allow-root --ip 0.0.0.0 --ServerApp.token=$NOTEBOOK_PASS
