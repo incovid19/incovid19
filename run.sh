@@ -1,3 +1,3 @@
 #!/bin/sh
 cp -a ./. /data/incovid19/
-tail -f /dev/null
+jupyter lab --allow-root --ip 0.0.0.0
