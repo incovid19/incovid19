@@ -560,22 +560,22 @@ def date_range(start, end):
     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-11-01"
-# end_date = "2022-01-10"
-# end = datetime.strptime(end_date, '%Y-%m-%d')
-# start = datetime.strptime(start_date, '%Y-%m-%d')
-# dateList = date_range(start, end)
+start_date = "2022-01-07"
+end_date = "2022-01-07"
+end = datetime.strptime(end_date, '%Y-%m-%d')
+start = datetime.strptime(start_date, '%Y-%m-%d')
+dateList = date_range(start, end)
 
-# for date in dateList:
-#     get_case_time_series(str(date.date()))
-#     getStates_Districts(str(date.date()))
-#     get_state_wise_daily(str(date.date()))
-#     get_vaccine_district_final(date)
-#     get_vaccine_state_csv(date.date())
+for date in dateList:
+    get_case_time_series(str(date.date()))
+    getStates_Districts(str(date.date()))
+    get_state_wise_daily(str(date.date()))
+    get_vaccine_district_final(date)
+    get_vaccine_state_csv(date.date())
 # date = "2021-12-17"
-date = (datetime.now() - timedelta(days=1)).date()
-get_case_time_series(str(date))
-getStates_Districts(str(date))
-get_state_wise_daily(str(date))
-get_vaccine_district_final(date)
-get_vaccine_state_csv(date)
+# date = (datetime.now() - timedelta(days=1)).date()
+# get_case_time_series(str(date))
+# getStates_Districts(str(date))
+# get_state_wise_daily(str(date))
+# get_vaccine_district_final(date)
+# get_vaccine_state_csv(date)
