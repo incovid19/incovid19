@@ -32,7 +32,10 @@ def col_check_state_raw_csv(df):
 
 
 def get_7dma_state(state, date):
-    df = pd.read_csv(f'../../RAWCSV/{date}/{state}_final.csv')
+    if state == "TT":
+        df = pd.read_csv(f'../../RAWCSV/{date}/{state}int_final.csv')
+    else:
+        df = pd.read_csv(f'../../RAWCSV/{date}/{state}_final.csv')
     cols = ['Confirmed', 'Deceased', 'Recovered', 'Tested', 'Vaccinated1', 'Vaccinated2']
     df = col_check_state_raw_csv(df)
     df.sort_values('District', inplace=True)
@@ -76,7 +79,11 @@ def get_7dma_state(state, date):
         test_df.set_index('District', inplace=True, drop=False)
         df['7DmaTestedForState'] = test_df['7DmaTestedForState']
         df['7DmaTestedForDistrict'][df['District'] != 'Unknown'] = test_df['7DmaTestedForDistrict'][test_df['District'] != 'Unknown']
-    df.to_csv(f"../../RAWCSV/{date}/{state}_final.csv", index=False)
+    if state == "TT":
+        df.to_csv(f'../../RAWCSV/{date}/{state}int_final.csv')
+    else:
+        df.to_csv(f"../../RAWCSV/{date}/{state}_final.csv", index=False)
+        print("Other")
     # print(df)
     # return df
 
