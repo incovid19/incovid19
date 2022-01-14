@@ -250,13 +250,13 @@ def getStates_Districts(date):
 
     states_df.reset_index(inplace=True,drop=True)
     states_df = states_df.drop_duplicates()
-    states_df = states_df.sort_values(by=['Date'])
+    states_df = states_df.sort_values(by=['Date','State'])
     states_df.to_csv("/home/swiadmin/test/csv/latest/states.csv",index=False)
 
     districts_df.reset_index(inplace=True,drop=True)
     districts_df = districts_df.drop_duplicates()
     districts_df = districts_df.dropna(subset=['Date'])
-    districts_df = districts_df.sort_values(by=['Date'])
+    districts_df = districts_df.sort_values(by=['Date','State'])
     districts_df.to_csv("/home/swiadmin/test/csv/latest/districts.csv",index=False)
 
     districts_wise_df.reset_index(inplace=True,drop=True)
@@ -556,13 +556,13 @@ def get_vaccine_state_csv(date):
         
         
 
-# def date_range(start, end):
-#     r = (end+timedelta(days=1)-start).days
-#     return [start+timedelta(days=i) for i in range(r)]
+def date_range(start, end):
+    r = (end+timedelta(days=1)-start).days
+    return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-11-21"
-# end_date = "2022-01-11"
+# start_date = "2021-12-25"
+# end_date = "2022-01-12"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)
