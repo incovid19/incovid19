@@ -456,9 +456,9 @@ def ExtractFromHTML(state, date):
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         # ExtractStateMyGov(state, date, no_source=True)
 
-# ExtractFromHTML(state="MH", date="2022-01-14")
+# ExtractFromHTML(state="MH", date="2022-01-15")
 # ExtractFromHTML(state="TR", date="2022-01-15")
-# ExtractFromHTML(state="KL", date="2022-01-03")
+# ExtractFromHTML(state="KL", date="2022-01-15")
 # ExtractFromHTML(state="GJ", date="2021-10-25")
 # ExtractFromHTML(state="OR", date="2021-10-25")
 # ExtractFromHTML(state="GJ", date="2021-10-26")
