@@ -19,10 +19,11 @@ def col_check_state_raw_csv(df):
         "tested_last_updated_district", "tested_source_district", "notesForDistrict",
         "cumulativeConfirmedNumberForDistrict", "cumulativeDeceasedNumberForDistrict",
         "cumulativeRecoveredNumberForDistrict", "cumulativeTestedNumberForDistrict",
-        "cumulativeVaccinated1NumberForDistrict", "cumulativeVaccinated2NumberForDistrict", "last_updated",
+        "cumulativeVaccinated1NumberForDistrict", "cumulativeVaccinated2NumberForDistrict",
+        "cumulativeOtherNumberForDistrict","last_updated",
         "statePopulation", "tested_last_updated_state", "tested_source_state", "notesForState",
         "cumulativeConfirmedNumberForState", "cumulativeDeceasedNumberForState", "cumulativeRecoveredNumberForState",
-        "cumulativeTestedNumberForState", "cumulativeVaccinated1NumberForState", "cumulativeVaccinated2NumberForState"
+        "cumulativeTestedNumberForState", "cumulativeVaccinated1NumberForState", "cumulativeVaccinated2NumberForState","cumulativeOtherNumberForState"
     ]
     for col in reqd_col_ls:
         if col not in cols_ls:
@@ -33,7 +34,7 @@ def col_check_state_raw_csv(df):
 
 def get_7dma_state(state, date):
     df = pd.read_csv(f'../RAWCSV/{date}/{state}_final.csv')
-    cols = ['Confirmed', 'Deceased', 'Recovered', 'Tested', 'Vaccinated1', 'Vaccinated2']
+    cols = ['Confirmed', 'Deceased', 'Recovered', 'Tested', 'Vaccinated1', 'Vaccinated2', 'Other']
     df = col_check_state_raw_csv(df)
     df.sort_values('District', inplace=True)
     df.reset_index(drop=True, inplace=True)
