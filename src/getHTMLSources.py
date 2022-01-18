@@ -69,6 +69,7 @@ def check_date(url, state, date):
         if state == 'GJ':
             return datetime.strptime(soup.find_all('span', {'id': 'ctl00_body_lblDate'})[0].getText(), "%d/%m/%Y %I:%M:%S %p").date()
         if state == 'KL':
+            print(datetime.strptime(soup.find_all('li', {'class': 'breadcrumb-item active'})[0].getText().upper()[9:], "%d-%m-%Y %I:%M %p").date())
             return datetime.strptime(soup.find_all('li', {'class': 'breadcrumb-item active'})[0].getText().upper()[9:], "%d-%m-%Y %I:%M %p").date()
         if state == 'OR':
             soup.sup.clear()

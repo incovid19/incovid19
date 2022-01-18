@@ -1,6 +1,7 @@
 import os
 import datetime
 import timedelta
+import os
 
 today = (datetime.datetime.now() - timedelta.Timedelta(days=0)).date()
 # present = datetime.datetime.now().date()
@@ -32,7 +33,8 @@ for idx in source.index:
     # if idx == 0:
     print("State:" + source["StateName"][idx])
     if source["StateDataSourceType"][idx] == "Image(Twitter)":
-        ExtractDataFromImage(source["StateCode"][idx], str(today), source['Twitter Handle'][idx], source['Twitter Search Term'][idx])
+        if "{}_raw.csv".format(source["StateCode"][idx]) not in os.listdir("../RAWCSV/"+str(today)+"/"):
+            ExtractDataFromImage(source["StateCode"][idx], str(today), source['Twitter Handle'][idx], source['Twitter Search Term'][idx])
     elif source["StateDataSourceType"][idx] in ["html","json"]:
         if source["myGov"][idx] != "yes":
             fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+ "." + source["StateDataSourceType"][idx]))

@@ -74,9 +74,9 @@ def CreateJson(date):
 
     for k,v in data_min_json.items():
         # print(k)
-        df_tt = pd.read_csv("../RAWCSV/"+date+"/TTint_final.csv")
+        df_tt = pd.read_csv("../../RAWCSV/"+date+"/TTint_final.csv")
         if k != "TT":
-            df = pd.read_csv("../RAWCSV/"+date+"/"+k+"_final.csv")
+            df = pd.read_csv("../../RAWCSV/"+date+"/"+k+"_final.csv")
         else:
             df = df_tt
         # df = pd.read_csv('datamin.csv',header=[1])
@@ -204,7 +204,7 @@ import os
 import requests
 
 
-# fileName = "../out_timeSeries/data.min.json"
+# fileName = "../../json_creation/Updated/out_timeSeries/data.min.json"
 
 #ASHA ... To run previous dates, use data.swi.min.json, so that the data.min.json is not disturbed..
 #fileName = "../out_timeSeries/data-2021-11-17.min.json"
