@@ -8,6 +8,7 @@ import io
 import datetime
 from ExtractStateMyGov import ExtractStateMyGov
 import requests
+from tqdm import tqdm
 
 
 def andhra_pradesh(state, date, path):
@@ -93,8 +94,14 @@ def gujarat(state, date, path):
     df = df[:-1]
 
     # getting cummulative values
-    df["Cases Tested for COVID19"] = df["Cases Tested for COVID19"].str.split().str[-1]
-    df["Patients Recovered"] = df["Patients Recovered"].str.split().str[-1]
+    try:
+        df["Cases Tested for COVID19"] = df["Cases Tested for COVID19"].str.split().str[-1]
+    except:
+        pass
+    try:
+        df["Patients Recovered"] = df["Patients Recovered"].str.split().str[-1]
+    except:
+        pass
     # df["Total Deaths"] = df["Total Deaths"].str.split().str[-1]
     # df["Active Cases"] = df["Active Cases"].str.split().str[-1]
 
@@ -178,18 +185,19 @@ def tripura(state, date, path):
     df.columns = [i[1] for i in df.columns]
     df = df.drop(
         ["SN", "Total Person Under Surveillance (Cumulative)", "No. of Persons Completed Observation Period (14 Days)",
-         "Facility Surveillance", "Home Surveillance", "Total Persons Under Surveillance", "Sample Negative",
-         "Patient Went Out of State"], axis=1)
+         "Facility Surveillance", "Home Surveillance", "Total Persons Under Surveillance", "Sample Negative"], axis=1)
     df.rename(columns={"Sample Collected & Tested": "Tested", "Sample Positive": "Confirmed",
-                                 "Patient Recovered": "Recovered", "Death": "Deceased"}, inplace=True)
-    [df['StateConfirmed'], df['StateTested'], df['StateRecovered'], df['StateDeceased']] = list(df[['Confirmed', 'Tested', 'Recovered', 'Deceased']][df['District'] == 'Total'].values.flatten())
-    dict_temp = {"var": ["Confirmed", "Tested", "Recovered", "Deceased"],
-                 "val": list(df[['Confirmed', 'Tested', 'Recovered', 'Deceased']][df['District'] == 'Total'].values.flatten())}
+                                 "Patient Recovered": "Recovered", "Death": "Deceased","Patient Went Out of State": "Other"}, inplace=True)
+    [df['StateConfirmed'], df['StateTested'], df['StateRecovered'], df['StateDeceased'], df['StateOther']] = list(df[['Confirmed', 'Tested', 'Recovered', 'Deceased' ,'Other']][df['District'] == 'Total'].values.flatten())
+    dict_temp = {"var": ["Confirmed", "Tested", "Recovered", "Deceased" , "Other"],
+                 "val": list(df[['Confirmed', 'Tested', 'Recovered', 'Deceased' , "Other"]][df['District'] == 'Total'].values.flatten())}
     df_summary = pd.DataFrame(dict_temp)
     df = df[:len(df) - 1]
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Tripura'].to_dict()
     df['District'].replace(dist_map, inplace=True)
+    df['notesForDistrict'] = df['Other'].astype(str) + " cases were recorded as patient went out of state"
+    df['notesForState'] = df['StateOther'].astype(str) + " cases were recorded as patient went out of state"
     GenerateRawCsv(state, date, df)
 
 
@@ -452,14 +460,29 @@ def ExtractFromHTML(state, date):
         states[state](state, date, path)
         StatusMsg(state, date, "OK", "COMPLETED", "ExtractFromHTML")
     except Exception as e:
+        # raise
         print(e)
         StatusMsg(state, date,"ERR", "Source URL Not Accessible/ has been changed", "ExtractFromHTML")
         # ExtractStateMyGov(state, date, no_source=True)
 
-# ExtractFromHTML(state="MH", date="2022-01-16")
-# ExtractFromHTML(state="TR", date="2022-01-16")
+# def date_range(start, end):
+#     r = (end+datetime.timedelta(days=1)-start).days
+#     return [start+datetime.timedelta(days=i) for i in range(r)]
+ 
+# start_date = "2021-10-31"
+# end_date = "2022-01-20"
+# end = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
+
+# for date in tqdm(dateList):
+#     # print(str(date.date()))
+#     ExtractFromHTML(state = "TR",date = str(date.date()))        
+
+# ExtractFromHTML(state="MH", date="2022-01-22")
+# ExtractFromHTML(state="TR", date="2022-01-22")
 # ExtractFromHTML(state="KL", date="2022-01-15")
-# ExtractFromHTML(state="GJ", date="2021-10-25")
+# ExtractFromHTML(state="GJ", date="2022-01-17")
 # ExtractFromHTML(state="OR", date="2021-10-25")
 # ExtractFromHTML(state="GJ", date="2021-10-26")
 # ExtractFromHTML(state="OR", date="2021-10-26")
@@ -470,6 +493,6 @@ def ExtractFromHTML(state, date):
 # ExtractFromHTML(state="GJ", date="2021-10-29")
 # ExtractFromHTML(state="OR", date="2021-10-29")
 # ExtractFromHTML(state="GJ", date="2021-10-30")
-# ExtractFromHTML(state="TR", date="2021-12-22")
+# ExtractFromHTML(state="MH", date="2021-11-06")
 
 

@@ -556,13 +556,13 @@ def get_vaccine_state_csv(date):
         
         
 
-def date_range(start, end):
-    r = (end+timedelta(days=1)-start).days
-    return [start+timedelta(days=i) for i in range(r)]
+# def date_range(start, end):
+#     r = (end+timedelta(days=1)-start).days
+#     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-12-25"
-# end_date = "2022-01-12"
+# start_date = "2022-01-13"
+# end_date = "2022-01-18"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)

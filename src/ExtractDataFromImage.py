@@ -682,6 +682,10 @@ def himachal_pradesh(state, date, query):
     hp_df['cumulativeDeceasedNumberForState'] = hp['dead']['data'][-1]
     hp_df['cumulativeRecoveredNumberForState'] = hp['recovered']['data'][-1]
     hp_df['cumulativeTestedNumberForState'] = None
+    hp_df['cumulativeOtherNumberForState'] = None
+    hp_df['cumulativeOtherNumberForDistrict'] = None
+    hp_df['notesForState'] = None
+    hp_df['notesForDistrict'] = None
 
     added_status_message = ""
     hp_df.to_csv('../RAWCSV/' + date + '/' + state + '_raw.csv', index=False, header=True)
@@ -1241,12 +1245,12 @@ def ExtractDataFromImage(state, date, handle, term):
 # ExtractDataFromImage('AR', '2022-01-07', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
 # ExtractDataFromImage('BR', '2021-11-30', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-12-01', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2021-12-01', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('HP', '2022-01-19', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-12-30', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-05', 'diprjk', 'Media Bulletin')
 # ExtractDataFromImage('PY', '2021-11-01', '', '')
-# ExtractDataFromImage('PY', '2022-01-14', '', '')
+# ExtractDataFromImage('PY', '2022-01-22', '', '')
 # def date_range(start, end):
 #     r = (end+timedelta(days=1)-start).days
 #     return [start+timedelta(days=i) for i in range(r)]

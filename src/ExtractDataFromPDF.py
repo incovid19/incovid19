@@ -9,6 +9,7 @@ import pytz
 from datetime import datetime, timezone, timedelta
 from tzlocal import get_localzone
 from StatusMsg import StatusMsg
+from tqdm import tqdm
 # from datetime import datetime,timedelta
 #programe extracts the tabels from the PDF files.
 # Need some Preprocessing to convert to RawCSV
@@ -88,7 +89,7 @@ def getRJData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getKAData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='2,5')
+    table = camelot.read_pdf(file_path,pages='1,5')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -97,16 +98,18 @@ def getKAData(file_path,date,StateCode):
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
     # df_districts = df_districts.replace("nan",np.nan)
-    # print(df_districts)
+    # print(df_districts.columns)
     
     # a=b
     
     # df_summary = df_districts
 
-    
-    col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased"}
+    if "Non-Covid" in df_districts.columns[-1]:
+        col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased" , df_districts.columns[-1]:"Other"}
+    else:
+        col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased" , df_districts.columns[-2]:"Other"}
     df_districts.rename(columns=col_dict,inplace=True)
-    print(df_districts.columns)
+    # print(df_districts.columns)
     # df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
     df_districts.dropna(how="all",inplace=True)
     # print(df_districts)
@@ -128,7 +131,10 @@ def getKAData(file_path,date,StateCode):
     # df_districts = df_districts[:-1]
     # print(df_districts)
     # df = df[]
-
+    df_districts['notesForDistrict'] = df_districts['Other'].astype(str) + " cases were recorded as Deaths due to Non Covid Reasons"
+    df_summary['notesForState'] = df_summary['Other'] + " cases were recorded as Deaths due to Non Covid Reasons"
+    df_addTest = pd.read_csv("../INPUT/KA_Tested.csv")
+    df_summary['Tested'] = df_addTest[df_addTest["Date"] == date]["Cumulative_Tested"].item()
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Karnataka'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
@@ -138,19 +144,20 @@ def getKAData(file_path,date,StateCode):
     # df_summary.rename(columns={"District":"State/UT"},inplace=True)
     # df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     
-    print(df_districts)
-    print(df_summary)
+    # print(df_districts)
+    # print(df_summary)
+    # print(date)
     # a=b
     return df_summary,df_districts
 
 def getTNData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='2,9')
+    table = camelot.read_pdf(file_path,pages='2,7')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
 
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-9-table-1.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
@@ -225,7 +232,12 @@ def getHRData(file_path,date,StateCode):
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     # print(df_summary)
-    df_summary["Tested"] = df_tests.loc[3,"Numbers"]
+    prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
+    # print(prevdate ,type(prevdate))
+    df_prevDay = pd.read_csv('../RAWCSV/{}/{}_raw.csv'.format(prevdate,StateCode))
+    df_prevDay["cumulativeTestedNumberForState"] 
+    print(int(df_tests.loc[3,"Numbers"]) , int(df_prevDay["cumulativeTestedNumberForState"][0]))
+    df_summary["Tested"] = int(df_tests.loc[0,"Numbers"]) + int(df_prevDay["cumulativeTestedNumberForState"][0])
     # df_districts["Tested"] = df_summary["Tested"]
     print(df_districts)
     print(df_summary)
@@ -367,14 +379,14 @@ def getUKData(file_path,date,StateCode):
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","")  
     
-    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Migrated","Migrated/Others":"Migrated","Cumulative Samples Tested":"Tested"}
+    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Other","Cumulative Samples Tested":"Tested"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
     df_tests = df_tests[['District',"Tested"]]
     df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
     df_districts["Recovered"] = df_districts["Recovered"].astype(str).str.split("*").str[0].astype(int)
     
-    df_districts['Recovered'] += df_districts['Migrated']
+    # df_districts['Recovered'] += df_districts['Migrated']
     # df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
     for col in df_districts.columns:
         df_districts[col] = df_districts[col].astype(str).str.replace("*","")
@@ -388,11 +400,15 @@ def getUKData(file_path,date,StateCode):
     df_total = pd.merge(df_districts, df_tests, on='District', how='inner')
     # print(df_districts)
     # print(df_tests)
-    # print(df_total)
+    print(df_total)
     # a=b
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     df_summary["Tested"] = int(df_tests.iloc[-1,-1])
+    
+    df_total['notesForDistrict'] = df_total['Other'].astype(str) + " cases were recorded as Migrated / Others"
+    df_summary['notesForState'] = df_summary['Other'] + " cases were recorded as Migrated / Others"
+    
     return df_summary,df_total
 
 # def getNLData(file_path,date,StateCode):
@@ -432,7 +448,8 @@ def getNLData(file_path,date,StateCode):
     df_tests.columns = df_tests.columns.str.replace("\n","")
     
     df_districts['Recovered'] = df_districts['Recovered'] + df_districts['j']
-    df_districts['Deceased'] = df_districts['Deceased'] + df_districts['h']
+    df_districts['Deceased'] = df_districts['Deceased'] 
+    df_districts['Other'] = df_districts['h'] + df_districts['j']
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     # df_districts.columns = df_districts.columns.str.replace("\n","")
        
@@ -446,6 +463,8 @@ def getNLData(file_path,date,StateCode):
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
     df_summary["Tested"] = df_tests.loc["Results Received","Total"].split("\n")[-1]
+    df_districts['notesForDistrict'] = df_districts['Other'].astype(str) + " cases were recorded as Non Covid Deaths with Covid19 Positivity"
+    df_summary['notesForState'] = df_summary['Other'].astype(str) + " cases were recorded as Non Covid Deaths with Covid19 Positivity"
     return df_summary,df_districts
 
 def getLAData(file_path,date,StateCode):
@@ -519,7 +538,7 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
         df['cumulativeTestedNumberForDistrict'] = df_districts['Tested']
     df['cumulativeDeceasedNumberForDistrict'] = df_districts['Deceased']
     df['cumulativeRecoveredNumberForDistrict'] = df_districts['Recovered']
-
+    # df['cumulativeOtherNumberForDistrict'] = df_districts['Other']
     # print(Date)
     # a=b
     df['Date'] = Date
@@ -527,6 +546,18 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
      
     df['cumulativeRecoveredNumberForState'] = df_summary['Recovered'] #.astype(int).sum()
     df['cumulativeDeceasedNumberForState'] = df_summary['Deceased'] #.astype(int).sum()
+    
+    try:
+        df['cumulativeOtherNumberForDistrict'] = df_districts['Other']
+        df['notesForDistrict'] = df_districts['notesForDistrict']
+    except:
+        df['cumulativeOtherNumberForDistrict'] = 0
+    try:
+        df['cumulativeOtherNumberForState'] = df_summary['Other']
+        df['notesForState'] = df_summary['notesForState']
+    except:
+        df['cumulativeOtherNumberForState'] = 0
+    
     IST = pytz.timezone('Asia/Kolkata')
     df['last_updated'] = utc_dt.astimezone(IST).isoformat()
     # print(df.head(1))
@@ -590,18 +621,22 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-11-06"
-# end_date = "2021-12-30"
+# start_date = "2021-12-13"
+# end_date = "2022-01-20"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)
 
         
-# for date in dateList:
-#     ExtractFromPDF(StateCode = "PB",Date = str(date))
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-16")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-01-16")
-# ExtractFromPDF(StateCode = "WB",Date = "2022-01-11")
+# for date in tqdm(dateList):
+#     # pass
+#     print(date)
+#     ExtractFromPDF(StateCode = "UT",Date = str(date.date()))
+# ExtractFromPDF(StateCode = "NL",Date = "2022-01-21")
+# ExtractFromPDF(StateCode = "NL",Date = "2022-01-22")
+# ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
+# ExtractFromPDF(StateCode = "LA",Date = "2022-01-20")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-01-20")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-30")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
@@ -611,4 +646,6 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "PB",Date = "2021-12-01")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-12")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-01-04")
-# ExtractFromPDF(StateCode = "ML",Date = "2022-01-04")
+# ExtractFromPDF(StateCode = "MH",Date = "2021-11-08")
+# ExtractFromPDF(StateCode = "TN",Date = "2022-01-22")
+# ExtractFromPDF(StateCode = "KA",Date = "2022-01-22")

@@ -9,21 +9,21 @@ def col_check_state_raw_csv(df):
     cols_ls = df.columns
     reqd_col_ls = [
         "Date", "State/UTCode", "deltaConfirmedForState", "deltaDeceasedForState", "deltaRecoveredForState",
-        "deltaTestedForState", "deltaVaccinated1ForState", "deltaVaccinated2ForState", "delta21_14confirmedForState",
+        "deltaTestedForState", "deltaVaccinated1ForState", "deltaVaccinated2ForState","deltaVaccinated3ForState", "delta21_14confirmedForState",
         "7DmaConfirmedForState", "7DmaDeceasedForState", "7DmaRecoveredForState", "7DmaTestedForState",
-        "7DmaVaccinated1ForState", "7DmaVaccinated2ForState", "District", "deltaConfirmedForDistrict",
+        "7DmaVaccinated1ForState", "7DmaVaccinated2ForState","7DmaVaccinated3ForState", "District", "deltaConfirmedForDistrict",
         "deltaDeceasedForDistrict", "deltaRecoveredForDistrict", "deltaTestedForDistrict",
-        "deltaVaccinated1ForDistrict", "deltaVaccinated2ForDistrict", "delta21_14confirmedForDistrict",
+        "deltaVaccinated1ForDistrict", "deltaVaccinated2ForDistrict","deltaVaccinated3ForDistrict", "delta21_14confirmedForDistrict",
         "7DmaConfirmedForDistrict", "7DmaDeceasedForDistrict", "7DmaRecoveredForDistrict", "7DmaTestedForDistrict",
-        "7DmaVaccinated1ForDistrict", "7DmaVaccinated2ForDistrict", "districtPopulation",
+        "7DmaVaccinated1ForDistrict", "7DmaVaccinated2ForDistrict","7DmaVaccinated3ForDistrict", "districtPopulation",
         "tested_last_updated_district", "tested_source_district", "notesForDistrict",
         "cumulativeConfirmedNumberForDistrict", "cumulativeDeceasedNumberForDistrict",
         "cumulativeRecoveredNumberForDistrict", "cumulativeTestedNumberForDistrict",
-        "cumulativeVaccinated1NumberForDistrict", "cumulativeVaccinated2NumberForDistrict",
+        "cumulativeVaccinated1NumberForDistrict", "cumulativeVaccinated2NumberForDistrict","cumulativeVaccinated3NumberForDistrict",
         "cumulativeOtherNumberForDistrict","last_updated",
         "statePopulation", "tested_last_updated_state", "tested_source_state", "notesForState",
         "cumulativeConfirmedNumberForState", "cumulativeDeceasedNumberForState", "cumulativeRecoveredNumberForState",
-        "cumulativeTestedNumberForState", "cumulativeVaccinated1NumberForState", "cumulativeVaccinated2NumberForState","cumulativeOtherNumberForState"
+        "cumulativeTestedNumberForState", "cumulativeVaccinated1NumberForState", "cumulativeVaccinated2NumberForState","cumulativeVaccinated3NumberForState","cumulativeOtherNumberForState"
     ]
     for col in reqd_col_ls:
         if col not in cols_ls:
@@ -34,7 +34,7 @@ def col_check_state_raw_csv(df):
 
 def get_7dma_state(state, date):
     df = pd.read_csv(f'../RAWCSV/{date}/{state}_final.csv')
-    cols = ['Confirmed', 'Deceased', 'Recovered', 'Tested', 'Vaccinated1', 'Vaccinated2', 'Other']
+    cols = ['Confirmed', 'Deceased', 'Recovered', 'Tested', 'Vaccinated1', 'Vaccinated2','Vaccinated3', 'Other']
     df = col_check_state_raw_csv(df)
     df.sort_values('District', inplace=True)
     df.reset_index(drop=True, inplace=True)
@@ -53,7 +53,8 @@ def get_7dma_state(state, date):
                 'cumulativeDeceasedNumberForState': prev_df['cumulativeDeceasedNumberForState'][0],
                 'cumulativeTestedNumberForState': prev_df['cumulativeTestedNumberForState'][0],
                 'cumulativeVaccinated1NumberForState': prev_df['cumulativeVaccinated1NumberForState'][0],
-                'cumulativeVaccinated2NumberForState': prev_df['cumulativeVaccinated2NumberForState'][0]
+                'cumulativeVaccinated2NumberForState': prev_df['cumulativeVaccinated2NumberForState'][0],
+                'cumulativeVaccinated3NumberForState': prev_df['cumulativeVaccinated3NumberForState'][0]
             }, ignore_index=True)
     prev_df.sort_values('District', inplace=True)
     prev_df.reset_index(drop=True, inplace=True)
