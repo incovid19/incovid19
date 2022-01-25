@@ -479,9 +479,9 @@ def ExtractFromHTML(state, date):
 #     # print(str(date.date()))
 #     ExtractFromHTML(state = "TR",date = str(date.date()))        
 
-# ExtractFromHTML(state="MH", date="2022-01-22")
-# ExtractFromHTML(state="TR", date="2022-01-22")
-# ExtractFromHTML(state="KL", date="2022-01-15")
+# ExtractFromHTML(state="MH", date="2022-01-24")
+# ExtractFromHTML(state="TR", date="2022-01-24")
+# ExtractFromHTML(state="KL", date="2022-01-24")
 # ExtractFromHTML(state="GJ", date="2022-01-17")
 # ExtractFromHTML(state="OR", date="2021-10-25")
 # ExtractFromHTML(state="GJ", date="2021-10-26")

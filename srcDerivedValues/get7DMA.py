@@ -78,6 +78,17 @@ def get_7dma_state(state, date):
         test_df.set_index('District', inplace=True, drop=False)
         df['7DmaTestedForState'] = test_df['7DmaTestedForState']
         df['7DmaTestedForDistrict'][df['District'] != 'Unknown'] = test_df['7DmaTestedForDistrict'][test_df['District'] != 'Unknown']
+        
+    try:
+        day14 = datetime.strptime(date, '%Y-%m-%d') - timedelta(days=14)
+        day21 = datetime.strptime(date, '%Y-%m-%d') - timedelta(days=21)
+        df_14 = pd.read_csv("../RAWCSV/"+str(day14.date())+"/"+state+"_final.csv")
+        df_21 = pd.read_csv("../RAWCSV/"+str(day21.date())+"/"+state+"_final.csv")
+        df = pd.read_csv("../RAWCSV/"+str(date.date())+"/"+state+"_final.csv")
+        df["delta21_14confirmedForState"] = df_14["cumulativeConfirmedNumberForState"] - df_21["cumulativeConfirmedNumberForState"]
+        df["delta21_14confirmedForDistrict"] = df_14["cumulativeConfirmedNumberForDistrict"] - df_21["cumulativeConfirmedNumberForDistrict"]
+    except:
+        pass
     df.to_csv(f"../RAWCSV/{date}/{state}_final.csv", index=False)
     # print(df)
     # return df
@@ -89,24 +100,23 @@ def get_7dma(date):
         print(state)
         get_7dma_state(state, date)
         
-# states = ["PB"]
+states = ["ML"]
 
-# def date_range(start, end):
-#     r = (end+timedelta(days=1)-start).days
-#     return [start+timedelta(days=i) for i in range(r)]
+def date_range(start, end):
+    r = (end+timedelta(days=1)-start).days
+    return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-11-01"
-# end_date = "2021-12-03"
-# end = datetime.strptime(end_date, '%Y-%m-%d')
-# start = datetime.strptime(start_date, '%Y-%m-%d')
-# dateList = date_range(start, end)
+start_date = "2021-11-19"
+end_date = "2022-01-19"
+end = datetime.strptime(end_date, '%Y-%m-%d')
+start = datetime.strptime(start_date, '%Y-%m-%d')
+dateList = date_range(start, end)
 
-# for date in dateList:
-#     print(str(date.date()))
-#     for state in states:
-#         print(state)
-#         get_7dma_state(state, str(date.date()))
+for date in dateList:
+    print(str(date.date()))
+    for state in states:
+        get_7dma_state(state, str(date.date()))
 
 # get_7dma_state('UT', '2021-12-15')
 # get_7dma_state('BR', '2021-12-14')
