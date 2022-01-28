@@ -324,8 +324,19 @@ def getMLData(file_path,date,StateCode):
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=1)
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))#,header=0)
     df_districts.columns = df_districts.columns.str.replace("\n","")
+    prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
+    prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/ML_final.csv")
+    # print(df_districts.columns)
+    df_districts["Total Recoveries"] = 0
+    for idx in df_districts.index:
+        if df_districts["District Name"][idx] != "Total":
+            df_districts["Total Recoveries"][idx] = prev_df[prev_df["District"] == df_districts["District Name"][idx]]["cumulativeRecoveredNumberForDistrict"].item() + df_districts["New Recoveries"][idx].item()
+        else:
+            # print(df_districts["Total Recoveries"].sum())
+            df_districts["Total Recoveries"][idx] = df_districts["Total Recoveries"].sum()  
+    
     col_dict = {"District Name":"District","Total Cases":"Confirmed","Total Recoveries":"Recovered","Total Deaths":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_summary = df_districts
@@ -447,8 +458,8 @@ def getNLData(file_path,date,StateCode):
     names=["RT PCR","Truenat","Rapid Antigen Test","Total"])
     df_tests.columns = df_tests.columns.str.replace("\n","")
     
-    df_districts['Recovered'] = df_districts['Recovered'] + df_districts['j']
-    df_districts['Deceased'] = df_districts['Deceased'] 
+    df_districts['Recovered'] = df_districts['Recovered']
+    df_districts['Deceased'] = df_districts['Deceased']
     df_districts['Other'] = df_districts['h'] + df_districts['j']
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))  
     # df_districts.columns = df_districts.columns.str.replace("\n","")
@@ -621,8 +632,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2021-12-13"
-# end_date = "2022-01-20"
+# start_date = "2022-01-04"
+# end_date = "2022-01-25"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)
@@ -631,9 +642,9 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # for date in tqdm(dateList):
 #     # pass
 #     print(date)
-#     ExtractFromPDF(StateCode = "UT",Date = str(date.date()))
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-01-24")
-# ExtractFromPDF(StateCode = "NL",Date = "2022-01-22")
+#     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
+# ExtractFromPDF(StateCode = "NL",Date = "2022-01-26")
+# ExtractFromPDF(StateCode = "LA",Date = "2022-01-26")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-20")
 # ExtractFromPDF(StateCode = "UT",Date = "2022-01-20")

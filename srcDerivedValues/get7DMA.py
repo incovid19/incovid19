@@ -84,9 +84,21 @@ def get_7dma_state(state, date):
         day21 = datetime.strptime(date, '%Y-%m-%d') - timedelta(days=21)
         df_14 = pd.read_csv("../RAWCSV/"+str(day14.date())+"/"+state+"_final.csv")
         df_21 = pd.read_csv("../RAWCSV/"+str(day21.date())+"/"+state+"_final.csv")
-        df = pd.read_csv("../RAWCSV/"+str(date.date())+"/"+state+"_final.csv")
-        df["delta21_14confirmedForState"] = df_14["cumulativeConfirmedNumberForState"] - df_21["cumulativeConfirmedNumberForState"]
-        df["delta21_14confirmedForDistrict"] = df_14["cumulativeConfirmedNumberForDistrict"] - df_21["cumulativeConfirmedNumberForDistrict"]
+        # df = pd.read_csv("../RAWCSV/"+str(date)+"/"+state+"_final.csv")
+        df["delta21_14confirmedForState"] = df_14["cumulativeConfirmedNumberForState"][0] - df_21["cumulativeConfirmedNumberForState"][0]
+        # df["delta21_14confirmedForDistrict"] = df_14["cumulativeConfirmedNumberForDistrict"] - df_21["cumulativeConfirmedNumberForDistrict"]
+        # print(df["delta21_14confirmedForDistrict"])
+        # print(len(df_14["cumulativeConfirmedNumberForDistrict"] - df_21["cumulativeConfirmedNumberForDistrict"]),len(df["delta21_14confirmedForDistrict"]))
+        for idx in df.index:
+            try:
+                # print(df["District"][idx])
+                # print(day21)
+                # print(day14)
+                # print(df_14[df_14["District"] == df["District"][idx]]["cumulativeConfirmedNumberForDistrict"])
+                # print(df_21[df_21["District"] == df["District"][idx]]["cumulativeConfirmedNumberForDistrict"].item())
+                df["delta21_14confirmedForDistrict"][idx] = df_14[df_14["District"] == df["District"][idx]]["cumulativeConfirmedNumberForDistrict"].item()-df_21[df_21["District"] == df["District"][idx]]["cumulativeConfirmedNumberForDistrict"].item()
+            except:
+                print(df["District"][idx]+" : District 14_21DMA Error")
     except:
         pass
     df.to_csv(f"../RAWCSV/{date}/{state}_final.csv", index=False)
@@ -106,6 +118,8 @@ def date_range(start, end):
     r = (end+timedelta(days=1)-start).days
     return [start+timedelta(days=i) for i in range(r)]
  
+    
+# get_7dma("2022-01-25")
 
 # start_date = "2021-11-19"
 # end_date = "2022-01-19"
@@ -119,13 +133,17 @@ def date_range(start, end):
 #         get_7dma_state(state, str(date.date()))
 
 # get_7dma_state('TT', '2022-01-24')
-# get_7dma_state('BR', '2021-12-14')
+# get_7dma_state('KA', '2022-01-25')
 # get_7dma_state('CT', '2021-12-14')
 # get_7dma_state('WB', '2021-10-31')
 # get_7dma_state('RJ', '2021-10-31')
 # get_7dma_state('ML', '2021-10-31')
 
 #get_7dma('2021-11-13')
-# get_7dma_state('BR', '2022-01-10')
-# get_7dma_state('JK', '2022-01-05')
-# get_7dma_state('JK', '2022-01-12')
+# get_7dma_state('HR', '2022-01-11')
+# get_7dma_state('HR', '2022-01-12')
+# get_7dma_state('HR', '2022-01-13')
+# get_7dma_state('HR', '2022-01-18')
+# get_7dma_state('HR', '2022-01-19')
+# get_7dma_state('HR', '2022-01-20')
+# get_7dma_state('HR', '2022-01-25')

@@ -334,8 +334,8 @@ def date_range(start, end):
     return [start+timedelta(days=i) for i in range(r)]
  
 
-start_date = "2021-11-01"
-end_date = "2022-01-23"
+start_date = "2022-01-27"
+end_date = "2022-01-27"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
