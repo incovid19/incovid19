@@ -581,8 +581,13 @@ def himachal_pradesh(state, date, query):
     client = vision.ImageAnnotatorClient()
     image = get_image(state, date, query)
 
-    if image is None:
-        return ['ERR', 'Source not accessible']
+    # if image is None:
+    #     return ['ERR', 'Source not accessible']
+    
+     if image is None:
+        image = get_image(state, date, query.replace('7Pm', '2Pm'))
+        if image is None:
+            return ['ERR', 'Source not accessible']
 
     for img in image:
         if "Department of Health & Family Welfare" in client.document_text_detection(image=get_bytes(img)).text_annotations[0].description:
