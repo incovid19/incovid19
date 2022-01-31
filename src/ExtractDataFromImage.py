@@ -584,7 +584,7 @@ def himachal_pradesh(state, date, query):
     # if image is None:
     #     return ['ERR', 'Source not accessible']
     
-     if image is None:
+    if image is None:
         image = get_image(state, date, query.replace('7Pm', '2Pm'))
         if image is None:
             return ['ERR', 'Source not accessible']

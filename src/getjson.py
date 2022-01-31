@@ -100,7 +100,7 @@ def createDataMin(date,addLog = False):
         data_min_json[k]={"districts":{},"delta":{},"delta7":{},"delta21_14":{},"meta":{},"total":{}}
 
     for k,v in data_min_json.items():
-        print(k)
+        # print(k)
         df = pd.read_csv("../RAWCSV/"+date+"/"+k+"_final.csv")
         df_tt = pd.read_csv("../RAWCSV/"+date+"/TT_final.csv")
         # df = pd.read_csv('datamin.csv',header=[1])
@@ -209,7 +209,7 @@ def createDataMin(date,addLog = False):
                                             "source":number_generation(df,"State/UTCode",k,'tested_source_state')
                                   }
                                  }
-        if k != "TT":
+        if k != "TT" or k != "HP" or k != "NL":
             data_min_json[k]["total"]["confirmed"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeConfirmedNumberForDistrict')
             data_min_json[k]["total"]["deceased"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeDeceasedNumberForDistrict')
             data_min_json[k]["total"]["recovered"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeRecoveredNumberForDistrict')
@@ -268,12 +268,10 @@ def ts_json(fileName):
 
         run_date = data_min[key]['meta']['date']
         timeseries_min[key]['dates'][run_date] = temp_dict
-        # print(type(run_date),run_date)
-
+    
         with open('Test/timeseries.min.json', 'w') as fp:
             json.dump(timeseries_min, fp)
-
-            
+    
 def ts_state_all(fileName):
     delta_keys = ['delta','delta7','total']
     single_dist = {"DL":"Delhi","CH":"Chandigarh","LD":"Lakshadweep"}
@@ -290,14 +288,12 @@ def ts_state_all(fileName):
             if i in temp.keys():
                 temp_dict[i] = temp[i]
         
-        
         with open("Test/timeseries-{}.min.json".format(key)) as fp:
                 timeseries_min = json.load(fp)
                 fp.close()    
                 
         run_date = data_min[key]['meta']['date']
         timeseries_min[key]["dates"][run_date] = temp_dict
-        
                 
         temp_dict = {}
         if key != "TT" and key not in single_dist:
@@ -328,20 +324,15 @@ def updateAll(date,log=False):
     ts_json("Test/data-"+str(date.date())+".min.json")
     ts_state_all("Test/data-"+str(date.date())+".min.json")
     
-
 def date_range(start, end):
     r = (end+timedelta(days=1)-start).days
     return [start+timedelta(days=i) for i in range(r)]
  
-
-start_date = "2022-01-27"
-end_date = "2022-01-27"
+start_date = "2021-11-01"
+end_date = "2022-01-30"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
 
-# In[22]:
-
 for date in tqdm(dateList):
     updateAll(date)
-    

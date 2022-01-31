@@ -422,6 +422,7 @@ def getUKData(file_path,date,StateCode):
     
     return df_summary,df_total
 
+
 # def getNLData(file_path,date,StateCode):
 #     table = camelot.read_pdf(file_path,'1')
 #     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
@@ -644,7 +645,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     print(date)
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-29")
-# ExtractFromPDF(StateCode = "ML",Date = "2022-01-29")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-01-30")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-26")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-20")
