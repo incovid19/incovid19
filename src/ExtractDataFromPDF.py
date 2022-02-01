@@ -379,28 +379,102 @@ def getPBData(file_path,date,StateCode):
     # a=b
     return df_summary,df_districts
 
+# def getUKData(file_path,date,StateCode):
+#     table = camelot.read_pdf(file_path,'2')
+#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+#     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
+#     df_districts.columns = df_districts.columns.str.replace("\n","")
+
+#     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
+#     df_tests.columns = df_tests.columns.str.replace("\n","")  
+    
+#     col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Other","Cumulative Samples Tested":"Tested"}
+#     df_districts.rename(columns=col_dict,inplace=True)
+#     df_tests.rename(columns=col_dict,inplace=True)
+#     df_tests = df_tests[['District',"Tested"]]
+#     df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
+#     df_districts["Recovered"] = df_districts["Recovered"].astype(str).str.split("*").str[0].astype(int)
+    
+#     # df_districts['Recovered'] += df_districts['Migrated']
+#     # df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
+#     for col in df_districts.columns:
+#         df_districts[col] = df_districts[col].astype(str).str.replace("*","")
+#     df_summary = df_districts
+#     df_districts = df_districts[:-1]
+#     df_json = pd.read_json("../DistrictMappingMaster.json")
+#     dist_map = df_json['Uttarakhand'].to_dict()
+#     df_districts['District'].replace(dist_map,inplace=True)
+#     df_tests['District'].replace(dist_map,inplace=True)
+
+#     df_total = pd.merge(df_districts, df_tests, on='District', how='inner')
+#     # print(df_districts)
+#     # print(df_tests)
+#     print(df_total)
+#     # a=b
+
+#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+#     df_summary["Tested"] = int(df_tests.iloc[-1,-1])
+    
+#     df_total['notesForDistrict'] = df_total['Other'].astype(str) + " cases were recorded as Migrated / Others"
+#     df_summary['notesForState'] = df_summary['Other'] + " cases were recorded as Migrated / Others"
+    
+#     return df_summary,df_total
+
+
 def getUKData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,'2')
+    
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
     df_districts.columns = df_districts.columns.str.replace("\n","")
-
-    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
-    df_tests.columns = df_tests.columns.str.replace("\n","")  
+    # print('columns is', df_districts.columns)
     
-    col_dict = {"Districts":"District","Cases till Date":"Confirmed","Treated/ Cured till Date":"Recovered","Deaths":"Deceased","Migrated/ Others":"Other","Cumulative Samples Tested":"Tested"}
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
+    df_tests.columns = df_tests.columns.str.replace("\n","") 
+
+    col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
+    "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
+    "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested":"Tested"}
+    # "Cumulative Samples Tested":"Tested"
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
-    df_tests = df_tests[['District',"Tested"]]
-    df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
-    df_districts["Recovered"] = df_districts["Recovered"].astype(str).str.split("*").str[0].astype(int)
+    updated_data_frame = df_districts
     
-    # df_districts['Recovered'] += df_districts['Migrated']
-    # df_districts.drop(columns=['Active Cases','Migrated'],inplace=True)
-    for col in df_districts.columns:
-        df_districts[col] = df_districts[col].astype(str).str.replace("*","")
+    base_csv= '../RAWCSV/2022-01-01/UT_raw.csv'
+    df_base_csv = pd.read_csv(base_csv)
+    for index, row in df_base_csv.iterrows():
+        District_base_col = row['District']
+        filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
+        if not filtered_dataframe.empty:
+            # print('data frame is not empty')
+        # pdf data columns
+            confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
+            Recovered_col =filtered_dataframe['Recovered'].iloc[0]
+            Deaths_col = filtered_dataframe['Deceased'].iloc[0]
+            Other_col = filtered_dataframe['Other'].iloc[0]
+
+            # base data columns
+            confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
+            Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
+            Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
+            other_base_col = row['notesForDistrict'].split("c")[0]
+            
+            # addition
+            confirmed_col = confirmed_col + confirmed_base_col
+            # print(type(confirmed_col))
+            Recovered_col = Recovered_col + Recovered_base_col
+            Deaths_col = Deaths_col + Deaths_base_col
+            Other_col = Other_col + int(other_base_col)
+            # updating dataframe column values with additional values
+            updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
+            updated_data_frame.loc[index, 'Recovered'] = Recovered_col
+            updated_data_frame.loc[index, 'Deceased'] = Deaths_col
+            updated_data_frame.loc[index, 'Other'] = Other_col
+    df_districts = updated_data_frame
     df_summary = df_districts
     df_districts = df_districts[:-1]
     df_json = pd.read_json("../DistrictMappingMaster.json")
@@ -418,10 +492,9 @@ def getUKData(file_path,date,StateCode):
     df_summary["Tested"] = int(df_tests.iloc[-1,-1])
     
     df_total['notesForDistrict'] = df_total['Other'].astype(str) + " cases were recorded as Migrated / Others"
-    df_summary['notesForState'] = df_summary['Other'] + " cases were recorded as Migrated / Others"
+    df_summary['notesForState'] = df_summary['Other'].astype(str) + " cases were recorded as Migrated / Others"
     
     return df_summary,df_total
-
 
 # def getNLData(file_path,date,StateCode):
 #     table = camelot.read_pdf(file_path,'1')
@@ -649,7 +722,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-26")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-20")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-01-20")
+ExtractFromPDF(StateCode = "UT",Date = "2022-01-31")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-30")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
