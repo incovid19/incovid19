@@ -422,7 +422,6 @@ def getPBData(file_path,date,StateCode):
     
 #     return df_summary,df_total
 
-
 def getUKData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,'2')
     
@@ -430,9 +429,13 @@ def getUKData(file_path,date,StateCode):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
+
+    # change district name from U.S. nagar to Udham Singh Nagar
+    index_of_USnagar= df_districts[df_districts['Districts'] == 'U.S. Nagar'].index[0]
+    df_districts.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
+
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    # print('columns is', df_districts.columns)
-    
+
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","") 
 
@@ -442,38 +445,72 @@ def getUKData(file_path,date,StateCode):
     # "Cumulative Samples Tested":"Tested"
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
+    print('df districts data is', df_districts)
+
     updated_data_frame = df_districts
     
-    base_csv= '../RAWCSV/2022-01-01/UT_raw.csv'
+    base_csv= '../RAWCSV/2021-12-31/UT_raw.csv'
     df_base_csv = pd.read_csv(base_csv)
+
     for index, row in df_base_csv.iterrows():
         District_base_col = row['District']
-        filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
-        if not filtered_dataframe.empty:
-            # print('data frame is not empty')
-        # pdf data columns
-            confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
-            Recovered_col =filtered_dataframe['Recovered'].iloc[0]
-            Deaths_col = filtered_dataframe['Deceased'].iloc[0]
-            Other_col = filtered_dataframe['Other'].iloc[0]
 
-            # base data columns
-            confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
-            Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
-            Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
-            other_base_col = row['notesForDistrict'].split("c")[0]
+        if District_base_col != "Total" :
+            filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
             
-            # addition
-            confirmed_col = confirmed_col + confirmed_base_col
-            # print(type(confirmed_col))
-            Recovered_col = Recovered_col + Recovered_base_col
-            Deaths_col = Deaths_col + Deaths_base_col
-            Other_col = Other_col + int(other_base_col)
-            # updating dataframe column values with additional values
-            updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
-            updated_data_frame.loc[index, 'Recovered'] = Recovered_col
-            updated_data_frame.loc[index, 'Deceased'] = Deaths_col
-            updated_data_frame.loc[index, 'Other'] = Other_col
+            if not filtered_dataframe.empty:
+                # pdf data columns
+                confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
+                Recovered_col =filtered_dataframe['Recovered'].iloc[0]
+                Deaths_col = filtered_dataframe['Deceased'].iloc[0]
+                Other_col = filtered_dataframe['Other'].iloc[0]
+
+                # base data columns
+                confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
+                Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
+                Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
+                other_base_col = row['notesForDistrict'].split("c")[0]
+
+                # addition
+                confirmed_col = confirmed_col + confirmed_base_col
+                Recovered_col = Recovered_col + Recovered_base_col
+                Deaths_col = Deaths_col + Deaths_base_col
+                Other_col = Other_col + int(other_base_col)
+
+                # updating dataframe column values with additional values
+                updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
+                updated_data_frame.loc[index, 'Recovered'] = Recovered_col
+                updated_data_frame.loc[index, 'Deceased'] = Deaths_col
+                updated_data_frame.loc[index, 'Other'] = Other_col
+
+    
+    # get the index of total row and set those row values to zero then update with sum values
+    # finding index of total 
+    index_of_total = updated_data_frame[updated_data_frame['District'] == 'Total'].index[0]
+    print('index of total', index_of_total)
+
+    # set the total row values to zero
+    updated_data_frame.at[index_of_total, 'Confirmed'] = 0
+    updated_data_frame.at[index_of_total, 'Recovered'] = 0
+    updated_data_frame.at[index_of_total, 'Deceased'] = 0
+    updated_data_frame.at[index_of_total, 'Other'] = 0
+    
+    # summing of all the Confirmed, Recovered, Deceased and Other Column values 
+    Confirmed_Sumvalue = updated_data_frame['Confirmed'].sum()
+    Recovered_Sumvalue = updated_data_frame['Recovered'].sum()
+    Deceased_Sumvalue = updated_data_frame['Deceased'].sum()
+    Other_Sumvalue = updated_data_frame['Other'].sum()
+    # print('updated data frame con sum is', Confirmed_Sumvalue, 'Recovered_Sumvalue',Recovered_Sumvalue,
+    # 'Deceased_Sumvalue',Deceased_Sumvalue, 'Other_Sumvalue',Other_Sumvalue) 
+
+    # updating total row with sum of all the (C, R, D, O) column values
+    updated_data_frame.at[index_of_total, 'Confirmed'] = Confirmed_Sumvalue
+    updated_data_frame.at[index_of_total, 'Recovered'] = Recovered_Sumvalue
+    updated_data_frame.at[index_of_total, 'Deceased'] = Deceased_Sumvalue
+    updated_data_frame.at[index_of_total, 'Other'] = Other_Sumvalue
+            
+    print('updated data frame is', updated_data_frame)   
+ 
     df_districts = updated_data_frame
     df_summary = df_districts
     df_districts = df_districts[:-1]
@@ -495,6 +532,7 @@ def getUKData(file_path,date,StateCode):
     df_summary['notesForState'] = df_summary['Other'].astype(str) + " cases were recorded as Migrated / Others"
     
     return df_summary,df_total
+
 
 # def getNLData(file_path,date,StateCode):
 #     table = camelot.read_pdf(file_path,'1')
@@ -717,12 +755,12 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     # pass
 #     print(date)
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-29")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-02-01")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-01-30")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-26")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-20")
-ExtractFromPDF(StateCode = "UT",Date = "2022-01-31")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-01-31")
 # ExtractFromPDF(StateCode = "ML",Date = "2021-12-30")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
 # ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
