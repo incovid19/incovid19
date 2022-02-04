@@ -1248,7 +1248,7 @@ def ExtractDataFromImage(state, date, handle, term):
 
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2022-01-07', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2022-02-02', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('BR', '2022-02-03', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-12-01', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2022-01-19', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-12-30', 'health_manipur', 'Manipur updates')

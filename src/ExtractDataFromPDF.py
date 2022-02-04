@@ -52,7 +52,7 @@ def getRJData(file_path,date,StateCode):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
 
-    df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
+    df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=0)
     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
 
     frames = [df_districts_1,df_districts_2]
@@ -438,19 +438,26 @@ def getUKData(file_path,date,StateCode):
 
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","") 
+    
+    index_of_USnagar= df_tests[df_tests['Districts'] == 'US Nagar'].index[0]
+    df_tests.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
 
     col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
     "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
-    "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested":"Tested"}
+    "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
     # "Cumulative Samples Tested":"Tested"
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
-    print('df districts data is', df_districts)
+    
 
     updated_data_frame = df_districts
     
     base_csv= '../RAWCSV/2021-12-31/UT_raw.csv'
     df_base_csv = pd.read_csv(base_csv)
+    
+    df_districts = pd.merge(df_districts, df_tests, on='District', how='inner')
+    
+    print('df districts data is', df_districts)
 
     for index, row in df_base_csv.iterrows():
         District_base_col = row['District']
@@ -463,24 +470,28 @@ def getUKData(file_path,date,StateCode):
                 confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
                 Recovered_col =filtered_dataframe['Recovered'].iloc[0]
                 Deaths_col = filtered_dataframe['Deceased'].iloc[0]
+                Tested_col = filtered_dataframe['Tested'].iloc[0]
                 Other_col = filtered_dataframe['Other'].iloc[0]
 
                 # base data columns
                 confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
                 Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
                 Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
+                Tested_base_col = row['cumulativeTestedNumberForDistrict']
                 other_base_col = row['notesForDistrict'].split("c")[0]
 
                 # addition
                 confirmed_col = confirmed_col + confirmed_base_col
                 Recovered_col = Recovered_col + Recovered_base_col
                 Deaths_col = Deaths_col + Deaths_base_col
+                Tested_col = Tested_col + Tested_base_col
                 Other_col = Other_col + int(other_base_col)
 
                 # updating dataframe column values with additional values
                 updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
                 updated_data_frame.loc[index, 'Recovered'] = Recovered_col
                 updated_data_frame.loc[index, 'Deceased'] = Deaths_col
+                updated_data_frame.loc[index, 'Tested'] = Tested_col
                 updated_data_frame.loc[index, 'Other'] = Other_col
 
     
@@ -493,12 +504,14 @@ def getUKData(file_path,date,StateCode):
     updated_data_frame.at[index_of_total, 'Confirmed'] = 0
     updated_data_frame.at[index_of_total, 'Recovered'] = 0
     updated_data_frame.at[index_of_total, 'Deceased'] = 0
+    updated_data_frame.at[index_of_total, 'Tested'] = 0
     updated_data_frame.at[index_of_total, 'Other'] = 0
     
     # summing of all the Confirmed, Recovered, Deceased and Other Column values 
     Confirmed_Sumvalue = updated_data_frame['Confirmed'].sum()
     Recovered_Sumvalue = updated_data_frame['Recovered'].sum()
     Deceased_Sumvalue = updated_data_frame['Deceased'].sum()
+    Tested_Sumvalue = updated_data_frame['Tested'].sum()
     Other_Sumvalue = updated_data_frame['Other'].sum()
     # print('updated data frame con sum is', Confirmed_Sumvalue, 'Recovered_Sumvalue',Recovered_Sumvalue,
     # 'Deceased_Sumvalue',Deceased_Sumvalue, 'Other_Sumvalue',Other_Sumvalue) 
@@ -507,6 +520,7 @@ def getUKData(file_path,date,StateCode):
     updated_data_frame.at[index_of_total, 'Confirmed'] = Confirmed_Sumvalue
     updated_data_frame.at[index_of_total, 'Recovered'] = Recovered_Sumvalue
     updated_data_frame.at[index_of_total, 'Deceased'] = Deceased_Sumvalue
+    updated_data_frame.at[index_of_total, 'Tested'] = Tested_Sumvalue
     updated_data_frame.at[index_of_total, 'Other'] = Other_Sumvalue
             
     print('updated data frame is', updated_data_frame)   
@@ -517,21 +531,21 @@ def getUKData(file_path,date,StateCode):
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Uttarakhand'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
-    df_tests['District'].replace(dist_map,inplace=True)
+    # df_tests['District'].replace(dist_map,inplace=True)
 
-    df_total = pd.merge(df_districts, df_tests, on='District', how='inner')
+    # df_total = pd.merge(df_districts, df_tests, on='District', how='inner')
     # print(df_districts)
     # print(df_tests)
-    print(df_total)
+    # print(df_total)
     # a=b
 
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-    df_summary["Tested"] = int(df_tests.iloc[-1,-1])
+    # df_summary["Tested"] = int(df_tests.iloc[-1,-1])
     
-    df_total['notesForDistrict'] = df_total['Other'].astype(str) + " cases were recorded as Migrated / Others"
+    df_districts['notesForDistrict'] = df_districts['Other'].astype(str) + " cases were recorded as Migrated / Others"
     df_summary['notesForState'] = df_summary['Other'].astype(str) + " cases were recorded as Migrated / Others"
     
-    return df_summary,df_total
+    return df_summary,df_districts
 
 
 # def getNLData(file_path,date,StateCode):
@@ -732,6 +746,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         #     GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         StatusMsg(StateCode,Date,"OK","COMPLETED","ExtractFromPDF")
     except HTTPError:
+        raise
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
@@ -755,7 +770,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     # pass
 #     print(date)
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
-# ExtractFromPDF(StateCode = "UT",Date = "2022-02-01")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-02-03")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-01-30")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-26")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
