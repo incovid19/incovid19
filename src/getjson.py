@@ -209,10 +209,15 @@ def createDataMin(date,addLog = False):
                                             "source":number_generation(df,"State/UTCode",k,'tested_source_state')
                                   }
                                  }
-        if k != "TT" and (k != "HP" or k != "NL"):
-            data_min_json[k]["total"]["confirmed"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeConfirmedNumberForDistrict')
-            data_min_json[k]["total"]["deceased"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeDeceasedNumberForDistrict')
-            data_min_json[k]["total"]["recovered"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeRecoveredNumberForDistrict')
+        if k != "TT" :
+            if k == "HP" or k == "NL":
+                data_min_json[k]["total"]["confirmed"] = number_generation(df,"State/UTCode",k,'cumulativeConfirmedNumberForState')
+                data_min_json[k]["total"]["deceased"] = number_generation(df,"State/UTCode",k,'cumulativeDeceasedNumberForState')
+                data_min_json[k]["total"]["recovered"] = number_generation(df,"State/UTCode",k,'cumulativeRecoveredNumberForState')
+            else:
+                data_min_json[k]["total"]["confirmed"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeConfirmedNumberForDistrict')
+                data_min_json[k]["total"]["deceased"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeDeceasedNumberForDistrict')
+                data_min_json[k]["total"]["recovered"] = number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeRecoveredNumberForDistrict')
             try:
                 data_min_json[k]["total"]["other"] = number_generation(df,"District",district,'cumulativeOtherNumberForState')
             except:
@@ -328,8 +333,8 @@ def date_range(start, end):
     r = (end+timedelta(days=1)-start).days
     return [start+timedelta(days=i) for i in range(r)]
  
-start_date = "2022-01-31"
-end_date = "2022-02-01"
+start_date = "2021-11-01"
+end_date = "2022-02-03"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
