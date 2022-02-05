@@ -60,9 +60,15 @@ def GetFileStatus(dateList,Save = False):
                     FINAL.append("Yes")
                 else:
                     FINAL.append("No")
+    
+    df = pd.DataFrame(list(zip(Date,STATE,INPUT,RAW,FINAL,fileType)),columns=["Date","State","Input","Raw","Final","Filetype"])
+    df["myGovFlag"] = (df["Raw"] == "No") & (df["Input"] == "No")
+    df['myGovFlag'] = df['myGovFlag'].map({False:'No',
+                         True:'Yes'},
+                         na_action=None)
     if Save:
-        pd.DataFrame(list(zip(Date,STATE,INPUT,RAW,FINAL,fileType)),columns=["Date","State","Input","Raw","Final","Filetype"]).to_csv("../fileStatus.csv",index=False)
-    return pd.DataFrame(list(zip(Date,STATE,INPUT,RAW,FINAL,fileType)),columns=["Date","State","Input","Raw","Final","Filetype"])
+        df.to_csv("../fileStatus.csv",index=False)
+    return df
 
 
 # print("Extracting Data for:" + str(today))
