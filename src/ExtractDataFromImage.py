@@ -114,25 +114,35 @@ def get_image(state, date, search_query):
     }
     query = search_query + '&expansions=attachments.media_keys&media.fields=url&tweet.fields=created_at'
     response = requests.get("https://api.twitter.com/2/tweets/search/recent?query=" + query, headers=header)
-
-    if response.status_code == 200:
-        images = []
-        response = json.loads(response.content.decode())
-        for data in response['data']:
-            if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.strptime(date, "%Y-%m-%d"):
-                if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < datetime.strptime(date, "%Y-%m-%d") + timedelta(1):
-                    for i in range(img_count[state]):
+    try:
+        if response.status_code == 200:
+            images = []
+            response = json.loads(response.content.decode())
+            for data in response['data']:
+                if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') >= datetime.strptime(date, "%Y-%m-%d"):
+                    if datetime.strptime(data['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < datetime.strptime(date, "%Y-%m-%d") + timedelta(1):
+                        for i in range(img_count[state]):
+                            try:
+                                media_id = data['attachments']['media_keys'][i]
+                                media_url = next(
+                                    (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
+                                    None
+                                )
+                                images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
+                            except Exception:
+                                continue
+                        if len(images) > 0:
+                            return images
+                    else:
                         try:
-                            media_id = data['attachments']['media_keys'][i]
-                            media_url = next(
-                                (media['url'] for media in response['includes']['media'] if media['media_key'] == media_id),
-                                None
-                            )
-                            images.append(cv2.imdecode(np.frombuffer(requests.get(media_url).content, np.uint8), -1))
+                            images = []
+                            for i in range(img_count[state]):
+                                images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
+                            if any(img is None for img in images):
+                                return None
+                            return images
                         except Exception:
-                            continue
-                    if len(images) > 0:
-                        return images
+                            return None
                 else:
                     try:
                         images = []
@@ -143,20 +153,11 @@ def get_image(state, date, search_query):
                         return images
                     except Exception:
                         return None
-            else:
-                try:
-                    images = []
-                    for i in range(img_count[state]):
-                        images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
-                    if any(img is None for img in images):
-                        return None
-                    return images
-                except Exception:
-                    return None
-    else:
+    except:
         try:
             images = []
             for i in range(img_count[state]):
+                print(i)
                 images.append(cv2.imread("../INPUT/{0}/{1}_{2}.jpg".format(date, state, str(i + 1))))
             return images
         except Exception:
@@ -1233,7 +1234,7 @@ def ExtractDataFromImage(state, date, handle, term):
         )
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
-        # raise
+        raise
         # print(e)
         StatusMsg(
             StateCode=state,
@@ -1248,9 +1249,9 @@ def ExtractDataFromImage(state, date, handle, term):
 
 # API Calls - To be commented or removed from deployed code
 # ExtractDataFromImage('AR', '2022-01-07', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2022-02-03', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('BR', '2022-02-06', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-12-01', 'HealthCgGov', '#ChhattisgarhFightsCorona')
-# ExtractDataFromImage('HP', '2022-01-19', 'nhm_hp', '#7PMupdate')
+# ExtractDataFromImage('HP', '2022-02-06', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-12-30', 'health_manipur', 'Manipur updates')
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-05', 'diprjk', 'Media Bulletin')
