@@ -1234,7 +1234,7 @@ def ExtractDataFromImage(state, date, handle, term):
         )
         # return [state, date, "ExtractDataFromImage", response[0], response[1]]
     except Exception as e:
-        raise
+        # raise
         # print(e)
         StatusMsg(
             StateCode=state,
