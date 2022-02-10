@@ -1256,7 +1256,7 @@ def ExtractDataFromImage(state, date, handle, term):
 # ExtractDataFromImage('RJ', '2021-10-27', 'dineshkumawat', '#Rajasthan Bulletin')
 # ExtractDataFromImage('JK', '2021-11-05', 'diprjk', 'Media Bulletin')
 # ExtractDataFromImage('PY', '2021-11-01', '', '')
-# ExtractDataFromImage('PY', '2022-01-22', '', '')
+# ExtractDataFromImage('PY', '2022-02-09', '', '')
 # def date_range(start, end):
 #     r = (end+timedelta(days=1)-start).days
 #     return [start+timedelta(days=i) for i in range(r)]

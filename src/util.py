@@ -84,7 +84,9 @@ def ExtractData(state,dateList):
             if source["myGov"][idx] != "yes":
                 fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+ "." + source["StateDataSourceType"][idx]))
                 if not(fileStatus):
-                    pass
+                    if source["StateCode"][idx] == "KL":
+                        print(source["StateCode"][idx],str(today))
+                        ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
                 else:
                     ExtractFromHTML(source["StateCode"][idx],str(today))
             else:

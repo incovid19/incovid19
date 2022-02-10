@@ -655,6 +655,127 @@ def getMZData(file_path,date,StateCode):
     df_summary = df_districts #testcode needs to be updated later
     return df_summary,df_districts
 
+def getKLData(file_path,date,StateCode):
+    
+    table = camelot.read_pdf(file_path,'4,5,10')
+
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+    # print('table', table)
+    df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
+    df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
+    df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-10-table-1.csv'.format(date,StateCode))
+
+    df_districts_1.columns = df_districts_1.columns.str.replace("\n","")
+    df_deaths_data.columns = df_deaths_data.columns.str.replace("\n","")
+    df_tests_data.columns = df_tests_data.columns.str.replace("\n","")
+
+    df_districts_1 = df_districts_1.iloc[:,[0, 1, 2]]    
+    df_deaths_data = df_deaths_data.iloc[:,[0, -1]]
+
+    df_districts = pd.merge(df_districts_1, df_deaths_data, on='District', how='inner')
+
+    # col_dict = {"District":"District","Positive Cases declared today":"Confirmed",
+    # "Declared Negative today":"Recovered", "Death Cases approved today (A+B+C)":"Deaths"} 
+
+    # for 02 Feb 2022, for deaths, this col dict
+    col_dict = {"District":"District","Positive Cases declared today":"Confirmed",
+    "Declared Negative today":"Recovered", "Death Cases approved today (A+B)":"Deceased"}   
+    df_districts.rename(columns=col_dict,inplace=True)
+
+    updated_data_frame = df_districts    
+    prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
+    # print('prevdate',prevdate ,type(prevdate))
+    df_prevDay = pd.read_csv("../RAWCSV/{}/{}_raw.csv".format(prevdate,StateCode))
+    # df_prevDay = pd.read_csv('../RAWCSV/{}/{}_raw.csv'.format(prevdate,StateCode))
+
+    # print('base csv is', df_prevDay)
+
+    for index, row in df_prevDay.iterrows():
+        District_base_col = row['District']
+        # print('District_base_col',District_base_col)
+    
+        if District_base_col != "Total" :
+            # print(District_base_col)
+            filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
+            district_index = filtered_dataframe.index[0]
+            if not filtered_dataframe.empty:
+
+                # pdf data columns
+                Confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
+                Recovered_col =filtered_dataframe['Recovered'].iloc[0]
+                Deaths_col = filtered_dataframe['Deceased'].iloc[0]
+                # print(type(Confirmed_col))
+                # print('Confirmed_col',Confirmed_col, 'Recovered_col',Recovered_col,'Deaths_col',Deaths_col)
+
+                # base data columns
+                Confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
+                Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
+                Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
+                # print('Confirmed_base_col',Confirmed_base_col,'Recovered_base_col',Recovered_base_col,'Deaths_base_col',Deaths_base_col)
+
+                # addition
+
+                Confirmed_col =  Confirmed_col + Confirmed_base_col
+                Recovered_col = Recovered_col + Recovered_base_col
+                Deaths_col = Deaths_col + Deaths_base_col
+                # print('Confirmed_col',Confirmed_col,
+                # 'Recovered_col',Recovered_col,
+                # 'Deaths_col',Deaths_col)
+
+                # updating dataframe column values with addition values
+                updated_data_frame.at[district_index, 'Confirmed'] = Confirmed_col
+                updated_data_frame.at[district_index, 'Recovered'] = Recovered_col
+                updated_data_frame.at[district_index, 'Deceased'] = Deaths_col
+    # print('updated_data_frame',updated_data_frame)
+
+            
+    # get the index of total row and set those row values to zero then update with sum values
+    # finding index of total 
+    index_of_total = updated_data_frame[updated_data_frame['District'] == 'Total'].index[0]
+
+    # set the total row values to zero
+
+    updated_data_frame.at[index_of_total, 'Confirmed'] = 0
+    updated_data_frame.at[index_of_total, 'Recovered'] = 0
+    updated_data_frame.at[index_of_total, 'Deceased'] = 0
+
+    
+    # summing of all the Confirmed, Recovered, Deceased and Other Column values 
+    Confirmed_Sumvalue = updated_data_frame['Confirmed'].sum()
+    Recovered_Sumvalue = updated_data_frame['Recovered'].sum()
+    Deceased_Sumvalue = updated_data_frame['Deceased'].sum()
+    
+
+    # updating total row with sum of all the (C, R, D, O) column values
+    updated_data_frame.at[index_of_total, 'Confirmed'] = Confirmed_Sumvalue
+    updated_data_frame.at[index_of_total, 'Recovered'] = Recovered_Sumvalue
+    updated_data_frame.at[index_of_total, 'Deceased'] = Deceased_Sumvalue
+    
+    # print('updated data frame is', updated_data_frame)
+
+    df_districts = updated_data_frame
+    df_summary = df_districts
+    df_districts = df_districts[:-1]
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Kerala'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
+
+
+    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    # for tested result
+    test_data = df_tests_data['Cumulative Samples Sent'].astype(int)
+    # print('test_data',test_data, type(test_data))
+    df_summary["Tested"] = int(test_data)
+
+    # print('df_tests_data',df_tests_data)    
+    # print('df_summary',df_summary)
+    # print('df_districts',df_districts)
+
+    return df_summary,df_districts
+    # GenerateRawCsv(StateCode,date,df_districts,df_summary)
+
 
 def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     # print(df_summary['Confirmed'].values)
@@ -741,12 +862,15 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         elif StateCode == "AP":
             df_summary,df_districts = getAPData(filepath,Date,StateCode)
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
+        elif StateCode == "KL":
+            df_summary,df_districts = getKLData(filepath,Date,StateCode)
+            GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         # elif StateCode == "MZ":
         #     df_summary,df_districts = getMZData(filepath,Date,StateCode)
         #     GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         StatusMsg(StateCode,Date,"OK","COMPLETED","ExtractFromPDF")
     except HTTPError:
-        raise
+        # raise
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
     except Exception:
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
