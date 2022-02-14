@@ -105,7 +105,7 @@ def getTT():
                     if source["StateCode"][idx] == "DL":
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
                         df_addTest = pd.read_csv("../INPUT/DL_Tested.csv")
-                        temp_df['Tested'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
+                        temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
                     else:
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
                 else:

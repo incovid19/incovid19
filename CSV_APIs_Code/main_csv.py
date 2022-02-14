@@ -8,6 +8,8 @@ import numpy as np
 import os
 from datetime import datetime,timedelta
 import requests
+import warnings
+warnings.filterwarnings('ignore')
 
 def vaccination_numbers_api_csv(state_name,Date):
     
@@ -180,13 +182,13 @@ def getStates_Districts(date):
 
         #states.csv
         state_values=state_.loc[0,["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
-                       "cumulativeDeceasedNumberForState","cumulativeTestedNumberForState"]]
+                       "cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","cumulativeTestedNumberForState"]]
         df_state=pd.DataFrame(state_values)
         df_state=df_state.T
-        df_state["Others"]=""
+        # df_state["Others"]=""
         df_state["State/UTCode"]=df_state["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
         df_state=df_state[["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
-                       "cumulativeDeceasedNumberForState","Others","cumulativeTestedNumberForState"]]
+                       "cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","cumulativeTestedNumberForState"]]
         df_state.columns=states_df.columns
         states_df=pd.concat([states_df,df_state],axis=0)
 
@@ -194,18 +196,17 @@ def getStates_Districts(date):
         if state=="TT":
             state_["notesForState"]=""
         state_wise_values=state_.loc[0,["State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
-                       "cumulativeDeceasedNumberForState","last_updated","deltaConfirmedForState","deltaRecoveredForState","deltaDeceasedForState","notesForState"]]
+                       "cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","last_updated","deltaConfirmedForState","deltaRecoveredForState","deltaDeceasedForState","notesForState"]]
 
         df_state_wise=pd.DataFrame(state_wise_values)
         df_state_wise=df_state_wise.T
-        df_state_wise["Migrated_Other"]=0
+        # df_state_wise["Migrated_Other"]=0
         df_state_wise["Active"]=df_state_wise["cumulativeConfirmedNumberForState"]-(df_state_wise["cumulativeRecoveredNumberForState"]
-                                                                                   +df_state_wise["cumulativeDeceasedNumberForState"]
-                                                                                   +df_state_wise["Migrated_Other"])
+                                                                                   +df_state_wise["cumulativeDeceasedNumberForState"])
         df_state_wise["State"]=df_state_wise["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
 
         df_state_wise=df_state_wise[["State","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
-                       "cumulativeDeceasedNumberForState","Active","last_updated","Migrated_Other","State/UTCode","deltaConfirmedForState","deltaRecoveredForState",
+                       "cumulativeDeceasedNumberForState","Active","last_updated","cumulativeOtherNumberForState","State/UTCode","deltaConfirmedForState","deltaRecoveredForState",
                                        "deltaDeceasedForState","notesForState"]]
         df_state_wise.columns=states_wise_df.columns
         states_wise_df=pd.concat([states_wise_df,df_state_wise],axis=0)
@@ -213,33 +214,33 @@ def getStates_Districts(date):
         #districts.csv
         if state!="TT":
             df_district=state_[["Date","State/UTCode","District","cumulativeConfirmedNumberForDistrict","cumulativeRecoveredNumberForDistrict",
-                           "cumulativeDeceasedNumberForDistrict","cumulativeTestedNumberForDistrict"]]
-            df_district["Others"]=""
+                           "cumulativeDeceasedNumberForDistrict","cumulativeOtherNumberForDistrict","cumulativeTestedNumberForDistrict"]]
+            # df_district["Others"]=""
             df_district["State/UTCode"]=df_district["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
             df_district=df_district[["Date","State/UTCode","District","cumulativeConfirmedNumberForDistrict","cumulativeRecoveredNumberForDistrict",
-                           "cumulativeDeceasedNumberForDistrict","Others","cumulativeTestedNumberForDistrict"]]
+                           "cumulativeDeceasedNumberForDistrict","cumulativeOtherNumberForDistrict","cumulativeTestedNumberForDistrict"]]
             df_district.columns=districts_df.columns
             districts_df=pd.concat([districts_df,df_district],axis=0)
 
             #district_wise
             temp_district_df=state_[["State/UTCode","District","cumulativeConfirmedNumberForDistrict","cumulativeRecoveredNumberForDistrict",
-                               "cumulativeDeceasedNumberForDistrict",'deltaConfirmedForDistrict','deltaRecoveredForDistrict','deltaDeceasedForDistrict',
+                               "cumulativeDeceasedNumberForDistrict","cumulativeOtherNumberForDistrict",'deltaConfirmedForDistrict','deltaRecoveredForDistrict','deltaDeceasedForDistrict',
                                     "notesForDistrict","last_updated"]]
 
             temp_district_df["State"]=temp_district_df["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
             temp_district_df["District_Key"]=temp_district_df.apply(lambda rw: rw["State/UTCode"]+"_"+rw["State"],axis=1)
-            temp_district_df["Migrated_Other"]=0
+            # temp_district_df["Migrated_Other"]=0
             temp_district_df["SlNo"]=0
 
             temp_district_df.fillna(0,inplace=True)
             temp_district_df["Active"]=temp_district_df.apply(lambda rw: int(rw["cumulativeConfirmedNumberForDistrict"])-(int(rw["cumulativeRecoveredNumberForDistrict"])
-                                                                                       +int(rw["cumulativeDeceasedNumberForDistrict"])+int(rw["Migrated_Other"])),axis=1)
+                                                                                       +int(rw["cumulativeDeceasedNumberForDistrict"])),axis=1)
             temp_district_df["delta_Active"]=temp_district_df.apply(lambda rw: rw["deltaConfirmedForDistrict"]-(rw["deltaRecoveredForDistrict"]
                                                                                        +rw["deltaDeceasedForDistrict"]),axis=1)
 
             temp_district_df=temp_district_df[["SlNo","State/UTCode","State","District_Key","District","cumulativeConfirmedNumberForDistrict",
                                               "Active","cumulativeRecoveredNumberForDistrict", "cumulativeDeceasedNumberForDistrict",
-                                              "Migrated_Other",'deltaConfirmedForDistrict',"delta_Active",'deltaRecoveredForDistrict','deltaDeceasedForDistrict',
+                                              "cumulativeOtherNumberForDistrict",'deltaConfirmedForDistrict',"delta_Active",'deltaRecoveredForDistrict','deltaDeceasedForDistrict',
                                     "notesForDistrict","last_updated"]]
 
             temp_district_df.columns=districts_wise_df.columns

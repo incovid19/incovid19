@@ -10,6 +10,7 @@ from datetime import datetime, timezone, timedelta
 from tzlocal import get_localzone
 from StatusMsg import StatusMsg
 from tqdm import tqdm
+from urllib.error import HTTPError
 # from datetime import datetime,timedelta
 #programe extracts the tabels from the PDF files.
 # Need some Preprocessing to convert to RawCSV
@@ -423,12 +424,12 @@ def getPBData(file_path,date,StateCode):
 #     return df_summary,df_total
 
 def getUKData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'2')
+    table = camelot.read_pdf(file_path,'3')
     
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-2.csv'.format(date,StateCode))
 
     # change district name from U.S. nagar to Udham Singh Nagar
     index_of_USnagar= df_districts[df_districts['Districts'] == 'U.S. Nagar'].index[0]
@@ -436,7 +437,7 @@ def getUKData(file_path,date,StateCode):
 
     df_districts.columns = df_districts.columns.str.replace("\n","")
 
-    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-1.csv'.format(date,StateCode)) 
     df_tests.columns = df_tests.columns.str.replace("\n","") 
     
     index_of_USnagar= df_tests[df_tests['Districts'] == 'US Nagar'].index[0]
@@ -657,7 +658,7 @@ def getMZData(file_path,date,StateCode):
 
 def getKLData(file_path,date,StateCode):
     
-    table = camelot.read_pdf(file_path,'4,5,10')
+    table = camelot.read_pdf(file_path,'4,5,12')
 
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
@@ -665,7 +666,7 @@ def getKLData(file_path,date,StateCode):
     # print('table', table)
     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
     df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
-    df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-10-table-1.csv'.format(date,StateCode))
+    df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-12-table-1.csv'.format(date,StateCode))
 
     df_districts_1.columns = df_districts_1.columns.str.replace("\n","")
     df_deaths_data.columns = df_deaths_data.columns.str.replace("\n","")
@@ -870,9 +871,12 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         #     GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         StatusMsg(StateCode,Date,"OK","COMPLETED","ExtractFromPDF")
     except HTTPError:
-        # raise
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
+    except FileNotFoundError:
+        raise
+        StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
+        raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
@@ -894,8 +898,9 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     # pass
 #     print(date)
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
-# ExtractFromPDF(StateCode = "UT",Date = "2022-01-26")
-# ExtractFromPDF(StateCode = "ML",Date = "2022-01-30")
+
+
+# ExtractFromPDF(StateCode = "KL",Date = "2021-11-02")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-26")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
 # ExtractFromPDF(StateCode = "LA",Date = "2022-01-20")

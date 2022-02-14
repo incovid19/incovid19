@@ -10,14 +10,22 @@ import json
 from functools import singledispatch
 import json
 import traceback
-# from datetime import datetime
 import time
 import requests
 from tqdm import tqdm
 from datetime import datetime,timedelta
+import natsort
+
+path = "Test/"
+# path = "../out_timeSeries/"
+# path = "/home/swiadmin/test/v4/min/"
+
+class FileAlreadyPresent(Exception):
+    pass
+    # print("Please pass OverWrite = True to overwrite the present file")
 
 def addLogging(logDict:dict):
-    loggingsFile = '../log.json'
+    loggingsFile = '/home/swiadmin/test/updatelog/log.json'
 
     with open(loggingsFile) as f:
         data = json.load(f)
@@ -156,11 +164,11 @@ def createDataMin(date,addLog = False):
             else:
                 data_min_json[k]["districts"].update(district_dict)
 
-
-        # print("State:"+str(number_generation(df,"State/UTCode",k,'cumulativeConfirmedNumberForState')))
-        # print("TT   :"+str(number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeConfirmedNumberForDistrict')))
         if k != "TT":
             if number_generation(df,"State/UTCode",k,'cumulativeConfirmedNumberForState') != number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeConfirmedNumberForDistrict'):
+                print(k)
+                print("State:"+str(number_generation(df,"State/UTCode",k,'cumulativeConfirmedNumberForState')))
+                print("TT   :"+str(number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeConfirmedNumberForDistrict')))
                 if addLog:
                     updateJSONLog(STATE_NAMES[k],number_generation(df_tt,"District",STATE_NAMES[k],'cumulativeConfirmedNumberForDistrict'),number_generation(df,"State/UTCode",k,'cumulativeConfirmedNumberForState'),date)
                 # pass
@@ -249,7 +257,7 @@ def createDataMin(date,addLog = False):
         return {k: remove_null_bool(v) for k, v in ob.items()
                 if v is not None and v is not 0 and v is not 'n' and v is not {}}
 
-    with open('Test/data-'+date+'.min.json', 'w') as json_file:
+    with open(path + 'data-'+date+'.min.json', 'w') as json_file:
         json.dump(remove_null_bool(data_min_json), json_file)
 
 def ts_json(fileName):
@@ -257,8 +265,8 @@ def ts_json(fileName):
     with open(fileName) as f:
         data_min = json.load(f)
         f.close()
-
-    with open('Test/timeseries.min.json') as fp:
+  
+    with open(path + 'timeseries.min.json') as fp:
             timeseries_min = json.load(fp)
             fp.close()
 
@@ -274,7 +282,7 @@ def ts_json(fileName):
         run_date = data_min[key]['meta']['date']
         timeseries_min[key]['dates'][run_date] = temp_dict
     
-        with open('Test/timeseries.min.json', 'w') as fp:
+        with open(path + 'timeseries.min.json', 'w') as fp:
             json.dump(timeseries_min, fp)
     
 def ts_state_all(fileName):
@@ -293,7 +301,7 @@ def ts_state_all(fileName):
             if i in temp.keys():
                 temp_dict[i] = temp[i]
         
-        with open("Test/timeseries-{}.min.json".format(key)) as fp:
+        with open(path + "timeseries-{}.min.json".format(key)) as fp:
                 timeseries_min = json.load(fp)
                 fp.close()    
                 
@@ -321,23 +329,59 @@ def ts_state_all(fileName):
                 timeseries_min[key]['districts'][single_dist[key]]["dates"][run_date][i] = data_min[key][i]
                 # print(data_min[key][i])
 
-        with open("Test/timeseries-{}.min.json".format(key), 'w') as fp:
+        with open(path + "timeseries-{}.min.json".format(key), 'w') as fp:
             json.dump(timeseries_min, fp)
+
             
-def updateAll(date,log=False):
+def renameFromDataMin(OverWrite = False):
+    with open(path + 'data.min.json') as f:
+        data_min = json.load(f)
+        f.close()
+    for key in data_min.keys():
+        run_date = data_min[key]['meta']['date']
+        break
+    print("Renaming....")
+    inList = natsort.natsorted(os.listdir(path))
+    if 'data-'+str(run_date)+'.min.json' in inList:
+        if not(OverWrite):
+            raise FileAlreadyPresent
+            print("data-"+str(run_date)+".min.json already present")
+        else:
+            print("Renaming Complete!")
+            os.rename(path+'data.min.json', path+'data-'+str(run_date)+'.min.json')
+    else:
+        print("Renaming Complete!")
+        os.rename(path+'data.min.json', path+'data-'+str(run_date)+'.min.json')
+    
+def renameToDataMin(OverWrite = False):
+    inList = natsort.natsorted(os.listdir(path))
+    dataminFiles = [filename for filename in inList if filename.startswith('data')]
+    if dataminFiles[-1] != "data.min.json" or OverWrite:
+        os.rename(path+dataminFiles[-1], path+'data.min.json')
+    else:
+        if not(OverWrite):
+            raise FileAlreadyPresent
+        print("data.min.json already present")
+    
+def updateAll(date,log=False,OverWrite=False):
+    renameFromDataMin(OverWrite)
     createDataMin(str(date.date()),log)
-    ts_json("Test/data-"+str(date.date())+".min.json")
-    ts_state_all("Test/data-"+str(date.date())+".min.json")
+    ts_json(path + "data-"+str(date.date())+".min.json")
+    ts_state_all(path + "data-"+str(date.date())+".min.json")
+    renameToDataMin(OverWrite)
     
 def date_range(start, end):
-    r = (end+timedelta(days=1)-start).days
-    return [start+timedelta(days=i) for i in range(r)]
- 
-start_date = "2022-02-01"
-end_date = "2022-02-09"
-end = datetime.strptime(end_date, '%Y-%m-%d')
-start = datetime.strptime(start_date, '%Y-%m-%d')
-dateList = date_range(start, end)
+        r = (end+timedelta(days=1)-start).days
+        return [start+timedelta(days=i) for i in range(r)]
+    
+    
+if __name__ == "__main__":
+    print("Running Main")
+    start_date = "2021-11-01"
+    end_date = "2022-02-12"
+    end = datetime.strptime(end_date, '%Y-%m-%d')
+    start = datetime.strptime(start_date, '%Y-%m-%d')
+    dateList = date_range(start, end)
 
-for date in tqdm(dateList):
-    updateAll(date)
+    for date in tqdm(dateList):
+        updateAll(date)

@@ -98,7 +98,8 @@ def get_7dma_state(state, date):
                 # print(df_21[df_21["District"] == df["District"][idx]]["cumulativeConfirmedNumberForDistrict"].item())
                 df["delta21_14confirmedForDistrict"][idx] = df_14[df_14["District"] == df["District"][idx]]["cumulativeConfirmedNumberForDistrict"].item()-df_21[df_21["District"] == df["District"][idx]]["cumulativeConfirmedNumberForDistrict"].item()
             except:
-                print(df["District"][idx]+" : District 14_21DMA Error")
+                pass
+                # print(df["District"][idx]+" : District 14_21DMA Error")
     except:
         pass
     df.to_csv(f"../RAWCSV/{date}/{state}_final.csv", index=False)

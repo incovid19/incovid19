@@ -186,7 +186,7 @@ def vaccination_numbers_api(state_name,Date):
     return (state_cumulative_vaccinated1,state_cumulative_vaccinated2,state_cumulative_vaccinated3,state_cumulative_vaccinated,district_vacc_dict)
 
 def addLogging(logDict:dict):
-    loggingsFile = '../log.json'
+    loggingsFile = '/home/swiadmin/test/updatelog/log.json'
 
     with open(loggingsFile) as f:
         data = json.load(f)
@@ -207,7 +207,7 @@ def updateJSONLog(stateName,date):
    })
 
 def removeLogging(date):
-    loggingsFile = "../log.json"
+    loggingsFile = "/home/swiadmin/test/updatelog/log.json"
     
     with open(loggingsFile) as f:
         data = json.load(f)

@@ -5,6 +5,7 @@ from ExtractDataFromImage import ExtractDataFromImage
 from ExtractDataFromPDF import ExtractFromPDF
 from ExtractStateMyGov import ExtractStateMyGov
 from getHTMLData import ExtractFromHTML
+from getHTMLSources import getSources
 
 source = pd.read_csv("../sources.csv")
 
@@ -73,6 +74,13 @@ def GetFileStatus(dateList,Save = False):
 
 # print("Extracting Data for:" + str(today))
 # for idx in source.index:
+def DownloadData(state,dateList):
+    for date in dateList:
+        today = date.date()
+        df_tmp = source[source["StateCode"] == state]
+        getSources(df_tmp,today)
+
+
 def ExtractData(state,dateList):
     for date in dateList:
         today = date.date()
