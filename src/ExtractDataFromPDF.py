@@ -20,6 +20,8 @@ from urllib.error import HTTPError
 # file_path = r"../INPUT/2021-10-26/KA.pdf"
 #Convert your file
 # reads all the tables in the PDF
+class FileFormatChanged(Exception):
+    pass
 
 def getAPData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,pages='1')
@@ -59,7 +61,7 @@ def getRJData(file_path,date,StateCode):
     frames = [df_districts_1,df_districts_2]
     df_districts = pd.concat(frames,ignore_index=True)
     df_districts.columns = df_districts.columns.str.replace("\n","")
-
+    print(df_districts.columns)
     col_dict = {"Cumulative Sample":"Tested", "Cumulative Positive":"Confirmed", "Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased","CumulativePositive":"Confirmed",
                 "CumulativeDeath":"Deceased","CumulativeRecovered/ Discharged":"Recovered"}
     df_districts.rename(columns=col_dict,inplace=True)
@@ -135,7 +137,11 @@ def getKAData(file_path,date,StateCode):
     df_districts['notesForDistrict'] = df_districts['Other'].astype(str) + " cases were recorded as Deaths due to Non Covid Reasons"
     df_summary['notesForState'] = df_summary['Other'] + " cases were recorded as Deaths due to Non Covid Reasons"
     df_addTest = pd.read_csv("../INPUT/KA_Tested.csv")
-    df_summary['Tested'] = df_addTest[df_addTest["Date"] == date]["Cumulative_Tested"].item()
+    try:
+        df_summary['Tested'] = df_addTest[df_addTest["Date"] == date]["Cumulative_Tested"].item()
+    except:
+        print("Please Enter KA Tested values in ../Input/KA_Tested.csv")
+        raise
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Karnataka'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
@@ -424,21 +430,38 @@ def getPBData(file_path,date,StateCode):
 #     return df_summary,df_total
 
 def getUKData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,'3')
-    
-    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
-        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
-    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-2.csv'.format(date,StateCode))
+    try:
+        table = camelot.read_pdf(file_path,'2')
 
-    # change district name from U.S. nagar to Udham Singh Nagar
-    index_of_USnagar= df_districts[df_districts['Districts'] == 'U.S. Nagar'].index[0]
-    df_districts.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
+        if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+            os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+        table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+        df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
 
-    df_districts.columns = df_districts.columns.str.replace("\n","")
+        # change district name from U.S. nagar to Udham Singh Nagar
+        index_of_USnagar= df_districts[df_districts['Districts'] == 'U.S. Nagar'].index[0]
+        df_districts.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
 
-    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-1.csv'.format(date,StateCode)) 
-    df_tests.columns = df_tests.columns.str.replace("\n","") 
+        df_districts.columns = df_districts.columns.str.replace("\n","")
+
+        df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
+        df_tests.columns = df_tests.columns.str.replace("\n","") 
+    except FileNotFoundError:
+        table = camelot.read_pdf(file_path,'3')
+
+        if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+            os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+        table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+        df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-2.csv'.format(date,StateCode))
+
+        # change district name from U.S. nagar to Udham Singh Nagar
+        index_of_USnagar= df_districts[df_districts['Districts'] == 'U.S. Nagar'].index[0]
+        df_districts.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
+
+        df_districts.columns = df_districts.columns.str.replace("\n","")
+
+        df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-1.csv'.format(date,StateCode)) 
+        df_tests.columns = df_tests.columns.str.replace("\n","") 
     
     index_of_USnagar= df_tests[df_tests['Districts'] == 'US Nagar'].index[0]
     df_tests.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
@@ -449,6 +472,9 @@ def getUKData(file_path,date,StateCode):
     # "Cumulative Samples Tested":"Tested"
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
+    
+    df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
+    df_districts["Recovered"] = df_districts["Recovered"].astype(str).str.split("*").str[0].astype(int)
     
 
     updated_data_frame = df_districts
@@ -657,16 +683,20 @@ def getMZData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getKLData(file_path,date,StateCode):
-    
-    table = camelot.read_pdf(file_path,'4,5,12')
+    print("Extracting PDF")
+    table = camelot.read_pdf(file_path,'4,5,9')
 
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # print('table', table)
-    df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
-    df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
-    df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-12-table-1.csv'.format(date,StateCode))
+    try:
+        df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
+        df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
+        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-9-table-1.csv'.format(date,StateCode))
+    except:
+        print("Format Chnaged")
+        raise FileFormatChanged
 
     df_districts_1.columns = df_districts_1.columns.str.replace("\n","")
     df_deaths_data.columns = df_deaths_data.columns.str.replace("\n","")
@@ -873,7 +903,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     except HTTPError:
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
     except FileNotFoundError:
-        raise
+        # raise
         StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
         raise

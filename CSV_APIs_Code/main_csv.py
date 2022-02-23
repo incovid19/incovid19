@@ -118,8 +118,6 @@ def get_case_time_series(date):
     new_case_time_series_df=pd.concat([case_time_series_df,v_df],axis=0)
     new_case_time_series_df.reset_index(inplace=True,drop=True)
     new_case_time_series_df = new_case_time_series_df.drop_duplicates()
-    # dest_path=f"./{v[0]}"
-    # os.makedirs(dest_path, exist_ok=True)
     new_case_time_series_df = new_case_time_series_df.sort_values(by=['Date_YMD'])
     new_case_time_series_df.to_csv("/home/swiadmin/test/csv/latest/case_time_series.csv",index=False)
 
@@ -181,33 +179,57 @@ def getStates_Districts(date):
         state_=pd.read_csv("../RAWCSV/"+date+"/{}_final.csv".format(state))
 
         #states.csv
-        state_values=state_.loc[0,["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
-                       "cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","cumulativeTestedNumberForState"]]
-        df_state=pd.DataFrame(state_values)
-        df_state=df_state.T
-        # df_state["Others"]=""
+        try:
+            state_values=state_.loc[0,["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState","cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","cumulativeTestedNumberForState"]]
+            df_state=pd.DataFrame(state_values)
+            df_state=df_state.T
+        except:
+            state_values=state_.loc[0,["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState","cumulativeDeceasedNumberForState","cumulativeTestedNumberForState"]]
+            df_state=pd.DataFrame(state_values)
+            df_state=df_state.T
+            df_state["Others"]=0
         df_state["State/UTCode"]=df_state["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
-        df_state=df_state[["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
+        try:
+            df_state=df_state[["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
                        "cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","cumulativeTestedNumberForState"]]
+        except:
+            df_state=df_state[["Date","State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
+                       "cumulativeDeceasedNumberForState","Others","cumulativeTestedNumberForState"]]
         df_state.columns=states_df.columns
         states_df=pd.concat([states_df,df_state],axis=0)
 
         #state_wise.csv
         if state=="TT":
             state_["notesForState"]=""
-        state_wise_values=state_.loc[0,["State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
-                       "cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","last_updated","deltaConfirmedForState","deltaRecoveredForState","deltaDeceasedForState","notesForState"]]
+        try:
+            state_wise_values=state_.loc[0,["State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState","cumulativeDeceasedNumberForState","cumulativeOtherNumberForState","last_updated","deltaConfirmedForState","deltaRecoveredForState","deltaDeceasedForState","notesForState"]]
 
-        df_state_wise=pd.DataFrame(state_wise_values)
-        df_state_wise=df_state_wise.T
-        # df_state_wise["Migrated_Other"]=0
-        df_state_wise["Active"]=df_state_wise["cumulativeConfirmedNumberForState"]-(df_state_wise["cumulativeRecoveredNumberForState"]
-                                                                                   +df_state_wise["cumulativeDeceasedNumberForState"])
-        df_state_wise["State"]=df_state_wise["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
+            df_state_wise=pd.DataFrame(state_wise_values)
+            df_state_wise=df_state_wise.T
+            # df_state_wise["Migrated_Other"]=0
+            df_state_wise["Active"]=df_state_wise["cumulativeConfirmedNumberForState"]-(df_state_wise["cumulativeRecoveredNumberForState"]
+                                                                                       +df_state_wise["cumulativeDeceasedNumberForState"])
+            df_state_wise["State"]=df_state_wise["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
 
-        df_state_wise=df_state_wise[["State","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
-                       "cumulativeDeceasedNumberForState","Active","last_updated","cumulativeOtherNumberForState","State/UTCode","deltaConfirmedForState","deltaRecoveredForState",
-                                       "deltaDeceasedForState","notesForState"]]
+            df_state_wise=df_state_wise[["State","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
+                           "cumulativeDeceasedNumberForState","Active","last_updated","cumulativeOtherNumberForState","State/UTCode","deltaConfirmedForState","deltaRecoveredForState",
+                                           "deltaDeceasedForState","notesForState"]]
+            
+        except:
+            state_wise_values=state_.loc[0,["State/UTCode","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
+                           "cumulativeDeceasedNumberForState","last_updated","deltaConfirmedForState","deltaRecoveredForState","deltaDeceasedForState","notesForState"]]
+
+            df_state_wise=pd.DataFrame(state_wise_values)
+            df_state_wise=df_state_wise.T
+            df_state_wise["Migrated_Other"]=0
+            df_state_wise["Active"]=df_state_wise["cumulativeConfirmedNumberForState"]-(df_state_wise["cumulativeRecoveredNumberForState"]
+                                                                                       +df_state_wise["cumulativeDeceasedNumberForState"])
+            df_state_wise["State"]=df_state_wise["State/UTCode"].apply(lambda val: STATE_NAMES.get(val))
+
+            df_state_wise=df_state_wise[["State","cumulativeConfirmedNumberForState","cumulativeRecoveredNumberForState",
+                           "cumulativeDeceasedNumberForState","Active","last_updated","Migrated_Other","State/UTCode","deltaConfirmedForState","deltaRecoveredForState",
+                                           "deltaDeceasedForState","notesForState"]]
+            
         df_state_wise.columns=states_wise_df.columns
         states_wise_df=pd.concat([states_wise_df,df_state_wise],axis=0)
 
@@ -252,21 +274,58 @@ def getStates_Districts(date):
     states_df.reset_index(inplace=True,drop=True)
     states_df = states_df.drop_duplicates()
     states_df = states_df.sort_values(by=['Date','State'])
+    states_df = states_df.fillna(0)
+    convert_dict = {
+                'Confirmed':int, 
+                'Recovered':int,
+                'Deceased':int, 
+                'Other':int,
+                'Tested':int}
+    states_df = states_df.astype(convert_dict)
     states_df.to_csv("/home/swiadmin/test/csv/latest/states.csv",index=False)
 
     districts_df.reset_index(inplace=True,drop=True)
     districts_df = districts_df.drop_duplicates()
     districts_df = districts_df.dropna(subset=['Date'])
     districts_df = districts_df.sort_values(by=['Date','State'])
+    print(districts_df.columns)
+    districts_df = districts_df.fillna(0)
+    convert_dict = {'Confirmed':int, 
+                    'Recovered':int,
+                    'Deceased':int,
+                    'Other':int, 
+                    'Tested':int}
+    districts_df = districts_df.astype(convert_dict)
     districts_df.to_csv("/home/swiadmin/test/csv/latest/districts.csv",index=False)
 
     districts_wise_df.reset_index(inplace=True,drop=True)
     districts_wise_df["SlNo"]=districts_wise_df.index
     districts_wise_df = districts_wise_df.drop_duplicates()
+    districts_wise_df = districts_wise_df.fillna(0)
+    convert_dict = {'Confirmed':int,
+                    'Active':int,
+                    'Recovered':int,
+                    'Deceased':int,
+                    'Migrated_Other':int, 
+                    'Delta_Confirmed':int,
+                    'Delta_Active':int, 
+                    'Delta_Recovered':int, 
+                    'Delta_Deceased':int}
+    districts_wise_df = districts_wise_df.astype(convert_dict)
     districts_wise_df.to_csv("/home/swiadmin/test/csv/latest/district_wise.csv",index=False)
 
     states_wise_df.reset_index(inplace=True,drop=True)
     states_wise_df = states_wise_df.drop_duplicates()
+    states_wise_df = states_wise_df.fillna(0)
+    convert_dict = {'Confirmed':int, 
+                    'Recovered':int, 
+                    'Deaths':int, 
+                    'Active':int,
+                    'Migrated_Other':int, 
+                    'Delta_Confirmed':int,
+                    'Delta_Recovered':int, 
+                    'Delta_Deaths':int}
+    states_wise_df = states_wise_df.astype(convert_dict)
     states_wise_df.to_csv("/home/swiadmin/test/csv/latest/state_wise.csv",index=False)
 
 
@@ -346,6 +405,7 @@ def get_state_wise_daily(date):
     state_wise_daily = state_wise_daily.drop_duplicates()
     state_wise_daily = state_wise_daily.dropna(subset=['Date'])
     state_wise_daily = state_wise_daily.sort_values(by=['Date'])
+    print(state_wise_daily.columns)
     state_wise_daily.to_csv("/home/swiadmin/test/csv/latest/state_wise_daily.csv",index=False)
 
 def get_vaccine_district_final(date):
@@ -550,6 +610,11 @@ def get_vaccine_state_csv(date):
             df_prev.reset_index(inplace=True,drop=True)
     df_prev["Updated On"] = df_prev["Updated On"].astype("str")        
     df_prev = df_prev.sort_values(by=['Updated On'])
+    # print(df_prev.columns)
+    df_prev = df_prev.fillna(0)
+    for col in df_prev.columns:
+        if col not in ['Updated On', 'State']:
+            df_prev[col] = df_prev[col].astype(int)
     df_prev.to_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_statewise.csv",index=False)
 
 # df_prev.to_csv("cowin_vaccine_data_statewise_latest.csv",index=False)
@@ -562,8 +627,8 @@ def get_vaccine_state_csv(date):
 #     return [start+timedelta(days=i) for i in range(r)]
  
 
-# start_date = "2022-01-20"
-# end_date = "2022-01-25"
+# start_date = "2021-10-31"
+# end_date = "2022-02-16"
 # end = datetime.strptime(end_date, '%Y-%m-%d')
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)

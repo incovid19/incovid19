@@ -308,6 +308,7 @@ def updateDerivedValues(StateCode,Date):
         if state_raw_csv["cumulativeTestedNumberForState"].sum() != 0:
             state_raw_csv["deltaTestedForState"]=state_raw_csv["cumulativeTestedNumberForState"].astype("int64")-previous_state_raw_csv["cumulativeTestedNumberForState"].astype("int64")
     except:
+        # raise
         print("Tested Error")
         state_raw_csv["deltaTestedForState"] = None
                 

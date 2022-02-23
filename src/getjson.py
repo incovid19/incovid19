@@ -16,9 +16,9 @@ from tqdm import tqdm
 from datetime import datetime,timedelta
 import natsort
 
-path = "Test/"
+
 # path = "../out_timeSeries/"
-# path = "/home/swiadmin/test/v4/min/"
+path = "/home/swiadmin/test/v4/min/"
 
 class FileAlreadyPresent(Exception):
     pass
@@ -377,8 +377,9 @@ def date_range(start, end):
     
 if __name__ == "__main__":
     print("Running Main")
-    start_date = "2021-11-01"
-    end_date = "2022-02-12"
+    path = "Test/"
+    start_date = "2022-02-19"
+    end_date = "2022-02-19"
     end = datetime.strptime(end_date, '%Y-%m-%d')
     start = datetime.strptime(start_date, '%Y-%m-%d')
     dateList = date_range(start, end)
