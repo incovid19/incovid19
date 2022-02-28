@@ -62,7 +62,8 @@ def getRJData(file_path,date,StateCode):
     df_districts = pd.concat(frames,ignore_index=True)
     df_districts.columns = df_districts.columns.str.replace("\n","")
     print(df_districts.columns)
-    col_dict = {"Cumulative Sample":"Tested", "Cumulative Positive":"Confirmed", "Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased","CumulativePositive":"Confirmed",
+    #Cumulative Sample
+    col_dict = {"Unnamed: 2":"Tested", "Cumulative Positive":"Confirmed", "Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased","CumulativePositive":"Confirmed",
                 "CumulativeDeath":"Deceased","CumulativeRecovered/ Discharged":"Recovered"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
@@ -380,7 +381,11 @@ def getPBData(file_path,date,StateCode):
     dist_map = df_json['Punjab'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-    df_summary["Tested"] = df_tests.loc[1,"Numbers"]
+    df_tests["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
+    if type(df_tests.loc[1,"Numbers"]) == str:
+        df_summary["Tested"] = df_tests.loc[1,"Numbers"].split('*')[1]
+    else:
+        df_summary["Tested"] = df_tests.loc[1,"Numbers"]
     # df_districts["Tested"] = df_summary["Tested"]
     # print(df_districts)
     # a=b
@@ -684,7 +689,7 @@ def getMZData(file_path,date,StateCode):
 
 def getKLData(file_path,date,StateCode):
     print("Extracting PDF")
-    table = camelot.read_pdf(file_path,'4,5,9')
+    table = camelot.read_pdf(file_path,'4,5,8')
 
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
@@ -693,7 +698,7 @@ def getKLData(file_path,date,StateCode):
     try:
         df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
         df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
-        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-9-table-1.csv'.format(date,StateCode))
+        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-8-table-1.csv'.format(date,StateCode))
     except:
         print("Format Chnaged")
         raise FileFormatChanged
@@ -895,6 +900,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         elif StateCode == "KL":
             df_summary,df_districts = getKLData(filepath,Date,StateCode)
+            print("Data Extracted Sucessfully")
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         # elif StateCode == "MZ":
         #     df_summary,df_districts = getMZData(filepath,Date,StateCode)
@@ -906,7 +912,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         # raise
         StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
-        raise
+        # raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 

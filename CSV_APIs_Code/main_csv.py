@@ -311,6 +311,7 @@ def getStates_Districts(date):
                     'Delta_Active':int, 
                     'Delta_Recovered':int, 
                     'Delta_Deceased':int}
+    districts_wise_df.loc[(districts_wise_df["District_Notes"] == 0), 'District_Notes'] = ""
     districts_wise_df = districts_wise_df.astype(convert_dict)
     districts_wise_df.to_csv("/home/swiadmin/test/csv/latest/district_wise.csv",index=False)
 
