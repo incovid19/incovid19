@@ -12,7 +12,6 @@ for folder in folders:
         os.mkdir(os.path.join("..",folder,str(today)))
         print("Created")
 
-
 from getHTMLSources import getSources
 from ExtractDataFromImage import ExtractDataFromImage
 from ExtractDataFromPDF import ExtractFromPDF

@@ -912,7 +912,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         # raise
         StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
-        # raise
+        raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
@@ -936,23 +936,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "KL",Date = "2021-11-02")
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-26")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-01-20")
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-20")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-01-31")
-# ExtractFromPDF(StateCode = "ML",Date = "2021-12-30")
-# ExtractFromPDF(StateCode = "TN",Date = "2021-10-28")
-# ExtractFromPDF(StateCode = "TN",Date = "2021-10-27")
-# ExtractFromPDF(StateCode = "TN",Date = "2021-12-26")
-# ExtractFromPDF(StateCode = "TN",Date = "2021-10-25")
-# ExtractFromPDF(StateCode = "AP",Date = "2021-11-27")
-# ExtractFromPDF(StateCode = "PB",Date = "2021-12-01")
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-12")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-01-04")
-# ExtractFromPDF(StateCode = "MH",Date = "2021-11-08")
-# ExtractFromPDF(StateCode = "TN",Date = "2022-01-22")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-01-22")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-01-24")
-# ExtractFromPDF(StateCode = "LA",Date = "2022-01-24")
-# ExtractFromPDF(StateCode = "PB",Date = "2022-01-24")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-02-27")
