@@ -689,7 +689,7 @@ def getMZData(file_path,date,StateCode):
 
 def getKLData(file_path,date,StateCode):
     print("Extracting PDF")
-    table = camelot.read_pdf(file_path,'4,5,8')
+    table = camelot.read_pdf(file_path,'4,5,7')
 
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
@@ -698,7 +698,7 @@ def getKLData(file_path,date,StateCode):
     try:
         df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
         df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
-        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-8-table-2.csv'.format(date,StateCode))
+        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
     except:
         print("Format Chnaged")
         raise FileFormatChanged
@@ -936,4 +936,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "ML",Date = "2022-02-27")
+# ExtractFromPDF(StateCode = "WB",Date = "2022-03-07")
