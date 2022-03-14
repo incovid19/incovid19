@@ -99,7 +99,7 @@ def getKAData(file_path,date,StateCode):
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
 
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=4)
     df_districts.columns = df_districts.columns.str.replace("\n","")
     # df_districts = df_districts.replace("nan",np.nan)
     # print(df_districts.columns)
@@ -107,6 +107,7 @@ def getKAData(file_path,date,StateCode):
     # a=b
     
     # df_summary = df_districts
+    # df_districts.columns = df_districts.columns.str.replace("\n","")
 
     if "Non-Covid" in df_districts.columns[-1]:
         col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased" , df_districts.columns[-1]:"Other"}
@@ -124,6 +125,7 @@ def getKAData(file_path,date,StateCode):
     # df_districts.dropna(inplace=True)
     # print(df_districts)
     # a=b
+
     
     df_summary = df_districts[df_districts["Sl. No"] == "Total"].iloc[0]
     # df_summary = df_districts[df_districts["District"] == "Total"].iloc[0]
@@ -936,4 +938,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "WB",Date = "2022-03-07")
+# ExtractFromPDF(StateCode = "KA",Date = "2022-03-10")

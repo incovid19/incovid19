@@ -6,8 +6,68 @@ from ExtractDataFromPDF import ExtractFromPDF
 from ExtractStateMyGov import ExtractStateMyGov
 from getHTMLData import ExtractFromHTML
 from getHTMLSources import getSources
+from UpdateDerivedValues import STATE_NAMES,updateDerivedValues,removeLogging
+from getTT import getTT
+from getjson import createDataMin,updateAll
+from tqdm import tqdm
+from git import Repo
 
 source = pd.read_csv("../sources.csv")
+
+PATH_OF_GIT_REPO = r'/home/swiadmin/test/.git'  # make sure .git folder is properly configured
+
+def git_push(COMMIT_MESSAGE):
+    try:
+        repo = Repo(PATH_OF_GIT_REPO)
+        repo.git.add(update=True)
+        repo.index.commit(COMMIT_MESSAGE)
+        origin = repo.remote()
+        origin.push()
+    except:
+        print('Some error occured while pushing the code') 
+
+def portalUpdate_first(dateList,prevUpdate = False):
+    df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
+    print(df_fileStatus)
+    for idx in df_fileStatus.index:
+        if df_fileStatus["Input"][idx] == "No":
+            DownloadData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
+            ExtractData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
+        if df_fileStatus["Input"][idx] == "Yes" and df_fileStatus["Raw"][idx] == "No":
+            ExtractData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
+            print(df_fileStatus["State"][idx])
+            if prevUpdate:
+                resp = input("Would you like to Generate the final(Yes/No):")
+                if resp == "Yes":
+                    updateDerivedValues(df_fileStatus["State"][idx],df_fileStatus["Date"][idx])  
+    
+    df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
+    print(df_fileStatus)
+
+
+def portalUpdate_second(dateList, prevUpdate):
+    today = (datetime.now() - timedelta(days=0)).date()
+    if "TT_final.csv" not in os.listdir("../RAWCSV/"+str(today)+"/"):
+        getTT()
+       
+    for date in dateList:
+        if not(prevUpdate): 
+            runDate = str(date.date())
+            removeLogging(runDate)
+            for key,val in tqdm(STATE_NAMES.items()):
+                updateDerivedValues(key,runDate)
+
+            updateAll(date,log=True,OverWrite=False)
+            df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
+            print(df_fileStatus)
+            if len(df_fileStatus) > 0:
+                return "Portal Update for "+ runDate +" Without "+",".join(df_fileStatus["State"].to_list())
+            else:
+                return "Portal Update for "+ runDate
+        else:
+            print(date)
+            updateAll(date,log=False,OverWrite=False)
+        
 
 def date_range_list(start, end):
     r = (end+timedelta(days=1)-start).days

@@ -288,7 +288,7 @@ def getStates_Districts(date):
     districts_df = districts_df.drop_duplicates()
     districts_df = districts_df.dropna(subset=['Date'])
     districts_df = districts_df.sort_values(by=['Date','State'])
-    print(districts_df.columns)
+    # print(districts_df.columns)
     districts_df = districts_df.fillna(0)
     convert_dict = {'Confirmed':int, 
                     'Recovered':int,
@@ -406,7 +406,7 @@ def get_state_wise_daily(date):
     state_wise_daily = state_wise_daily.drop_duplicates()
     state_wise_daily = state_wise_daily.dropna(subset=['Date'])
     state_wise_daily = state_wise_daily.sort_values(by=['Date'])
-    print(state_wise_daily.columns)
+    # print(state_wise_daily.columns)
     state_wise_daily.to_csv("/home/swiadmin/test/csv/latest/state_wise_daily.csv",index=False)
 
 def get_vaccine_district_final(date):
@@ -464,7 +464,7 @@ def get_vaccine_district_final(date):
         date=tdate.strftime("%d/%m/%Y")
         if not isinstance(Date,str):
             Date=Date.strftime("%Y-%m-%d")
-        print(Date)
+        # print(Date)
         # /home/swiadmin/test/csv/latest/
         cowin_vaccine_data_districtwise_prev=pd.read_csv("/home/swiadmin/test/csv/latest/cowin_vaccine_data_districtwise.csv",header=[0,1])
         try:
@@ -575,11 +575,11 @@ def get_vaccine_state_csv(date):
     for Date in dates_list:
     #     path=f"./Historical Data/CSV_api/{Date.strftime('%Y-%m-%d')}"
     #     os.makedirs(path, exist_ok=True)
-        print(Date)
+        # print(Date)
         i=0
         for _,state in STATE_NAMES.items(): #:["Uttar Pradesh"]
             i+=1
-            print(i,state)
+            # print(i,state)
             df=pd.DataFrame(columns=["Updated On","State","Total Doses Administered",
                                      "Sessions","Sites","First Dose Administered","Second Dose Administered",
                                      "Male (Doses Administered)","Female (Doses Administered)","Transgender (Doses Administered)",
@@ -634,16 +634,22 @@ def get_vaccine_state_csv(date):
 # start = datetime.strptime(start_date, '%Y-%m-%d')
 # dateList = date_range(start, end)
 
-# for date in dateList:
-#     get_case_time_series(str(date.date()))
-#     getStates_Districts(str(date.date()))
-#     get_state_wise_daily(str(date.date()))
-#     get_vaccine_district_final(date)
-#     get_vaccine_state_csv(date.date())
+def UpadteCSV(dateList):
+    for date in dateList:
+        print("Updateing CSV's for :"+str(date.date()))
+        get_case_time_series(str(date.date()))
+        getStates_Districts(str(date.date()))
+        get_state_wise_daily(str(date.date()))
+        get_vaccine_district_final(date)
+        get_vaccine_state_csv(date.date())
+
+
 # date = "2021-12-17"
-date = (datetime.now() - timedelta(days=1)).date()
-get_case_time_series(str(date))
-getStates_Districts(str(date))
-get_state_wise_daily(str(date))
-get_vaccine_district_final(date)
-get_vaccine_state_csv(date)
+# def UpadteCSV(date):
+#     date = (datetime.now() - timedelta(days=1)).date()
+#     print("Updateing CSV's for :"+str(date))
+#     get_case_time_series(str(date))
+#     getStates_Districts(str(date))
+#     get_state_wise_daily(str(date))
+#     get_vaccine_district_final(date)
+#     get_vaccine_state_csv(date)
