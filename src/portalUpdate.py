@@ -54,4 +54,20 @@ else:
     pass
 
 
+
+resp_incovid = input("Would you like to update and push the RDF CSV's?(Yes/No):")
+if resp_incovid == "Yes":
+    print("Updating RDF CSV's....")
+    sys.path.insert(1, '../rdf')
+    from csvvacc import main as csvmain
+    from rdfgeneration import main as rdfmain
+
+    csvmain()
+    rdfmain()
+    os.system("cd /home/swiadmin/Incovid19/rdf/ && scp *.csv swiadmin@captain.internal.semanticwebindia.in:/home/swiadmin/files/")
+else:
+    pass
+
+
+
 # python portalUpdate.py 2022-03-13
