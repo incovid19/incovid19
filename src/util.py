@@ -15,11 +15,22 @@ from git import Repo
 source = pd.read_csv("../sources.csv")
 
 PATH_OF_GIT_REPO = r'/home/swiadmin/test/.git'  # make sure .git folder is properly configured
+PATH_OF_INCOVID_GIT_REPO = r'/home/swiadmin/Incovid19/incovid19/.git'
 
 def git_push(COMMIT_MESSAGE):
     try:
         repo = Repo(PATH_OF_GIT_REPO)
-        repo.git.add(update=True)
+        repo.git.add(all=True)
+        repo.index.commit(COMMIT_MESSAGE)
+        origin = repo.remote()
+        origin.push()
+    except:
+        print('Some error occured while pushing the code')
+        
+def git_push_incovid(COMMIT_MESSAGE):
+    try:
+        repo = Repo(PATH_OF_INCOVID_GIT_REPO)
+        repo.git.add(all=True)
         repo.index.commit(COMMIT_MESSAGE)
         origin = repo.remote()
         origin.push()

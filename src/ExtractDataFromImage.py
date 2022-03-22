@@ -208,11 +208,17 @@ def arunachal_pradesh(state, date, query):
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     page_text = page[0].description
     date_start = page_text.find(status_text)
-    date_end = page_text.find("M", date_start)
+    date_end = page_text.find("(", date_start)
     print(page_text)
 
-    date_string = page_text[date_start:date_end+1].replace(status_text, "").replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace(".", "")
-    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B %Y (updated at  %I%M %p"))
+    # date_string = page_text[date_start:date_end+1].replace(status_text, "").replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace(".", "")
+    
+    date_string = page_text[date_start:date_end].replace(status_text, "").replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace(".", "")
+    last_updated = timezone("Asia/Kolkata").localize(
+        datetime.strptime(date_string, "%d %B %Y ").replace(hour=datetime.now().hour, minute=datetime.now().minute)
+    )
+    
+    # last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d %B %Y (updated at  %I%M %p"))
 
     test_dim = total_dim = recover_dim = dead_dim = xm = []
     x = x2 = 0
@@ -345,6 +351,9 @@ def bihar(state, date, query):
     x = 0
     y1 = 0
     y2 = 0
+    last_updated = timezone("Asia/Kolkata").localize(
+        datetime.strptime(date, "%Y-%m-%d").replace(hour=datetime.now().hour, minute=datetime.now().minute)
+    )
     for i, text in enumerate(page):
         if text.description == 'Dated':
             last_updated = timezone("Asia/Kolkata").localize(
@@ -375,6 +384,8 @@ def bihar(state, date, query):
     for i, text in enumerate(page2[:-1]):
         if (text.description == '17') and (page2[i + 1].description == "."):
             p2_y = text.bounding_poly.vertices[0].y - 15
+            if p2_y < 0:
+                p2_y = 0
             p2_x1 = text.bounding_poly.vertices[0].x - 5
     x2 = min(image[0].shape[1], image[1].shape[1])
     if p1_x1 > p2_x1:
@@ -1248,8 +1259,8 @@ def ExtractDataFromImage(state, date, handle, term):
 
 
 # API Calls - To be commented or removed from deployed code
-# ExtractDataFromImage('AR', '2022-01-07', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
-# ExtractDataFromImage('BR', '2022-02-06', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
+# ExtractDataFromImage('AR', '2022-03-14', 'DirHealth_ArPr', '#ArunachalCoronaUpdate')
+# ExtractDataFromImage('BR', '2022-03-14', 'BiharHealthDept', '#COVIDー19 Updates Bihar')
 # ExtractDataFromImage('CT', '2021-12-01', 'HealthCgGov', '#ChhattisgarhFightsCorona')
 # ExtractDataFromImage('HP', '2022-02-06', 'nhm_hp', '#7PMupdate')
 # ExtractDataFromImage('MN', '2021-12-30', 'health_manipur', 'Manipur updates')
