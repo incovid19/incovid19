@@ -9,23 +9,48 @@ pd.set_option('display.max_columns', None)
 
 def ExtractNoSource(df, state, date):
     date = date - timedelta(1)
-    cols = ['cumulativeConfirmedNumberForDistrict', 'cumulativeDeceasedNumberForDistrict', 'cumulativeRecoveredNumberForDistrict']
+    cols = ['cumulativeConfirmedNumberForDistrict', 'cumulativeDeceasedNumberForDistrict', 'cumulativeRecoveredNumberForDistrict','cumulativeOtherNumberForDistrict']
     try:
-        state = pd.read_csv(
-            "../RAWCSV/" + date.strftime("%Y-%m-%d") + "/" + state + "_raw.csv",
-            index_col=None,
-            usecols=[
-                "District",
-                "cumulativeConfirmedNumberForDistrict",
-                "cumulativeDeceasedNumberForDistrict",
-                "cumulativeRecoveredNumberForDistrict",
-                "cumulativeConfirmedNumberForState",
-                "cumulativeDeceasedNumberForState",
-                "cumulativeRecoveredNumberForState",
-                "cumulativeTestedNumberForState",
-            ]
-        )
+        try:
+            state = pd.read_csv(
+                "../RAWCSV/" + date.strftime("%Y-%m-%d") + "/" + state + "_raw.csv",
+                index_col=None,
+                usecols=[
+                    "District",
+                    "cumulativeConfirmedNumberForDistrict",
+                    "cumulativeDeceasedNumberForDistrict",
+                    "cumulativeRecoveredNumberForDistrict",
+                    "cumulativeConfirmedNumberForState",
+                    "cumulativeDeceasedNumberForState",
+                    "cumulativeRecoveredNumberForState",
+                    "cumulativeTestedNumberForState"
+                ]
+            )
+            state["cumulativeOtherNumberForDistrict"] = 0
+            state["cumulativeOtherNumberForState"] = 0
+        except:
+            print(state)
+            state = pd.read_csv(
+                "../RAWCSV/" + date.strftime("%Y-%m-%d") + "/" + state + "_raw.csv",
+                index_col=None,
+                usecols=[
+                    "District",
+                    "cumulativeConfirmedNumberForDistrict",
+                    "cumulativeDeceasedNumberForDistrict",
+                    "cumulativeRecoveredNumberForDistrict",
+                    "cumulativeOtherNumberForDistrict",
+                    "cumulativeConfirmedNumberForState",
+                    "cumulativeDeceasedNumberForState",
+                    "cumulativeRecoveredNumberForState",
+                    "cumulativeTestedNumberForState",
+                    "cumulativeOtherNumberForState",
+                ]
+            )
         df["cumulativeTestedNumberForState"] = state["cumulativeTestedNumberForState"][0]
+        try:
+            df["cumulativeOtherNumberForState"] = state["cumulativeOtherNumberForState"][0]
+        except:
+            df["cumulativeOtherNumberForState"] = 0
         for district in list(state['District']):
             if district != 'Unknown':
                 for col in cols:
@@ -85,6 +110,9 @@ def ExtractStateMyGov(state, date, no_source=False):
     state_df["cumulativeDeceasedNumberForState"] = state_df['cumulativeDeceasedNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeDeceasedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df["cumulativeRecoveredNumberForState"] = state_df['cumulativeRecoveredNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeRecoveredNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df['cumulativeTestedNumberForState'] = None#ind["cumulativeTestedNumberForState"]# * len(districts)
+    state_df['cumulativeOtherNumberForState'] = 0
+    state_df['cumulativeOtherNumberForDistrict'] = 0
+    
 
     if no_source:
         state_df = ExtractNoSource(state_df, state, datetime.strptime(date, "%Y-%m-%d"))
