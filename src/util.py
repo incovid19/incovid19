@@ -34,6 +34,7 @@ def git_push_incovid(COMMIT_MESSAGE):
         repo.index.commit(COMMIT_MESSAGE)
         origin = repo.remote('origin main')
         origin.push()
+        raise
     except:
         print('Some error occured while pushing the code') 
 
