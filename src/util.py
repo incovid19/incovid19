@@ -34,8 +34,8 @@ def git_push_incovid(COMMIT_MESSAGE):
         repo.index.commit(COMMIT_MESSAGE)
         origin = repo.remote('origin main')
         origin.push()
-        raise
     except:
+        raise
         print('Some error occured while pushing the code') 
 
 def portalUpdate_first(dateList,prevUpdate = False):
@@ -67,6 +67,7 @@ def portalUpdate_second(dateList, prevUpdate):
             runDate = str(date.date())
             removeLogging(runDate)
             for key,val in tqdm(STATE_NAMES.items()):
+                print(key)
                 updateDerivedValues(key,runDate)
 
             updateAll(date,log=True,OverWrite=False)
