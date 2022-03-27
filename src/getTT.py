@@ -106,18 +106,19 @@ def getTT():
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
                         df_addTest = pd.read_csv("../INPUT/DL_Tested.csv")
                         temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
-                    elif source["StateCode"][idx] == "WB":
-                        temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
-                        df_addTest = pd.read_csv("../INPUT/WB_Tested.csv")
-                        temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
                     else:
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
                 else:
-                    temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
+                    if source["StateCode"][idx] == "WB":
+                        temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
+                        df_addTest = pd.read_csv("../INPUT/WB_Tested.csv")
+                        temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
+                    else:
+                        temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
                 temp_df["Date"] = pDate
                 temp_df.to_csv(os.path.join("..","RAWCSV",str(pDate),"myGov",source["StateCode"][idx]+"_raw.csv"))
     except ValueError:
-        print("Delhi Tetsed Values missing for the Date:"+ str(pDate))
+        print("Tetsed Values missing for DL/WB for the Date:"+ str(pDate))
         raise
 
     TT_df = TT_df.dropna(1)
