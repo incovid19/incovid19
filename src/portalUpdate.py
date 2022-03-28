@@ -61,7 +61,6 @@ if resp_incovid == "Yes":
     sys.path.insert(1, '../rdf')
     from csvvacc import main as csvmain
     from rdfgeneration import main as rdfmain
-
     csvmain()
     rdfmain()
     os.system("cd /home/swiadmin/Incovid19/rdf/ && scp *.csv swiadmin@captain.internal.semanticwebindia.in:/home/swiadmin/files/")

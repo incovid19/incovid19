@@ -620,20 +620,6 @@ def get_vaccine_state_csv(date):
 
 # df_prev.to_csv("cowin_vaccine_data_statewise_latest.csv",index=False)
         
-        
-        
-
-# def date_range(start, end):
-#     r = (end+timedelta(days=1)-start).days
-#     return [start+timedelta(days=i) for i in range(r)]
- 
-
-# start_date = "2021-10-31"
-# end_date = "2022-02-16"
-# end = datetime.strptime(end_date, '%Y-%m-%d')
-# start = datetime.strptime(start_date, '%Y-%m-%d')
-# dateList = date_range(start, end)
-
 def UpadteCSV(dateList):
     for date in dateList:
         print("Updateing CSV's for :"+str(date.date()))
@@ -641,7 +627,20 @@ def UpadteCSV(dateList):
         getStates_Districts(str(date.date()))
         get_state_wise_daily(str(date.date()))
         get_vaccine_district_final(date)
-        get_vaccine_state_csv(date.date())
+        get_vaccine_state_csv(date.date())        
+        
+
+# def date_range(start, end):
+#     r = (end+timedelta(days=1)-start).days
+#     return [start+timedelta(days=i) for i in range(r)]
+ 
+# start_date = "2022-02-25"
+# end_date = "2022-02-25"
+# end = datetime.strptime(end_date, '%Y-%m-%d')
+# start = datetime.strptime(start_date, '%Y-%m-%d')
+# dateList = date_range(start, end)
+
+# UpadteCSV(dateList)
 
 
 # date = "2021-12-17"

@@ -60,7 +60,6 @@ def get_7dma_state(state, date):
     prev_df.reset_index(drop=True, inplace=True)
     prev_df.set_index('District', inplace=True, drop=False)
     for col in cols:
-        print(col)
         df[f'7Dma{col}ForState'] -= prev_df[f'cumulative{col}NumberForState']
         df[f'7Dma{col}ForDistrict'] -= prev_df[f'cumulative{col}NumberForDistrict']
     for col in cols:
