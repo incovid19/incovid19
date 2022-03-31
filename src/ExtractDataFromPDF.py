@@ -942,4 +942,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "KL",Date = "2022-03-14")
+# ExtractFromPDF(StateCode = "AP",Date = "2022-03-19")

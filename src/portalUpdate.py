@@ -49,7 +49,7 @@ else:
 
 resp_incovid = input("Would you like to push the incovid Repo?(Yes/No):")
 if resp_incovid == "Yes":
-    git_push_incovid("Update Untill" + str(datetime.now()))
+    git_push_incovid("Update Until" + str(datetime.now()))
 else:
     pass
 
