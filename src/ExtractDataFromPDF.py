@@ -691,8 +691,8 @@ def getMZData(file_path,date,StateCode):
 
 def getKLData(file_path,date,StateCode):
     print("Extracting PDF")
-    table = camelot.read_pdf(file_path,'4,5,6')
-    # table = camelot.read_pdf(file_path,'4,5,7')
+    # table = camelot.read_pdf(file_path,'4,5,6')
+    table = camelot.read_pdf(file_path,'4,5,7')
 
 
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
@@ -702,8 +702,8 @@ def getKLData(file_path,date,StateCode):
     try:
         df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
         df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
-        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-2.csv'.format(date,StateCode))
-        # df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
+        # df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-2.csv'.format(date,StateCode))
+        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
 
     except:
         print("Format Chnaged")
@@ -918,7 +918,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         # raise
         StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
-        # raise
+        raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
@@ -942,4 +942,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "AP",Date = "2022-03-19")
+# ExtractFromPDF(StateCode = "AP",Date = "2022-01-06")
+# ExtractFromPDF(StateCode = "AP",Date = "2022-01-10")
+# ExtractFromPDF(StateCode = "AP",Date = "2022-03-12")
+# ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
