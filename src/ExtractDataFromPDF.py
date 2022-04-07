@@ -690,9 +690,9 @@ def getMZData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getKLData(file_path,date,StateCode):
-    print("Extracting PDF")
-    # table = camelot.read_pdf(file_path,'4,5,6')
-    table = camelot.read_pdf(file_path,'4,5,7')
+    # print("Extracting PDF")
+    table = camelot.read_pdf(file_path,'4,5,6')
+    # table = camelot.read_pdf(file_path,'4,5,7')
 
 
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
@@ -702,8 +702,8 @@ def getKLData(file_path,date,StateCode):
     try:
         df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
         df_deaths_data = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode))
-        # df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-2.csv'.format(date,StateCode))
-        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
+        df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-6-table-3.csv'.format(date,StateCode))
+        # df_tests_data = pd.read_csv('../INPUT/{}/{}/foo-page-7-table-1.csv'.format(date,StateCode))
 
     except:
         print("Format Chnaged")

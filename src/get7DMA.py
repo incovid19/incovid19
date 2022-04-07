@@ -128,10 +128,10 @@ end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
 
-for date in dateList:
-    print(str(date.date()))
-    for state in states:
-        get_7dma_state(state, str(date.date()))
+# for date in dateList:
+#     print(str(date.date()))
+#     for state in states:
+#         get_7dma_state(state, str(date.date()))
 
 # get_7dma_state('TT', '2022-01-24')
 # get_7dma_state('KA', '2022-01-25')
