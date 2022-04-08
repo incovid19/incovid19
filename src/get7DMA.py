@@ -113,7 +113,7 @@ def get_7dma(date):
         print(state)
         get_7dma_state(state, date)
         
-states = ["AP","KL","NL","PB","TR","UT"]
+states = ["OR","NL"]
 
 def date_range(start, end):
     r = (end+timedelta(days=1)-start).days
@@ -122,8 +122,8 @@ def date_range(start, end):
     
 # get_7dma("2022-01-25")
 
-start_date = "2022-01-01"
-end_date = "2022-04-05"
+start_date = "2022-02-11"
+end_date = "2022-04-06"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
