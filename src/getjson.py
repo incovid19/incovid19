@@ -378,8 +378,8 @@ def date_range(start, end):
 if __name__ == "__main__":
     print("Running Main")
     path = "Test/"
-    start_date = "2022-02-10"
-    end_date = "2022-04-06"
+    start_date = "2022-04-07"
+    end_date = "2022-04-07"
     end = datetime.strptime(end_date, '%Y-%m-%d')
     start = datetime.strptime(start_date, '%Y-%m-%d')
     dateList = date_range(start, end)
