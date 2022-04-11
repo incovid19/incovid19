@@ -627,23 +627,16 @@ def UpadteCSV(dateList):
         getStates_Districts(str(date.date()))
         get_state_wise_daily(str(date.date()))
         get_vaccine_district_final(date)
-        get_vaccine_state_csv(date.date())        
+        get_vaccine_state_csv(date.date()) 
         
-
-# def date_range(start, end):
-#     r = (end+timedelta(days=1)-start).days
-#     return [start+timedelta(days=i) for i in range(r)]
- 
-# start_date = "2022-02-25"
-# end_date = "2022-02-25"
-# end = datetime.strptime(end_date, '%Y-%m-%d')
-# start = datetime.strptime(start_date, '%Y-%m-%d')
-# dateList = date_range(start, end)
-
-# UpadteCSV(dateList)
-
-
-# date = "2021-12-17"
+def UpadteCSVprev(dateList):
+    for date in dateList:
+        print("Updateing CSV's for :"+str(date.date()))
+        get_case_time_series(str(date.date()))
+        getStates_Districts(str(date.date()))
+        get_state_wise_daily(str(date.date()))
+        get_vaccine_district_final(date) 
+        
 # def UpadteCSV(date):
 #     date = (datetime.now() - timedelta(days=1)).date()
 #     print("Updateing CSV's for :"+str(date))
@@ -652,3 +645,20 @@ def UpadteCSV(dateList):
 #     get_state_wise_daily(str(date))
 #     get_vaccine_district_final(date)
 #     get_vaccine_state_csv(date)
+        
+
+        
+def date_range(start, end):
+    r = (end+timedelta(days=1)-start).days
+    return [start+timedelta(days=i) for i in range(r)]
+ 
+if __name__ == "__main__":    
+    start_date = "2022-01-01"
+    end_date = "2022-04-09"
+    end = datetime.strptime(end_date, '%Y-%m-%d')
+    start = datetime.strptime(start_date, '%Y-%m-%d')
+    dateList = date_range(start, end)
+    UpadteCSVprev(dateList)
+
+
+# date = "2021-12-17"
