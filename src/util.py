@@ -35,8 +35,7 @@ def git_push_incovid(COMMIT_MESSAGE):
         origin = repo.remote('origin main')
         origin.push()
     except:
-        pass
-        # print('Some error occured while pushing the code') 
+        print('Some error occured while pushing the code') 
 
 def portalUpdate_first(dateList,prevUpdate = False):
     df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
