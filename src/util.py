@@ -32,7 +32,7 @@ def git_push_incovid(COMMIT_MESSAGE):
         repo = Repo(PATH_OF_INCOVID_GIT_REPO)
         repo.git.add(all=True)
         repo.index.commit(COMMIT_MESSAGE)
-        origin = repo.remote('origin main')
+        origin = repo.remote()
         origin.push()
     except:
         raise
