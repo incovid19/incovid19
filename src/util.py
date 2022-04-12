@@ -35,6 +35,7 @@ def git_push_incovid(COMMIT_MESSAGE):
         origin = repo.remote('origin main')
         origin.push()
     except:
+        raise
         print('Some error occured while pushing the code') 
 
 def portalUpdate_first(dateList,prevUpdate = False):
