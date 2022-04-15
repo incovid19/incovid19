@@ -9,10 +9,21 @@ import timedelta
 import urllib.request, json 
 from get7DMA import get_7dma_state
 
+class TTNotUpdated(Exception):
+    pass
 
 def india(state,date):
     soup = BeautifulSoup(open("../INPUT/"+date+"/TT_State.html", encoding="utf8"), "html.parser")
     sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
+    
+    date = sum_soup.find('div', { "class" : "updated-date"}).text.split(':')[1].split(',')[0]
+    if datetime.datetime.strptime(date," %d %b %Y").date() != datetime.datetime.today().date():
+        raise TTNotUpdated("TT Not Update Please run the main.py")
+        
+    date_state = soup.find('div',{"class": "field-item even"}).text.split(",")[0]
+    if datetime.datetime.strptime(date_state,"%d %b %Y").date() != datetime.datetime.today().date():
+        raise TTNotUpdated("TT_State Not Update Please run the main.py")
+    
     STATES = soup.find_all("div", {"class": "field field-name-field-select-state field-type-list-text field-label-above"})
     CONFIRMED = soup.find_all("div", {"class": "field field-name-field-total-confirmed-indians field-type-number-integer field-label-above"})
     CURED_DISCHARGED = soup.find_all("div", {"class": "field field-name-field-cured field-type-number-integer field-label-above"})
