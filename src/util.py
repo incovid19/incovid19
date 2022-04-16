@@ -52,7 +52,10 @@ def portalUpdate_first(dateList,prevUpdate = False):
                 resp = input("Would you like to Generate the final(Yes/No):")
                 if resp == "Yes":
                     updateDerivedValues(df_fileStatus["State"][idx],df_fileStatus["Date"][idx])
-                    updateDerivedValues(df_fileStatus["State"][idx],str((datetime.strptime(df_fileStatus["Date"][idx],"%Y-%m-%d")+timedelta(1)).date()))
+                    try:
+                        updateDerivedValues(df_fileStatus["State"][idx],str((datetime.strptime(df_fileStatus["Date"][idx],"%Y-%m-%d")+timedelta(1)).date()))
+                    except:
+                        pass
     
     df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
     print(df_fileStatus)
