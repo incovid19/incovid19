@@ -108,11 +108,17 @@ def getKAData(file_path,date,StateCode):
     
     # df_summary = df_districts
     # df_districts.columns = df_districts.columns.str.replace("\n","")
+    
+    for idx in df_districts.index:
+        print()
+        
 
     if "Non-Covid" in df_districts.columns[-1]:
         col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased" , df_districts.columns[-1]:"Other"}
     else:
         col_dict = {"District Name":"District","Total Positives":"Confirmed","Total Discharges":"Recovered","Total Covid Deaths":"Deceased" , df_districts.columns[-2]:"Other"}
+        
+    
     df_districts.rename(columns=col_dict,inplace=True)
     # print(df_districts.columns)
     # df_districts.drop(columns=['Sl. No','Today’s Positives','Today’s Discharges','Total Active Cases','Today’s Reported Covid Deaths','Death due to  Non-Covid reasons#'],inplace=True)
