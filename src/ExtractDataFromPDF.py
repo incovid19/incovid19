@@ -93,7 +93,7 @@ def getRJData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getKAData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='1,5')
+    table = camelot.read_pdf(file_path,pages='1,6')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
