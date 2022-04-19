@@ -481,7 +481,7 @@ def updateDerivedValues(StateCode,Date):
 # updateDerivedValues("JK","2021-12-08")
 # updateDerivedValues("MN","2021-12-08")
 # updateDerivedValues("MH","2021-12-29")
-updateDerivedValues("DL","2022-04-12")
+# updateDerivedValues("DL","2022-04-12")
 
 # states = ["AR","BR","CT","HP","JK","MN"]
 # for state in states:

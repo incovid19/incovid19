@@ -93,7 +93,7 @@ def getRJData(file_path,date,StateCode):
     return df_summary,df_districts
 
 def getKAData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='1,6')
+    table = camelot.read_pdf(file_path,pages='1,5')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
@@ -102,7 +102,7 @@ def getKAData(file_path,date,StateCode):
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
     # df_districts = df_districts.replace("nan",np.nan)
-    # print(df_districts.columns)
+    print(df_districts.columns)
     
     # a=b
     
@@ -110,7 +110,13 @@ def getKAData(file_path,date,StateCode):
     # df_districts.columns = df_districts.columns.str.replace("\n","")
     
     for idx in df_districts.index:
-        print()
+        print(df_districts["Sl. No"][idx])
+        if df_districts["Sl. No"][idx] == "21  Mandya":
+            df_districts["Sl. No"][idx] = 21
+            df_districts["District Name"][idx] = "Mandya"
+        elif df_districts["Sl. No"][idx] == "22  Mysuru":
+            df_districts["Sl. No"][idx] = 22
+            df_districts["District Name"][idx] = "Mysuru"
         
 
     if "Non-Covid" in df_districts.columns[-1]:
@@ -924,7 +930,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         # raise
         StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
-        raise
+        # raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
@@ -952,3 +958,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "AP",Date = "2022-01-10")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-12")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
+# ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
