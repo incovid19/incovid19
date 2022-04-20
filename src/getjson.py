@@ -380,7 +380,7 @@ if __name__ == "__main__":
     # path = "Test/"
     path = "/home/swiadmin/test/v4/min/"
     start_date = "2022-04-13"
-    end_date = "2022-04-17"
+    end_date = "2022-04-18"
     end = datetime.strptime(end_date, '%Y-%m-%d')
     start = datetime.strptime(start_date, '%Y-%m-%d')
     dateList = date_range(start, end)
