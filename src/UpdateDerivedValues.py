@@ -483,6 +483,31 @@ def updateDerivedValues(StateCode,Date):
 # updateDerivedValues("MH","2021-12-29")
 # updateDerivedValues("DL","2022-04-12")
 
+# updateDerivedValues("DL","2022-02-14")
+# updateDerivedValues("DL","2022-02-15")
+
+# updateDerivedValues("DL","2022-02-20")
+# updateDerivedValues("DL","2022-02-21")
+# updateDerivedValues("DL","2022-02-23")
+# updateDerivedValues("DL","2022-02-24")
+# updateDerivedValues("DL","2022-03-19")
+# updateDerivedValues("DL","2022-03-20")
+# updateDerivedValues("DL","2022-03-26")
+# updateDerivedValues("DL","2022-03-27")
+# updateDerivedValues("DL","2022-03-31")
+# updateDerivedValues("DL","2022-04-01")
+
+
+
+
+
+
+
+
+
+
+
+
 # states = ["AR","BR","CT","HP","JK","MN"]
 # for state in states:
 #     updateDerivedValues(state,"2021-12-20")
