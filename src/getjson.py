@@ -218,7 +218,7 @@ def createDataMin(date,addLog = False):
                                   }
                                  }
         if k != "TT" :
-            if k == "HP" or k == "NL" or k == "UT" or k == "TR":
+            if k == "HP" or k == "NL" or k == "UT" or k == "TR" or k == "KA" or k == "MH":
                 data_min_json[k]["total"]["confirmed"] = number_generation(df,"State/UTCode",k,'cumulativeConfirmedNumberForState')
                 data_min_json[k]["total"]["deceased"] = number_generation(df,"State/UTCode",k,'cumulativeDeceasedNumberForState')
                 data_min_json[k]["total"]["recovered"] = number_generation(df,"State/UTCode",k,'cumulativeRecoveredNumberForState')
@@ -377,10 +377,10 @@ def date_range(start, end):
     
 if __name__ == "__main__":
     print("Running Main")
-    # path = "Test/"  #Staging path
-    path = "/home/swiadmin/test/v4/min/"    #production path
-    start_date = "2022-02-14"
-    end_date = "2022-04-07"
+    path = "Test/"  #Staging path
+    # path = "/home/swiadmin/test/v4/min/"    #production path
+    start_date = "2021-11-01"
+    end_date = "2022-04-24"
     end = datetime.strptime(end_date, '%Y-%m-%d')
     start = datetime.strptime(start_date, '%Y-%m-%d')
     dateList = date_range(start, end)
