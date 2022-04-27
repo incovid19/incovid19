@@ -28,8 +28,10 @@ def ExtractNoSource(df, state, date):
                     "cumulativeOtherNumberForState"
                 ]
             )
+            state["cumulativeOtherNumberForDistrict"] = 0
+            state["cumulativeOtherNumberForState"] = 0
         except:
-            print(state)
+            # print(state)
             state = pd.read_csv(
                 "../RAWCSV/" + date.strftime("%Y-%m-%d") + "/" + state + "_raw.csv",
                 index_col=None,
@@ -49,6 +51,7 @@ def ExtractNoSource(df, state, date):
         df["cumulativeTestedNumberForState"] = state["cumulativeTestedNumberForState"][0]
         try:
             df["cumulativeOtherNumberForState"] = state["cumulativeOtherNumberForState"][0]
+            df["cumulativeOtherNumberForState"] = 0
         except:
             df["cumulativeOtherNumberForState"] = 0
         for district in list(state['District']):

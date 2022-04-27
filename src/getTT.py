@@ -118,10 +118,8 @@ def getTT():
                         df_addTest = pd.read_csv("../INPUT/DL_Tested.csv")
                         temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
                     elif source["StateCode"][idx] == "AS":
-
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
-                        df_addTest = pd.read_csv("../INPUT/DL_Tested.csv")
-                        temp_df['cumulativeOtherNumberForState'] = 1347
+                        temp_df['cumulativeOtherNumberForState'] = 0
                     else:
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
                 else:
