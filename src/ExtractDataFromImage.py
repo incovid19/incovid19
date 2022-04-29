@@ -492,7 +492,7 @@ def chhattisgarh(state, date, query):
     image = image[-1]
 
     summary_page = client.document_text_detection(image=get_bytes(summary_image)).text_annotations
-
+    last_updated = datetime.now()
     for i, text in enumerate(summary_page):
         if text.description == 'स्थिति':
             if (summary_page[i - 1].description == 'की') and (summary_page[i - 2].description == '-19') and (summary_page[i - 3].description == 'कोविड'):
@@ -612,11 +612,21 @@ def himachal_pradesh(state, date, query):
 
     page = client.document_text_detection(image=get_bytes(image)).text_annotations
     page_text = page[0].description
-    date_start = page_text.find("\n", page_text.find(status_text)) + 1
-    date_end = page_text.find("\n", date_start)
+    
+    try:
+        status_text = "Media Bulletin"
+        date_start = page_text.find("\n", page_text.find(status_text)) + 1
+        date_end = page_text.find("\n", date_start)
 
-    date_string = page_text[date_start:date_end]
-    last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d-%m-%Y at %I:%M %p"))
+        date_string = page_text[date_start:date_end]
+        last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d-%m-%Y at %I:%M %p"))
+    except Exception:
+        status_text = "HEALTH"
+        date_start = page_text.find("\n", page_text.find(status_text)) + 1
+        date_end = page_text.find("\n", date_start)
+
+        date_string = page_text[date_start:date_end]
+        last_updated = timezone("Asia/Kolkata").localize(datetime.strptime(date_string, "%d-%m-%Y at %I:%M %p"))
 
     total = False
     y = 757
@@ -1229,6 +1239,7 @@ def ExtractDataFromImage(state, date, handle, term):
         'PY': pondicherry,
         # 'LA': ladakh,
     }
+    # print(term,type(term))
     query = '(' + term.replace(" ", '%20').replace(':', '%3A').replace('#', '%23').replace('@', '%40') + ')' + '(from:' + handle + ')'
     try:
         response = states[state](state, date, query)
