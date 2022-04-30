@@ -496,6 +496,8 @@ def updateDerivedValues(StateCode,Date):
 # updateDerivedValues("DL","2022-03-27")
 # updateDerivedValues("DL","2022-03-31")
 # updateDerivedValues("DL","2022-04-01")
+# updateDerivedValues("DL","2022-04-01")
+
 
 
 
