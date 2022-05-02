@@ -216,6 +216,8 @@ def kerala(state, date, path):
     if total_no is not None:
         confirmed = int(script[total_no + 1].replace(' ', '').replace('\n', '').split('+')[2])
         recovered = int(script[total_no + 2].replace(' ', '').replace('\n', '').split('+')[2])
+        print(recovered)
+        print(script[total_no + 1])
         death = int(script[total_no + 3].replace(' ', '').replace('\n', '').split('+')[2])
     else:
         totals = []
@@ -483,7 +485,7 @@ def ExtractFromHTML(state, date):
 # ExtractFromHTML(state="AP", date="2022-01-29")
 # ExtractFromHTML(state="MH", date="2022-01-28")
 # ExtractFromHTML(state="TR", date="2022-01-24")
-# ExtractFromHTML(state="KL", date="2022-01-24")
+# ExtractFromHTML(state="KL", date="2022-04-30")
 # ExtractFromHTML(state="GJ", date="2022-01-17")
 # ExtractFromHTML(state="OR", date="2021-10-25")
 # ExtractFromHTML(state="GJ", date="2021-10-26")
