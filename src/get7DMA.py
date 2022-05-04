@@ -133,7 +133,7 @@ dateList = date_range(start, end)
 #     for state in states:
 #         get_7dma_state(state, str(date.date()))
 
-# get_7dma_state('NL', '2022-03-22')
+# get_7dma_state('ML', '2022-01-28')
 # get_7dma_state('NL', '2022-03-26')
 # get_7dma_state('CT', '2021-12-14')
 # get_7dma_state('WB', '2021-10-31')
