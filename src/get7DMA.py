@@ -150,3 +150,20 @@ dateList = date_range(start, end)
 # get_7dma_state('HR', '2022-01-25')
 # get_7dma_state('DL', '2022-04-10')
 
+# get_7dma_state('HP', '2022-02-15')
+# get_7dma_state('HP', '2022-02-26')
+# get_7dma_state('HP', '2022-02-28')
+# get_7dma_state('HP', '2022-03-03')
+# get_7dma_state('HP', '2022-03-08')
+# get_7dma_state('HP', '2022-03-19')
+# get_7dma_state('HP', '2022-03-25')
+# get_7dma_state('HP', '2022-03-30')
+# get_7dma_state('HP', '2022-04-16')
+
+
+
+
+
+
+
+

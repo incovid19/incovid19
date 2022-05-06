@@ -371,38 +371,91 @@ def getMLData(file_path,date,StateCode):
     df_summary = df_summary.iloc[-1,:]
     return df_summary,df_districts
 
+# def getPBData(file_path,date,StateCode):
+#     table = camelot.read_pdf(file_path,'1,4')
+#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+#     # table[5].to_excel('foo.xlsx')
+#     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
+#     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),names=["Details","Numbers"])
+    
+#     df_districts.columns = df_districts.columns.str.replace("\n","")
+    
+#     col_dict = {"Total ConfirmedCases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased","Total Confirmed Cases":"Confirmed"}
+#     df_districts.rename(columns=col_dict,inplace=True)
+#     # print(df_districts)
+#     # a=b
+#     # df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
+#     df_summary = df_districts
+#     df_districts = df_districts[:-1]
+#     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
+#     # df = df[]
+#     df_json = pd.read_json("../DistrictMappingMaster.json")
+#     dist_map = df_json['Punjab'].to_dict()
+#     df_districts['District'].replace(dist_map,inplace=True)
+#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+#     df_tests["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
+#     if type(df_tests.loc[1,"Numbers"]) == str:
+#         df_summary["Tested"] = df_tests.loc[1,"Numbers"].split('*')[1]
+#     else:
+#         df_summary["Tested"] = df_tests.loc[1,"Numbers"]
+#     # df_districts["Tested"] = df_summary["Tested"]
+#     # print(df_districts)
+#     # a=b
+#     return df_summary,df_districts
+
+
+
 def getPBData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,'1,4')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
-    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    # table[5].to_excel('foo.xlsx')
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')    
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-4-table-1.csv'.format(date,StateCode))
-    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),names=["Details","Numbers"])
-    
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=None)
+
+    # removing the header part in df tests
+    df_tests.drop(df_tests.head(1).index, inplace=True)
+    # new coulmn is added in new PDF format removing that column.
+    cols = [2]
+    df_tests.drop(df_tests.columns[cols], axis=1, inplace=True)
+    col_dict = {0:"S.No",1:"Description",3:"Numbers"}
+    df_tests.rename(columns=col_dict,inplace=True)
+    # print(df_tests)
+     
     df_districts.columns = df_districts.columns.str.replace("\n","")
+    # print(df_districts.columns)
     
-    col_dict = {"Total ConfirmedCases":"Confirmed","Total Cured":"Recovered","Deaths":"Deceased","Total Confirmed Cases":"Confirmed"}
+    col_dict = {"District":"District",
+    "Unnamed: 3":"Confirmed",
+    "Unnamed: 5":"Recovered",
+    "Unnamed: 7":"Deceased"}
     df_districts.rename(columns=col_dict,inplace=True)
-    # print(df_districts)
-    # a=b
-    # df_districts.drop(columns=['S. No.','Total ActiveCases'],inplace=True)
+    
     df_summary = df_districts
     df_districts = df_districts[:-1]
-    # df_districts.drop(labels=[0,1],axis=0,inplace=True)
-    # df = df[]
+    
+    df_districts = df_districts.dropna()
+
+    # removing unwanted columns ,these got added in new PDF format.
+    # df_districts.drop(columns=['confirmed cases from 1st April','Recovered from 1st April',
+    # 'Deceased from 1st April',"Total Active Cases"],axis=0,inplace=True)
+    # print(df_districts.columns)
+    
+
     df_json = pd.read_json("../DistrictMappingMaster.json")
+    
     dist_map = df_json['Punjab'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
-    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+
+    # df_summary = df_summary[:-1]
+    df_summary = df_summary.iloc[-1,:]
+
     df_tests["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
-    if type(df_tests.loc[1,"Numbers"]) == str:
-        df_summary["Tested"] = df_tests.loc[1,"Numbers"].split('*')[1]
-    else:
-        df_summary["Tested"] = df_tests.loc[1,"Numbers"]
-    # df_districts["Tested"] = df_summary["Tested"]
-    # print(df_districts)
-    # a=b
+    df_summary["Tested"] = df_tests.loc[1,"Numbers"]
+    print(df_tests.loc[1,"Numbers"])
+
     return df_summary,df_districts
 
 # def getUKData(file_path,date,StateCode):
@@ -954,7 +1007,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "AP",Date = "2022-01-06")
+# ExtractFromPDF(StateCode = "PB",Date = "2022-04-21")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-01-10")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-12")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
