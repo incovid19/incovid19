@@ -7,6 +7,11 @@ curl --referer "https://dashboard.kerala.gov.in/covid/index.php" \
      -b cookies.txt \
      -c new_cookies.txt \
      -o kerala-districts.html https://dashboard.kerala.gov.in/covid/dailyreporting-view-public-districtwise.php
+     
+curl --referer "https://dashboard.kerala.gov.in/covid/index.php" \
+     -b cookies.txt \
+     -c new_cookies.txt \
+     -o kerala-testing.html https://dashboard.kerala.gov.in/covid/testing-view-public.php
 
 for CODE in {1601..1614}; do
     echo "Downloading for district=$CODE";
