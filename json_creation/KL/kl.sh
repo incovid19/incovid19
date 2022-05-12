@@ -17,7 +17,7 @@ for CODE in {1601..1614}; do
     echo "Downloading for district=$CODE";
     mv new_cookies.txt cookies.txt
     curl -X POST \
-	 --referer "https://dashboard.kerala.gov.in/covid/dailyreporting-view-public-districtwise.php" \
+	 --referer "https://dashboard.kerala.gov.in/covid/index.php" \
 	 -b cookies.txt \
 	 -c new_cookies.txt \
 	 -F district=${CODE} \
