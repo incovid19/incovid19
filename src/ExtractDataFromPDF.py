@@ -335,6 +335,14 @@ def getMHData(file_path,date,StateCode):
     print(df_districts)
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
+    df_addTest = pd.read_csv("../INPUT/MH_Tested.csv")
+    # print(df_addTest)
+    try:
+        df_summary['Tested'] = df_addTest[df_addTest["Date"] == date]["Cumulative_Tested"].item()
+        # print(df_summary['Tested'])
+    except:
+        print("Please Enter MH Tested values in ../Input/MH_Tested.csv")
+        raise
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Maharashtra'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
@@ -1119,4 +1127,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-12")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
-# ExtractFromPDF(StateCode = "MH",Date = "2022-05-10")
+# ExtractFromPDF(StateCode = "MH",Date = "2022-05-11")
