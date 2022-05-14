@@ -71,6 +71,7 @@ def ExtractNoSource(df, state, date):
 
 
 def ExtractStateMyGov(state, date, no_source=False):
+    print(state,date)
     states = json.load(io.open("../StateCode.json"))
     state_name = states[state]
     ind = pd.read_csv(
@@ -109,6 +110,8 @@ def ExtractStateMyGov(state, date, no_source=False):
     state_df['tested_last_updated_state'] = None
     state_df['tested_source_state'] = None
     state_df['notesForState'] = None
+    # print(state_df)
+    # print(ind)
     state_df["cumulativeConfirmedNumberForState"] = state_df['cumulativeConfirmedNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeConfirmedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df["cumulativeDeceasedNumberForState"] = state_df['cumulativeDeceasedNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeDeceasedNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])
     state_df["cumulativeRecoveredNumberForState"] = state_df['cumulativeRecoveredNumberForDistrict'][state_df['District'] == 'Unknown'] = int(ind["cumulativeRecoveredNumberForDistrict"][ind["District"].str.contains(state_name)].values[0])

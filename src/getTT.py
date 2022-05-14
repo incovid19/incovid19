@@ -210,11 +210,13 @@ def getTT():
     prevdayVACC_df = pd.DataFrame(list(zip(states,vaccinated,vaccinated1,vaccinated2,vaccinated3))).groupby(0, as_index=False).sum()
 
     prevdayVACC_df = prevdayVACC_df.rename(columns={0:"District",1:"cumulativeVaccinatedNumberForDistrict",2:"cumulativeVaccinated1NumberForDistrict",3:"cumulativeVaccinated2NumberForDistrict",4:"cumulativeVaccinated3NumberForDistrict"})
-
+    
+    TT_df = TT_df.dropna()
     lst = ["Vaccinated1","Vaccinated2","Vaccinated3","Vaccinated"]
     for val in lst:
         TT_df["delta{}ForDistrict".format(val)] = None
         for idx in TT_df.index:
+            # print(TT_df)
             TT_df["delta{}ForDistrict".format(val)][idx] = TT_df["cumulative{}NumberForDistrict".format(val)][idx] - prevdayVACC_df[prevdayVACC_df["District"] == TT_df["District"][idx]]["cumulative{}NumberForDistrict".format(val)].item()
 
     states_df = cs[["Date","District","cumulativeConfirmedNumberForDistrict","cumulativeRecoveredNumberForDistrict","cumulativeDeceasedNumberForDistrict"]]
