@@ -122,8 +122,8 @@ def date_range(start, end):
     
 # get_7dma("2022-01-25")
 
-start_date = "2022-04-04"
-end_date = "2022-04-08"
+start_date = "2022-04-20"
+end_date = "2022-04-20"
 end = datetime.strptime(end_date, '%Y-%m-%d')
 start = datetime.strptime(start_date, '%Y-%m-%d')
 dateList = date_range(start, end)
