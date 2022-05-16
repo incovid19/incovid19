@@ -250,16 +250,19 @@ def kerala(state, date, path):
         data = data.replace(k, v)
     data = data.replace("/*", "").replace("*/", "")
     data = data.replace(",]", "]")
+    
+    print(data)
 
     df_districts = pd.read_json(data)
 
     Confirmed = df_districts['data'][0]
-    Recovered = df_districts['data'][1]
-    Deceased = df_districts['data'][2]
-    # Active = df_districts['data'][3]
+    Deceased = df_districts['data'][1]
+    # Recovered = df_districts['data'][2]
+    Active = df_districts['data'][2]
 
-    df = pd.DataFrame(list(zip(dist['District'].tolist(), Confirmed, Recovered, Deceased)), columns=['District', 'Confirmed', 'Recovered', 'Deceased'])
-
+    df = pd.DataFrame(list(zip(dist['District'].tolist(), Confirmed, Deceased, Active)), columns=['District', 'Confirmed', 'Deceased', 'Active'])
+    df["Recovered"] = df["Confirmed"] - df["Deceased"] - df["Active"]
+    print(df)
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Kerala'].to_dict()
     df['District'].replace(dist_map, inplace=True)
@@ -481,7 +484,7 @@ def ExtractFromHTML(state, date):
 #     # print(str(date.date()))
 #     ExtractFromHTML(state = "TR",date = str(date.date()))        
 
-# ExtractFromHTML(state="MH", date="2022-01-29")
+# ExtractFromHTML(state="KL", date="2022-05-12")
 # ExtractFromHTML(state="AP", date="2022-01-29")
 # ExtractFromHTML(state="MH", date="2022-01-28")
 # ExtractFromHTML(state="TR", date="2022-01-24")
