@@ -918,7 +918,7 @@ def getKLData(file_path,date,StateCode):
     
     # print('prevdate',prevdate ,type(prevdate))
     updated_data_frame = df_districts
-    df_prevDay = pd.read_csv("../../RAWCSV/{}/{}_raw.csv".format(prevdate,StateCode))
+    df_prevDay = pd.read_csv("../RAWCSV/{}/{}_raw.csv".format(prevdate,StateCode))
     # df_prevDay = pd.read_csv('../RAWCSV/{}/{}_raw.csv'.format(prevdate,StateCode))
 
     # print('base csv is', df_prevDay)
@@ -991,7 +991,7 @@ def getKLData(file_path,date,StateCode):
     df_summary = df_summary.iloc[-1,:]
     df_summary["Tested"] = testdone
     df_districts = df_districts[:-1]
-    df_json = pd.read_json("../../DistrictMappingMaster.json")
+    df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Kerala'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     df_summary["Date"] = date

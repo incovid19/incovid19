@@ -26,7 +26,7 @@ source = pd.read_csv(r"../sources.csv")
 # a=b
 getSources(source,today)
 # cmd = 'echo swie2e@2908 | sudo -S ../INPUT/KL/kl.sh'
-# os.system(cmd)
+os.system('python ../INPUT/KL/kl_dataDownload.py')
 #*********************************************************************
 
 print("Extracting Data for:" + str(today))

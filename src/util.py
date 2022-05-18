@@ -172,6 +172,7 @@ def ExtractData(state,dateList):
                     if source["StateCode"][idx] == "KL":
                         print(source["StateCode"][idx],str(today))
                         ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
+                        # updateDerivedValues(source["StateCode"][idx],str(today))
                 else:
                     ExtractFromHTML(source["StateCode"][idx],str(today))
             else:
