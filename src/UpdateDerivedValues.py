@@ -9,6 +9,14 @@ import traceback
 # from datetime import datetime
 import time
 
+def getLastDate(state, date):
+    date = date - timedelta(1)
+    try:
+        state = pd.read_csv("../RAWCSV/" + date.strftime("%Y-%m-%d") + "/" + state + "_raw.csv")
+    except FileNotFoundError:
+        df = getLastDate(state, date)
+    return date
+
 
 def col_check_state_raw_csv(df):
     cols_ls=df.columns
@@ -226,6 +234,7 @@ def updateDerivedValues(StateCode,Date):
         state_raw_csv=pd.read_csv(f"../RAWCSV/{Date}/myGov/{StateCode}_raw.csv",index_col=False)
         if (sources[sources["StateCode"] == StateCode]["myGov"] != "yes").item():
             updateJSONLog((sources[sources["StateCode"] == StateCode]["StateName"]).item(),Date)
+            
     state_population=pd.read_csv("../CSV/StatePopulation.csv")
     district_population=pd.read_csv("../CSV/DistrictPopulation.csv")
     state_raw_csv=col_check_state_raw_csv(state_raw_csv)
@@ -259,6 +268,9 @@ def updateDerivedValues(StateCode,Date):
         previous_state_raw_csv=pd.read_csv(f"../RAWCSV/{prev_date_str}/{StateCode}_raw.csv")
     except:
         previous_state_raw_csv=pd.read_csv(f"../RAWCSV/{prev_date_str}/myGov/{StateCode}_raw.csv")
+        if (sources[sources["StateCode"] == StateCode]["myGov"] != "yes").item():
+            last_published_date = getLastDate(StateCode,prev_date)
+            state_raw_csv["notesForState"] = "There could be a spike in the Delta Values as the last published data at the district level for {} is {}".format((sources[sources["StateCode"] == StateCode]["StateName"]).item(),last_published_date.date())
     
     vaccination_numbers_yesterday=vaccination_numbers_api(state_name,prev_date_str)
     
