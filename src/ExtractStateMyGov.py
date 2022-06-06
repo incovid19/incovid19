@@ -67,6 +67,10 @@ def ExtractNoSource(df, state, date):
 
     except FileNotFoundError:
         df = ExtractNoSource(df, state, date)
+        if state == "HP":
+            df["cumulativeDeceasedNumberForState"] - df["cumulativeDeceasedNumberForState"] - df["cumulativeOtherNumberForState"]
+        elif state == "NL"or state == "TR":
+            df["cumulativeRecoveredNumberForState"] - df["cumulativeRecoveredNumberForState"] - df["cumulativeOtherNumberForState"]
     return df
 
 
