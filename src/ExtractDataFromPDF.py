@@ -11,6 +11,7 @@ from tzlocal import get_localzone
 from StatusMsg import StatusMsg
 from tqdm import tqdm
 from urllib.error import HTTPError
+import re
 # from datetime import datetime,timedelta
 #programe extracts the tabels from the PDF files.
 # Need some Preprocessing to convert to RawCSV
@@ -101,6 +102,10 @@ def getKAData(file_path,date,StateCode):
 
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-5-table-1.csv'.format(date,StateCode),skiprows=3)
     df_districts.columns = df_districts.columns.str.replace("\n","")
+    df_districts['District Name'] = df_districts['District Name'].str.replace("\n","")
+    df_districts['District Name'] = df_districts['District Name'].str.replace("#","")
+    df_districts['District Name'] = df_districts['District Name'].str.replace("*","")
+    df_districts['District Name'] = df_districts['District Name'].replace(r'\s+', ' ', regex=True)
     # df_districts = df_districts.replace("nan",np.nan)
     print(df_districts.columns)
     
