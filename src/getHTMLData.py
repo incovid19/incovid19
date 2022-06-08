@@ -10,6 +10,124 @@ from ExtractStateMyGov import ExtractStateMyGov
 import requests
 from tqdm import tqdm
 
+def combine_listItems(list):
+    combined_items = ' '.join([str(item) for item in list])
+    return combined_items
+
+def getAPData(file_path, date, StateCode):
+    
+    try:
+        file_path = tabula.read_pdf('../INPUT/{}/{}/'.format(date,StateCode),pages=1,stream = True)
+        
+        table = tabulate(file_path)
+        # print(table)
+        df_districts = pd.read_fwf(io.StringIO(table))
+        # remove junk on top and reset the index
+        df_districts.drop(df_districts.head(4).index, inplace=True)
+        df_districts = df_districts.reset_index()
+
+        # remove bottom junk
+        df_districts.drop(df_districts.tail(2).index, inplace=True)
+        df_other_cols = df_districts
+        # print(df_districts)
+        
+        # remove unnecessary columns
+        cols = [0, 4, 6]
+        df_districts.drop(df_districts.columns[cols], axis=1, inplace=True)
+
+        # add column names
+        df_districts.columns = ['S.No','District', 'cumulativeConfirmedNumberForDistrict', 'District_1', 'Cases_2']
+        df_districts.drop('S.No', axis=1, inplace=True)
+
+        new_df = df_districts
+        # splitting the dataframe
+        N = 2
+        splitted_list_df = np.split(df_districts, np.arange(N, len(df_districts.columns), N), axis=1)
+        part_A = splitted_list_df[0]
+        part_B = splitted_list_df[1]
+        # print(type(part_B))
+
+        part_B_cols = {"District_1": "District", "Cases_2": "cumulativeConfirmedNumberForDistrict"}
+        part_B.rename(columns=part_B_cols, inplace=True)
+        # concatenate two splitted DF's
+        df_districts = pd.concat([part_A, part_B], ignore_index=True, sort=False)
+        
+        base_csv= '../RAWCSV/2022-04-05/myGov/AP_raw.csv'
+        df_base_csv = pd.read_csv(base_csv)
+        base_csv_forState = '../RAWCSV/2022-04-06/myGov/AP_raw.csv'
+        df_base_csv_forState = pd.read_csv(base_csv_forState)
+
+        for index, row in df_districts.iterrows():
+            # print(index, row)
+            cases_col = row['cumulativeConfirmedNumberForDistrict'].split(' ')[1:]
+            cases_col = list(filter(str.strip, cases_col))
+            # print(cases_col, len(cases_col))
+
+            district_col = row['District'].split(' ')[1:]
+            district_col = list(filter(str.strip, district_col))
+            # print(district_col,len(district_col))
+
+            if len(district_col) == 1:
+                s = ''
+                new_district_col = s.join(district_col)
+            else:
+                new_district_col = combine_listItems(district_col)
+            if len(cases_col) == 1:
+                s = ''
+                new_cases_col = s.join(cases_col)
+            else:
+                new_cases_col = combine_listItems(cases_col)
+
+            df_districts.loc[index, "District"] = new_district_col
+            df_districts.loc[index, "cumulativeConfirmedNumberForDistrict"] = new_cases_col
+        
+        # dropping rows having Nan    
+        df_districts.drop(df_districts.index[[13,14,15,16,30]],inplace=True)
+        df_districts = df_districts.reset_index(drop=True)
+        # df_districts.to_csv("/mnt/c/Users/91967/Downloads/AP_PDF/2022-04-06/table_csv2.csv")
+        df_districts.to_csv('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+
+        df_summary = df_districts
+        df_districts = df_districts[:-1]
+        # print(df_summary, df_districts)
+        df_json = pd.read_json("../DistrictMappingMaster.json")
+        
+        dist_map = df_json['Andhra Pradesh'].to_dict()
+        df_districts['District'].replace(dist_map,inplace=True)
+
+        for index,row in df_districts.iterrows():
+            filtered_base_df = df_base_csv[df_base_csv['District']==row['District']]
+            # print('filtered_base_df',filtered_base_df)
+            filtered_base_forState_df= df_base_csv_forState[df_base_csv_forState['District']==row['District']]
+            # print('filtered_base_forState_df',filtered_base_forState_df)
+            if len(filtered_base_df)== 1 and len(filtered_base_forState_df) == 1:
+                # print('District:',row['District'])
+                cumulative_confirmed = filtered_base_df.iloc[0]['cumulativeConfirmedNumberForDistrict'].astype(int)
+                # print(cumulative_confirmed,type(cumulative_confirmed))
+                # print(row['CcumulativeConfirmedNumberForDistrictases'],type(row['CacumulativeConfirmedNumberForDistrictses']))
+                df_districts.loc[index, "cumulativeConfirmedNumberForDistrict"] = cumulative_confirmed+int(row['cumulativeConfirmedNumberForDistrict'])
+                df_districts['cumulativeDeceasedNumberForDistrict'] = '0'
+                df_districts['cumulativeRecoveredNumberForDistrict'] = '0'
+                df_districts['cumulativeTestedNumberForDistrict'] = '0'
+        
+                df_districts['cumulativeConfirmedNumberForState'] = df_districts['cumulativeConfirmedNumberForDistrict'].sum()
+
+                cumulativeDeceasedNumberForState = filtered_base_forState_df.iloc[0]['cumulativeDeceasedNumberForState'].astype(int)
+                # print('cumulativeDeceasedNumberForState',cumulativeDeceasedNumberForState)
+                df_districts['cumulativeDeceasedNumberForState'] = cumulativeDeceasedNumberForState
+                cumulativeRecoveredNumberForState = filtered_base_forState_df.iloc[0]['cumulativeRecoveredNumberForState'].astype(int)
+                # print('cumulativeRecoveredNumberForState')
+                df_districts['cumulativeRecoveredNumberForState'] = cumulativeRecoveredNumberForState
+                
+                df_districts['cumulativeTestedNumberForState'] = '33462024'
+
+           # df_summary = df_summary.iloc[-1,:]
+        return df_districts
+        
+    except Exception as e:
+        print(e)
+
+
 
 def andhra_pradesh(state, date, path):
     soup = BeautifulSoup(open(path.format(date, state), encoding="utf8"), "html.parser")

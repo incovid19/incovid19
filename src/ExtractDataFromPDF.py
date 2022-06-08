@@ -363,7 +363,9 @@ def getMLData(file_path,date,StateCode):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))#,header=0)
+    # print(df_districts)
     df_districts.columns = df_districts.columns.str.replace("\n","")
+    # print(df_districts)
     prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
     prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/ML_final.csv")
     # print(df_districts.columns)
@@ -385,6 +387,7 @@ def getMLData(file_path,date,StateCode):
     df_districts['District'].replace(dist_map,inplace=True)
     
     df_summary = df_summary.iloc[-1,:]
+    print(df_districts)
     return df_summary,df_districts
 
 # def getPBData(file_path,date,StateCode):
@@ -1133,3 +1136,4 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-05-11")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-05-23")
