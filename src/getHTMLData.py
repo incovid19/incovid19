@@ -9,17 +9,20 @@ import datetime
 from ExtractStateMyGov import ExtractStateMyGov
 import requests
 from tqdm import tqdm
+import tabula
+import tabulate
 
 def combine_listItems(list):
     combined_items = ' '.join([str(item) for item in list])
     return combined_items
 
-def getAPData(file_path, date, StateCode):
+def getAPData(state, date, path):
     
     try:
-        file_path = tabula.read_pdf('../INPUT/{}/{}/'.format(date,StateCode),pages=1,stream = True)
+        # file_path1 = tabula.read_pdf('../INPUT/{}/{}/'.format(date,state),pages=1,stream = True)
+        file_path = tabula.read_pdf(path,pages=1,stream = True)
         
-        table = tabulate(file_path)
+        table = tabulate(file_path1)
         # print(table)
         df_districts = pd.read_fwf(io.StringIO(table))
         # remove junk on top and reset the index
@@ -85,7 +88,7 @@ def getAPData(file_path, date, StateCode):
         df_districts.drop(df_districts.index[[13,14,15,16,30]],inplace=True)
         df_districts = df_districts.reset_index(drop=True)
         # df_districts.to_csv("/mnt/c/Users/91967/Downloads/AP_PDF/2022-04-06/table_csv2.csv")
-        df_districts.to_csv('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+        df_districts.to_csv('../INPUT/{}/{}/foo.csv'.format(date,StateCode))
 
         df_summary = df_districts
         df_districts = df_districts[:-1]
@@ -122,7 +125,7 @@ def getAPData(file_path, date, StateCode):
                 df_districts['cumulativeTestedNumberForState'] = '33462024'
 
            # df_summary = df_summary.iloc[-1,:]
-        return df_districts
+        return df_districts 
         
     except Exception as e:
         print(e)
@@ -571,7 +574,7 @@ def GenerateRawCsv(state, date, df_districts):
 def ExtractFromHTML(state, date):
     path = "../INPUT/{0}/{1}.html".format(date, state)
     states = {
-        'AP': andhra_pradesh,
+        'AP': getAPData,
         'GJ': gujarat,
         'OR': odisha,
         'TR': tripura,
