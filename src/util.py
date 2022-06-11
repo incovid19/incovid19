@@ -73,14 +73,15 @@ def portalUpdate_second(dateList, prevUpdate):
             for key,val in tqdm(STATE_NAMES.items()):
                 print(key)
                 updateDerivedValues(key,runDate)
-
-            updateAll(date,log=True,OverWrite=False)
-            df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
-            print(df_fileStatus)
-            if len(df_fileStatus) > 0:
-                return "Portal Update for "+ runDate +" Without "+",".join(df_fileStatus["State"].to_list())
-            else:
-                return "Portal Update for "+ runDate
+            resp_updateJson = input("Would you like to generate JSON(Yes/No):")
+            if resp_updateJson == "Yes":
+                updateAll(date,log=True,OverWrite=False)
+                df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
+                print(df_fileStatus)
+                if len(df_fileStatus) > 0:
+                    return "Portal Update for "+ runDate +" Without "+",".join(df_fileStatus["State"].to_list())
+                else:
+                    return "Portal Update for "+ runDate
         else:
             print(date)
             updateAll(date,log=False,OverWrite=False)
