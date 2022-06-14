@@ -172,3 +172,5 @@ dateList = date_range(start, end)
 # get_7dma_state('MH', '2022-05-15')
 # get_7dma_state('MH', '2022-05-22')
 # get_7dma_state('MH', '2022-05-29')
+# get_7dma_state('UT', '2022-06-06')
+
