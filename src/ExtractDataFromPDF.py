@@ -123,51 +123,52 @@ def getAPData(file_path, date, StateCode):
                 new_cases_col = combine_listItems(cases_col)
 
             df_districts.loc[index, "District"] = new_district_col
-            print(type(new_district_col))
+            # print(type(new_district_col))
             df_districts.loc[index, "cumulativeConfirmedNumberForDistrict"] = new_cases_col
         # dropping rows having Nan    
         df_districts.drop(df_districts.index[[13,14,15,16,30,33]],inplace=True)
         df_districts = df_districts.reset_index(drop=True)
-        # df_districts['cumulativeConfirmedNumberForDistrict'] =df_districts['cumulativeConfirmedNumberForDistrict'].astype(int)
+        df_districts['cumulativeConfirmedNumberForDistrict'] =df_districts['cumulativeConfirmedNumberForDistrict'].astype(int)
 
-        df_summary = df_districts
+        # df_summary = df_districts
         df_districts = df_districts[:-2]
-        print(df_districts)
-        df_json = pd.read_json("../DistrictMappingMaster.json")
+        # print(df_districts)
         
+        df_json = pd.read_json("../DistrictMappingMaster.json")
         dist_map = df_json['Andhra Pradesh'].to_dict()
         df_districts['District'].replace(dist_map,inplace=True)
 
         for index,row in df_districts.iterrows():
             filtered_base_df = df_base_csv[df_base_csv['District']==row['District']]
-            # print('filtered_base_df',filtered_base_df)
             filtered_base_forState_df= df_base_csv_forState[df_base_csv_forState['District']==row['District']]
-            # print('filtered_base_forState_df',filtered_base_forState_df)
             if len(filtered_base_df)== 1 and len(filtered_base_forState_df) == 1:
+            # if len(filtered_base_df)== 1:
                 # print('District:',row['District'])
-                cumulative_confirmed = filtered_base_df.iloc[0]['cumulativeConfirmedNumberForDistrict'].astype(int)
-                # print(cumulative_confirmed,type(cumulative_confirmed), type(str(cumulative_confirmed)))
-#                 df_districts.loc[index, 'cumulativeConfirmedNumberForDistrict'] = cumulative_confirmed+int(row['cumulativeConfirmedNumberForDistrict'])
-#                 df_districts['cumulativeDeceasedNumberForDistrict'] = '0'
-#                 df_districts['cumulativeRecoveredNumberForDistrict'] = '0'
-#                 df_districts['cumulativeTestedNumberForDistrict'] = '0'
-#                 df_districts['cumulativeConfirmedNumberForState'] = df_districts['cumulativeConfirmedNumberForDistrict'].sum()
-
-#                 cumulativeDeceasedNumberForState = filtered_base_forState_df.iloc[0]['cumulativeDeceasedNumberForState'].astype(int)
-#                 # print('cumulativeDeceasedNumberForState',cumulativeDeceasedNumberForState)
-#                 df_districts['cumulativeDeceasedNumberForState'] = cumulativeDeceasedNumberForState
-#                 cumulativeRecoveredNumberForState = filtered_base_forState_df.iloc[0]['cumulativeRecoveredNumberForState'].astype(int)
-#                 # print('cumulativeRecoveredNumberForState')
-#                 df_districts['cumulativeRecoveredNumberForState'] = cumulativeRecoveredNumberForState
+                cumulative_confirmed_forDistrict = filtered_base_df.iloc[0]['cumulativeConfirmedNumberForDistrict'].astype(int)
                 
-#                 df_districts['cumulativeTestedNumberForState'] = '33462024'
+                df_districts.loc[index, 'cumulativeConfirmedNumberForDistrict'] = cumulative_confirmed_forDistrict+int(row['cumulativeConfirmedNumberForDistrict'])                
+                df_districts['cumulativeDeceasedNumberForDistrict'] = '0'
+                df_districts['cumulativeRecoveredNumberForDistrict'] = '0'
+                df_districts['cumulativeTestedNumberForDistrict'] = '0'
+                df_districts['cumulativeConfirmedNumberForState'] = df_districts['cumulativeConfirmedNumberForDistrict'].sum()
 
-           # df_summary = df_summary.iloc[-1,:]
-        return df_districts
+                cumulativeDeceasedNumberForState = filtered_base_forState_df.iloc[0]['cumulativeDeceasedNumberForState'].astype(int)
+                df_districts['cumulativeDeceasedNumberForState'] = cumulativeDeceasedNumberForState
+                cumulativeRecoveredNumberForState = filtered_base_forState_df.iloc[0]['cumulativeRecoveredNumberForState'].astype(int)
+                df_districts['cumulativeRecoveredNumberForState'] = cumulativeRecoveredNumberForState
+                
+                # df_districts['cumulativeTestedNumberForState'] = '33462024'
+        df_summary = df_districts
+        # print('df_summary',df_summary)
+        # print(df_districts)
+        df_summary['cumulativeTestedNumberForState'] = '33462024' 
+        print('df_summary',df_summary)
+    
+        return df_districts, df_summary
         
     except Exception as e:
         raise
-        print(e)
+        # print(e)
 
 
 
