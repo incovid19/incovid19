@@ -96,11 +96,14 @@ def getAPData(file_path, date, StateCode):
         # concatenate two splitted DF's
         df_districts = pd.concat([part_A, part_B], ignore_index=True, sort=False)
         
-        base_csv= '../RAWCSV/2022-04-05/myGov/AP_raw.csv'
+        # base_csv= '../RAWCSV/2022-04-05/myGov/AP_raw.csv'
+        base_csv= '../RAWCSV/2022-04-07/AP_raw.csv'
         df_base_csv = pd.read_csv(base_csv)
-        base_csv_forState = '../RAWCSV/2022-04-06/myGov/AP_raw.csv'
+        # con = df_base_csv['cumulativeConfirmedNumberForDistrict']
+        # print(con)
+        # base_csv_forState = '../RAWCSV/2022-04-06/myGov/AP_raw.csv'
+        base_csv_forState = '../RAWCSV/2022-04-08/myGov/AP_raw.csv'
         df_base_csv_forState = pd.read_csv(base_csv_forState)
-
         for index, row in df_districts.iterrows():
             # print(index, row)
             cases_col = row['cumulativeConfirmedNumberForDistrict'].split(' ')[1:]
@@ -137,16 +140,29 @@ def getAPData(file_path, date, StateCode):
         df_json = pd.read_json("../DistrictMappingMaster.json")
         dist_map = df_json['Andhra Pradesh'].to_dict()
         df_districts['District'].replace(dist_map,inplace=True)
+        print('printing df districts before iterating .....')
+        print(df_districts)
 
         for index,row in df_districts.iterrows():
             filtered_base_df = df_base_csv[df_base_csv['District']==row['District']]
+            filtered_district = filtered_base_df.iloc[0]['District']
+            print('filtered_district',filtered_district)
+            # print(filtered_base_df.columns)
+            # cumulativeConfirmedNumberForDistrict_value = filtered_base_df['cumulativeConfirmedNumberForDistrict']
+            # print('printing value .....')
+            # print(cumulativeConfirmedNumberForDistrict_value)
+            
             filtered_base_forState_df= df_base_csv_forState[df_base_csv_forState['District']==row['District']]
-            if len(filtered_base_df)== 1 and len(filtered_base_forState_df) == 1:
-            # if len(filtered_base_df)== 1:
-                # print('District:',row['District'])
+            
+            if len(filtered_base_df) == 1 and len(filtered_base_forState_df) == 1:
+            # if len(filtered_base_df) == 1:
+                # print('printing district names',filtered_district)
                 cumulative_confirmed_forDistrict = filtered_base_df.iloc[0]['cumulativeConfirmedNumberForDistrict'].astype(int)
+                # print('cumulative_confirmed_forDistrict',cumulative_confirmed_forDistrict)
                 
-                df_districts.loc[index, 'cumulativeConfirmedNumberForDistrict'] = cumulative_confirmed_forDistrict+int(row['cumulativeConfirmedNumberForDistrict'])                
+                con_val = df_districts.loc[index, 'cumulativeConfirmedNumberForDistrict'] = cumulative_confirmed_forDistrict+int(row['cumulativeConfirmedNumberForDistrict']) 
+                # print('printing con value .....')
+                # print('con_val',con_val,filtered_district)
                 df_districts['cumulativeDeceasedNumberForDistrict'] = '0'
                 df_districts['cumulativeRecoveredNumberForDistrict'] = '0'
                 df_districts['cumulativeTestedNumberForDistrict'] = '0'
@@ -159,17 +175,26 @@ def getAPData(file_path, date, StateCode):
                 
                 # df_districts['cumulativeTestedNumberForState'] = '33462024'
         df_summary = df_districts
-        # print('df_summary',df_summary)
+        # print('printing df districts.....')
         # print(df_districts)
-        df_summary['cumulativeTestedNumberForState'] = '33462024' 
-        print('df_summary',df_summary)
-    
-        return df_districts, df_summary
+        
+        # df_summary['cumulativeTestedNumberForState'] = '33462024' 
+        # df_summary['cumulativeTestedNumberForState'] = '33469666'
+        df_addTest = pd.read_csv("../INPUT/AP_Tested.csv")
+        # print(df_addTest)
+        try:
+            df_summary['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == date]["Cumulative_Tested"].item()
+            # print(df_summary['Tested'])
+        except:
+            print("Please Enter AP Tested values in ../Input/AP_Tested.csv")
+            raise
+        
+        # df_summary.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, StateCode))
+        return df_summary, df_districts
         
     except Exception as e:
         raise
         # print(e)
-
 
 
 def getRJData(file_path,date,StateCode):
@@ -1214,7 +1239,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         elif StateCode == "AP":
             df_summary,df_districts = getAPData(filepath,Date,StateCode)
-            GenerateRawCsv(StateCode,Date,df_districts,df_summary)
+            # GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         elif StateCode == "KL":
             df_summary,df_districts = getKLData(filepath,Date,StateCode)
             print("Data Extracted Sucessfully")
@@ -1255,7 +1280,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 
 # ExtractFromPDF(StateCode = "UT",Date = "2022-05-23")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-01-10")
-# ExtractFromPDF(StateCode = "AP",Date = "2022-04-06")
+# ExtractFromPDF(StateCode = "AP",Date = "2022-04-08")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-05-11")
