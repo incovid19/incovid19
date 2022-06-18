@@ -97,7 +97,7 @@ def getAPData(file_path, date, StateCode):
         df_districts = pd.concat([part_A, part_B], ignore_index=True, sort=False)
         # print(df_districts)
         # base_csv= '../RAWCSV/2022-04-05/myGov/AP_raw.csv'
-        # base_csv= '../RAWCSV/2022-04-17/myGov/AP_raw.csv'
+        # base_csv= '../RAWCSV/2022-04-18/myGov/AP_raw.csv'
         base_csv= '../RAWCSV/2022-04-19/AP_raw.csv'
         df_base_csv = pd.read_csv(base_csv)
         # print(df_base_csv)
@@ -114,7 +114,6 @@ def getAPData(file_path, date, StateCode):
         # distri = df_base_csv_forState['District']
         # con = df_base_csv_forState['cumulativeConfirmedNumberForDistrict']
         # print(con, distri)
-        
         for index, row in df_districts.iterrows():
             # print(index, row)
             cases_col = row['cumulativeConfirmedNumberForDistrict'].split(' ')[1:]
@@ -144,7 +143,6 @@ def getAPData(file_path, date, StateCode):
         df_districts = df_districts.reset_index(drop=True)
         df_districts['cumulativeConfirmedNumberForDistrict'] =df_districts['cumulativeConfirmedNumberForDistrict'].astype(int)
 
-        # df_summary = df_districts
         df_districts = df_districts[:-2]
         # print(df_districts)
         
@@ -154,14 +152,15 @@ def getAPData(file_path, date, StateCode):
         
         for index,row in df_districts.iterrows():
             filtered_base_df = df_base_csv[df_base_csv['District']==row['District']]
-            # cumulativeConfirmedNumberForDistrict_value = filtered_base_df['cumulativeConfirmedNumberForDistrict']
-            # print('printing value .....')
-            # print(cumulativeConfirmedNumberForDistrict_value)
+            # print(df_base_csv_forState)
+          
+            # filtered_base_forState_df= df_base_csv_forState[df_base_csv_forState['District']==row['District']]
+            distr = df_districts['District']
+            # print(distr)
+            # print(filtered_base_forState_df)
             
-            filtered_base_forState_df= df_base_csv_forState[df_base_csv_forState['District']==row['District']]
-            
-            if len(filtered_base_df) == 1 and len(filtered_base_forState_df) == 1:
-            # if len(filtered_base_df) == 1:
+            # if len(filtered_base_df) == 1 and len(filtered_base_forState_df) == 1:
+            if len(filtered_base_df) == 1:
                 # print('printing district names',filtered_district)
                 cumulative_confirmed_forDistrict = filtered_base_df.iloc[0]['cumulativeConfirmedNumberForDistrict'].astype(int)
                 # print('cumulative_confirmed_forDistrict',cumulative_confirmed_forDistrict)
@@ -172,12 +171,13 @@ def getAPData(file_path, date, StateCode):
                 df_districts['cumulativeRecoveredNumberForDistrict'] = '0'
                 df_districts['cumulativeTestedNumberForDistrict'] = '0'
                 df_districts['cumulativeConfirmedNumberForState'] = df_districts['cumulativeConfirmedNumberForDistrict'].sum()
-
-                cumulativeDeceasedNumberForState = filtered_base_forState_df.iloc[0]['cumulativeDeceasedNumberForState'].astype(int)
-                df_districts['cumulativeDeceasedNumberForState'] = cumulativeDeceasedNumberForState
-                cumulativeRecoveredNumberForState = filtered_base_forState_df.iloc[0]['cumulativeRecoveredNumberForState'].astype(int)
-                df_districts['cumulativeRecoveredNumberForState'] = cumulativeRecoveredNumberForState
                 
+                cumulativeDeceasedNumberForState = df_base_csv_forState.iloc[0]['cumulativeDeceasedNumberForState'].astype(int)
+                # print('cumulativeDeceasedNumberForState',cumulativeDeceasedNumberForState)
+                df_districts['cumulativeDeceasedNumberForState'] = cumulativeDeceasedNumberForState
+                cumulativeRecoveredNumberForState = df_base_csv_forState.iloc[0]['cumulativeRecoveredNumberForState'].astype(int)
+                df_districts['cumulativeRecoveredNumberForState'] = cumulativeRecoveredNumberForState
+
                 # df_districts['cumulativeTestedNumberForState'] = '33462024'
         df_summary = df_districts
         # print('printing df districts.....')
