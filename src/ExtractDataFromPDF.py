@@ -97,8 +97,8 @@ def getAPData(file_path, date, StateCode):
         df_districts = pd.concat([part_A, part_B], ignore_index=True, sort=False)
         # print(df_districts)
         # base_csv= '../RAWCSV/2022-04-05/myGov/AP_raw.csv'
-        # base_csv= '../RAWCSV/2022-04-18/myGov/AP_raw.csv'
-        base_csv= '../RAWCSV/2022-04-19/AP_raw.csv'
+        # base_csv= '../RAWCSV/2022-04-24/myGov/AP_raw.csv'
+        base_csv= '../RAWCSV/2022-04-28/AP_raw.csv'
         df_base_csv = pd.read_csv(base_csv)
         # print(df_base_csv)
         # df_base_csv.drop(df_base_csv.index[[0,7]],inplace=True)
@@ -107,7 +107,7 @@ def getAPData(file_path, date, StateCode):
         # con = df_base_csv['cumulativeConfirmedNumberForDistrict']
         # print(con, distri)
         # base_csv_forState = '../RAWCSV/2022-04-06/myGov/AP_raw.csv'
-        base_csv_forState = '../RAWCSV/2022-04-20/myGov/AP_raw.csv'
+        base_csv_forState = '../RAWCSV/2022-04-29/myGov/AP_raw.csv'
         df_base_csv_forState = pd.read_csv(base_csv_forState)
         # df_base_csv_forState.drop(df_base_csv_forState.index[[0,7]],inplace=True)
         # df_base_csv_forState = df_base_csv_forState.reset_index(drop=True)
@@ -186,7 +186,7 @@ def getAPData(file_path, date, StateCode):
         # df_summary['cumulativeTestedNumberForState'] = '33462024' 
         # df_summary['cumulativeTestedNumberForState'] = '33469666'
         df_addTest = pd.read_csv("../INPUT/AP_Tested.csv")
-        print(df_addTest)
+        # print(df_addTest)
         try:
             df_summary['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == date]["Cumulative_Tested"].item()
             # print(df_summary['Tested'])
@@ -1285,7 +1285,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 
 # ExtractFromPDF(StateCode = "UT",Date = "2022-05-23")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-01-10")
-# ExtractFromPDF(StateCode = "AP",Date = "2022-04-20")
+# ExtractFromPDF(StateCode = "AP",Date = "2022-04-29")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-05-11")

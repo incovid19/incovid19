@@ -8,6 +8,7 @@ pd.set_option('display.max_columns', None)
 
 
 def ExtractNoSource(df, state, date):
+    STATE = state
     date = date - timedelta(1)
     cols = ['cumulativeConfirmedNumberForDistrict', 'cumulativeDeceasedNumberForDistrict', 'cumulativeRecoveredNumberForDistrict','cumulativeOtherNumberForDistrict']
     try:
@@ -28,8 +29,9 @@ def ExtractNoSource(df, state, date):
                     "cumulativeOtherNumberForState"
                 ]
             )
-            state["cumulativeOtherNumberForDistrict"] = 0
-            state["cumulativeOtherNumberForState"] = 0
+            if STATE != "NL" or STATE != "TR":
+                state["cumulativeOtherNumberForDistrict"] = 0
+                state["cumulativeOtherNumberForState"] = 0
         except:
             # print(state)
             state = pd.read_csv(
@@ -64,13 +66,16 @@ def ExtractNoSource(df, state, date):
 
         for col in cols:
             df[col][df['District'] == "Unknown"] -= state[col.replace("District", "State")][0]
+            
+        if STATE == "HP":
+            df["cumulativeDeceasedNumberForState"] = df["cumulativeDeceasedNumberForState"] - state["cumulativeOtherNumberForState"][0]
+            df["cumulativeOtherNumberForState"] = state["cumulativeOtherNumberForState"][0]
+        elif STATE == "NL"or STATE == "TR":
+            df["cumulativeOtherNumberForState"] = state["cumulativeOtherNumberForState"][0]
+            df["cumulativeRecoveredNumberForState"] = df["cumulativeRecoveredNumberForState"] - state["cumulativeOtherNumberForState"][0]
 
     except FileNotFoundError:
         df = ExtractNoSource(df, state, date)
-        if state == "HP":
-            df["cumulativeDeceasedNumberForState"] - df["cumulativeDeceasedNumberForState"] - df["cumulativeOtherNumberForState"]
-        elif state == "NL"or state == "TR":
-            df["cumulativeRecoveredNumberForState"] - df["cumulativeRecoveredNumberForState"] - df["cumulativeOtherNumberForState"]
     return df
 
 
@@ -132,4 +137,4 @@ def ExtractStateMyGov(state, date, no_source=False):
 
 
 # ExtractStateMyGov("AR", "2021-10-29", no_source=True)
-# ExtractStateMyGov("SK", "2021-10-29")
+# ExtractStateMyGov("NL", "2021-10-29")
