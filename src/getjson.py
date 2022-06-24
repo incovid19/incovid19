@@ -379,8 +379,8 @@ if __name__ == "__main__":
     print("Running Main")
     # path = "Test/"  #Staging path
     path = "/home/swiadmin/test/v4/min/"    #production path
-    start_date = "2022-06-21"
-    end_date = "2022-06-21"
+    start_date = "2022-06-22"
+    end_date = "2022-06-22"
     end = datetime.strptime(end_date, '%Y-%m-%d')
     start = datetime.strptime(start_date, '%Y-%m-%d')
     dateList = date_range(start, end)
