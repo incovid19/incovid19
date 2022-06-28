@@ -674,15 +674,15 @@ def getPBData(file_path,date,StateCode):
 
 def getUKData(file_path,date,StateCode):
     try:
-        # table = camelot.read_pdf(file_path,'2')
-        table = camelot.read_pdf(file_path,'3')
+        table = camelot.read_pdf(file_path,'2')
+        # table = camelot.read_pdf(file_path,'3')
 
 
         if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
             os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
         table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-        # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
-        df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-3.csv'.format(date,StateCode))
+        df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
+        # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-3.csv'.format(date,StateCode))
 
         # change district name from U.S. nagar to Udham Singh Nagar
         index_of_USnagar= df_districts[df_districts['Districts'] == 'U.S. Nagar'].index[0]
