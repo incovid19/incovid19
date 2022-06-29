@@ -515,7 +515,7 @@ def getMLData(file_path,date,StateCode):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))#,header=0)
-    # print(df_districts)
+    print(df_districts)
     df_districts.columns = df_districts.columns.str.replace("\n","")
     # print(df_districts)
     prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
@@ -928,6 +928,19 @@ def getMZData(file_path,date,StateCode):
     df_summary = df_districts #testcode needs to be updated later
     return df_summary,df_districts
 
+
+def getUPData(file_path,date,StateCode):
+    # print(file_path)
+    # tables = tabula.read_pdf(file_path)
+    # print(dfs)
+    folder_name = '../INPUT/{}/{}/{}_table.csv'.format(date,StateCode,StateCode)
+    print(folder_name)
+    tabula.convert_into(file_path, folder_name, pages="all", output_format="csv", stream=True)
+#     df_districts.columns = df_districts.columns.str.replace("\n","")
+
+#     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
+    
+
 # def getKLData(file_path,date,StateCode):
 #     # print("Extracting PDF")
 #     table = camelot.read_pdf(file_path,'4,5,6')
@@ -1207,6 +1220,8 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
     # print(df.head(1))
     # a=b
     df.to_csv("../RAWCSV/{}/{}_raw.csv".format(Date,StateCode))
+    
+
 
 
 def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
@@ -1248,10 +1263,15 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
         elif StateCode == "AP":
             df_summary,df_districts = getAPData(filepath,Date,StateCode)
             # GenerateRawCsv(StateCode,Date,df_districts,df_summary)
+        elif StateCode == "UP":
+            print('UP loading')
+            df_summary,df_districts = getUPData(filepath,Date,StateCode)
+            GenerateRawCsv(StateCode,Date,df_districts,df_summary)
         elif StateCode == "KL":
             df_summary,df_districts = getKLData(filepath,Date,StateCode)
             print("Data Extracted Sucessfully")
             GenerateRawCsv(StateCode,Date,df_districts,df_summary)
+            
         # elif StateCode == "MZ":
         #     df_summary,df_districts = getMZData(filepath,Date,StateCode)
         #     GenerateRawCsv(StateCode,Date,df_districts,df_summary)
@@ -1293,4 +1313,6 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-05-11")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-23")
+# ExtractFromPDF(StateCode = "UP",Date = "2022-04-09")
+
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)

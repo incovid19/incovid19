@@ -53,9 +53,10 @@ def ExtractNoSource(df, state, date):
         df["cumulativeTestedNumberForState"] = state["cumulativeTestedNumberForState"][0]
         try:
             df["cumulativeOtherNumberForState"] = state["cumulativeOtherNumberForState"][0]
-            df["cumulativeOtherNumberForState"] = 0
+            # df["cumulativeOtherNumberForState"] = 0
         except:
-            df["cumulativeOtherNumberForState"] = 0
+            pass
+            # df["cumulativeOtherNumberForState"] = 0
         for district in list(state['District']):
             if district != 'Unknown':
                 for col in cols:
@@ -137,4 +138,4 @@ def ExtractStateMyGov(state, date, no_source=False):
 
 
 # ExtractStateMyGov("AR", "2021-10-29", no_source=True)
-# ExtractStateMyGov("NL", "2021-10-29")
+# ExtractStateMyGov("NL", "2021-04-13")
