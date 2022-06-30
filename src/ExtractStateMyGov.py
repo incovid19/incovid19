@@ -29,7 +29,8 @@ def ExtractNoSource(df, state, date):
                     "cumulativeOtherNumberForState"
                 ]
             )
-            if STATE != "NL" or STATE != "TR":
+            if STATE != "NL" and STATE != "TR":
+                print("Yes")
                 state["cumulativeOtherNumberForDistrict"] = 0
                 state["cumulativeOtherNumberForState"] = 0
         except:
@@ -138,4 +139,4 @@ def ExtractStateMyGov(state, date, no_source=False):
 
 
 # ExtractStateMyGov("AR", "2021-10-29", no_source=True)
-# ExtractStateMyGov("NL", "2021-04-13")
+# ExtractStateMyGov("NL", "2021-04-13",no_source=True)
