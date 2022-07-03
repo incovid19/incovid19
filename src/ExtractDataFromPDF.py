@@ -209,7 +209,7 @@ def getRJData(file_path,date,StateCode):
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
 
     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=0)
-    df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+    df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1-edit.csv'.format(date,StateCode))
 
     frames = [df_districts_1,df_districts_2]
     df_districts = pd.concat(frames,ignore_index=True)
@@ -1317,7 +1317,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-05-11")
-# ExtractFromPDF(StateCode = "ML",Date = "2022-05-23")
-# ExtractFromPDF(StateCode = "UP",Date = "2022-04-07")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-07-02")
+ExtractFromPDF(StateCode = "RJ",Date = "2022-07-02")
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
