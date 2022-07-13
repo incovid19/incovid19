@@ -682,8 +682,8 @@ def getPBData(file_path,date,StateCode):
 
 def getUKData(file_path,date,StateCode):
     try:
-        table = camelot.read_pdf(file_path,'2')
-        # table = camelot.read_pdf(file_path,'3')
+        # table = camelot.read_pdf(file_path,'2')
+        table = camelot.read_pdf(file_path,'3')
 
 
         if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
