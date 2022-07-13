@@ -382,9 +382,9 @@ def getHRData(file_path,date,StateCode):
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # table[5].to_excel('foo.xlsx')
 
-    # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
     # incase HR extraction not correct rename the table name and use this
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1_editTable.csv'.format(date,StateCode))
+    # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1_editTable.csv'.format(date,StateCode))
     print('HR districts data:',df_districts)
 
     df_districts.columns = df_districts.columns.str.replace("\n","")
@@ -429,49 +429,49 @@ def getHRData(file_path,date,StateCode):
     # a=b
     return df_summary,df_districts
 
-def getWBData(file_path,date,StateCode):
-    table = camelot.read_pdf(file_path,pages='1,2')
-    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
-        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
-    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    # table[5].to_excel('foo.xlsx')
+# def getWBData(file_path,date,StateCode):
+#     table = camelot.read_pdf(file_path,pages='1,2')
+#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+#     # table[5].to_excel('foo.xlsx')
 
-    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
-    df_districts.columns = df_districts.iloc[0]
-    df_districts = df_districts[1:]
-    df_districts.columns = df_districts.columns.str.replace("\n","")
+#     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+#     df_districts.columns = df_districts.iloc[0]
+#     df_districts = df_districts[1:]
+#     df_districts.columns = df_districts.columns.str.replace("\n","")
 
-    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-2.csv'.format(date,StateCode))
+#     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-2.csv'.format(date,StateCode))
     
-    # print(df_tests)
-    # a=b
+#     # print(df_tests)
+#     # a=b
     
-    col_dict = {"Total Cases":"Confirmed","Total Discharged":"Recovered","Total Deaths":"Deceased"}
-    df_districts.rename(columns=col_dict,inplace=True)
-    # df_districts.drop(columns=['S. No','Total Active Cases','Last Reported Case'],inplace=True)
-    df_districts["Confirmed"] = df_districts["Confirmed"].str.split("+").str[0]
-    df_districts["Recovered"] = df_districts["Recovered"].str.split("+").str[0]
-    df_districts["Deceased"] = df_districts["Deceased"].str.split("+").str[0]
+#     col_dict = {"Total Cases":"Confirmed","Total Discharged":"Recovered","Total Deaths":"Deceased"}
+#     df_districts.rename(columns=col_dict,inplace=True)
+#     # df_districts.drop(columns=['S. No','Total Active Cases','Last Reported Case'],inplace=True)
+#     df_districts["Confirmed"] = df_districts["Confirmed"].str.split("+").str[0]
+#     df_districts["Recovered"] = df_districts["Recovered"].str.split("+").str[0]
+#     df_districts["Deceased"] = df_districts["Deceased"].str.split("+").str[0]
 
-    df_districts["Confirmed"] = df_districts["Confirmed"].str.replace(",","")
-    df_districts["Recovered"] = df_districts["Recovered"].str.replace(",","")
-    df_districts["Deceased"] = df_districts["Deceased"].str.replace(",","")
+#     df_districts["Confirmed"] = df_districts["Confirmed"].str.replace(",","")
+#     df_districts["Recovered"] = df_districts["Recovered"].str.replace(",","")
+#     df_districts["Deceased"] = df_districts["Deceased"].str.replace(",","")
     
-    df_summary = df_districts
-    df_districts = df_districts[:-1]
-    # df_districts.drop(labels=[0,1],axis=0,inplace=True)
-    # df = df[]
-    df_json = pd.read_json("../DistrictMappingMaster.json")
-    dist_map = df_json['West Bengal'].to_dict()
-    df_districts['District'].replace(dist_map,inplace=True)
-    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-    df_summary["Tested"] = df_tests.loc[1,"Number"]
-    # print(df_summary)
-    df_summary["Tested"]  = int(df_summary["Tested"].replace(',', '')) #.astype(int)
-    # df_districts["Tested"] = df_summary["Tested"]
-    # print(df_summary)
-    # a=b
-    return df_summary,df_districts
+#     df_summary = df_districts
+#     df_districts = df_districts[:-1]
+#     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
+#     # df = df[]
+#     df_json = pd.read_json("../DistrictMappingMaster.json")
+#     dist_map = df_json['West Bengal'].to_dict()
+#     df_districts['District'].replace(dist_map,inplace=True)
+#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+#     df_summary["Tested"] = df_tests.loc[1,"Number"]
+#     # print(df_summary)
+#     df_summary["Tested"]  = int(df_summary["Tested"].replace(',', '')) #.astype(int)
+#     # df_districts["Tested"] = df_summary["Tested"]
+#     # print(df_summary)
+#     # a=b
+#     return df_summary,df_districts
 
 
 def getMHData(file_path,date,StateCode):
@@ -513,42 +513,42 @@ def getMHData(file_path,date,StateCode):
     return df_summary,df_districts
 
 
-# def getMLData(file_path,date,StateCode):
-#     table = camelot.read_pdf(file_path,pages='1')
-#     # print(file_path,date,StateCode)
-#     # print(table)
-#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
-#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
-#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-#     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))#,header=0)
-#     print(df_districts)
-#     df_districts.columns = df_districts.columns.str.replace("\n","")
-#     print(df_districts.columns)
-#     prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
-#     prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/ML_final.csv")
-#     # print(df_districts.columns)
-#     # print(prev_df.columns)
-#     df_districts["Total Recoveries"] = 0
-#     for idx in df_districts.index:
-#         if df_districts["District Name"][idx] != "Total":
-#             df_districts["Total Recoveries"][idx] = prev_df[prev_df["District"] == df_districts["District Name"][idx]]["cumulativeRecoveredNumberForDistrict"].item() + df_districts["New Recoveries"][idx].item()
-#             # print(df_districts["Total Recoveries"][idx])
-#         else:
-#             # print(df_districts["Total Recoveries"].sum())
-#             df_districts["Total Recoveries"][idx] = df_districts["Total Recoveries"].sum()  
+def getMLData(file_path,date,StateCode):
+    table = camelot.read_pdf(file_path,pages='1')
+    # print(file_path,date,StateCode)
+    # print(table)
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))#,header=0)
+    print(df_districts)
+    df_districts.columns = df_districts.columns.str.replace("\n","")
+    # print(df_districts.columns)
+    prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
+    prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/ML_final.csv")
+    print(df_districts.columns)
+    print(prev_df.columns)
+    df_districts["Total Recoveries"] = 0
+    for idx in df_districts.index:
+        if df_districts["District Name"][idx] != "Total":
+            df_districts["Total Recoveries"][idx] = prev_df[prev_df["District"] == df_districts["District Name"][idx]]["cumulativeRecoveredNumberForDistrict"].item() + df_districts["New Recoveries"][idx].item()
+            # print(df_districts["Total Recoveries"][idx])
+        else:
+            # print(df_districts["Total Recoveries"].sum())
+            df_districts["Total Recoveries"][idx] = df_districts["Total Recoveries"].sum()  
     
-#     col_dict = {"District Name":"District","Total Cases":"Confirmed","Total Recoveries":"Recovered","Total Deaths":"Deceased"}
-#     df_districts.rename(columns=col_dict,inplace=True)
-#     df_summary = df_districts
-#     df_districts = df_districts[:-1]
+    col_dict = {"District Name":"District","Total Cases":"Confirmed","Total Recoveries":"Recovered","Total Deaths":"Deceased"}
+    df_districts.rename(columns=col_dict,inplace=True)
+    df_summary = df_districts
+    df_districts = df_districts[:-1]
 
-#     df_json = pd.read_json("../DistrictMappingMaster.json")
-#     dist_map = df_json['Meghalaya'].to_dict()
-#     df_districts['District'].replace(dist_map,inplace=True)
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Meghalaya'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
     
-#     df_summary = df_summary.iloc[-1,:]
-#     print(df_districts)
-#     return df_summary,df_districts
+    df_summary = df_summary.iloc[-1,:]
+    print(df_districts)
+    return df_summary,df_districts
 
 # def getPBData(file_path,date,StateCode):
 #     table = camelot.read_pdf(file_path,'1,4')
@@ -1327,5 +1327,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "MH",Date = "2022-05-11")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-07-09")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
+
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
