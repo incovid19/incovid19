@@ -429,22 +429,22 @@ def getHRData(file_path,date,StateCode):
     # a=b
     return df_summary,df_districts
 
-# def getWBData(file_path,date,StateCode):
-#     table = camelot.read_pdf(file_path,pages='1,2')
-#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
-#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
-#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-#     # table[5].to_excel('foo.xlsx')
+def getWBData(file_path,date,StateCode):
+    table = camelot.read_pdf(file_path,pages='1,2')
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+    # table[5].to_excel('foo.xlsx')
 
-#     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
-#     df_districts.columns = df_districts.iloc[0]
-#     df_districts = df_districts[1:]
-#     df_districts.columns = df_districts.columns.str.replace("\n","")
+    df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+    df_districts.columns = df_districts.iloc[0]
+    df_districts = df_districts[1:]
+    df_districts.columns = df_districts.columns.str.replace("\n","")
 
-#     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-2.csv'.format(date,StateCode))
+    df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-2.csv'.format(date,StateCode))
     
-#     # print(df_tests)
-#     # a=b
+    # print(df_tests)
+    # a=b
     
 #     col_dict = {"Total Cases":"Confirmed","Total Discharged":"Recovered","Total Deaths":"Deceased"}
 #     df_districts.rename(columns=col_dict,inplace=True)
