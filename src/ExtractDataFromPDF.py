@@ -521,6 +521,11 @@ def getMLData(file_path,date,StateCode):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))#,header=0)
+    # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1_edit.csv'.format(date,StateCode))#,header=0)
+    # index_of_Rhio= df_districts[df_districts['Districts'] == 'RI-BHOI'].index[0]
+    # print('index_of_Rhio',index_of_Rhio)
+    # df_districts.at[index_of_Rhio, 'Districts'] = 'Ri-Bhoi'
+
     print(df_districts)
     df_districts.columns = df_districts.columns.str.replace("\n","")
     # print(df_districts.columns)
@@ -532,9 +537,9 @@ def getMLData(file_path,date,StateCode):
     for idx in df_districts.index:
         if df_districts["District Name"][idx] != "Total":
             df_districts["Total Recoveries"][idx] = prev_df[prev_df["District"] == df_districts["District Name"][idx]]["cumulativeRecoveredNumberForDistrict"].item() + df_districts["New Recoveries"][idx].item()
-            # print(df_districts["Total Recoveries"][idx])
+            print(df_districts["Total Recoveries"][idx])
         else:
-            # print(df_districts["Total Recoveries"].sum())
+            print(df_districts["Total Recoveries"].sum())
             df_districts["Total Recoveries"][idx] = df_districts["Total Recoveries"].sum()  
     
     col_dict = {"District Name":"District","Total Cases":"Confirmed","Total Recoveries":"Recovered","Total Deaths":"Deceased"}
@@ -684,7 +689,6 @@ def getUKData(file_path,date,StateCode):
     try:
         table = camelot.read_pdf(file_path,'2')
         # table = camelot.read_pdf(file_path,'3')
-
 
         if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
             os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
