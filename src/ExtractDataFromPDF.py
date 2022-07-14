@@ -728,9 +728,12 @@ def getUKData(file_path,date,StateCode):
     index_of_USnagar= df_tests[df_tests['Districts'] == 'US Nagar'].index[0]
     df_tests.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
 
-    col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
-    "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
-    "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
+    # col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
+    # "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
+    # "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
+    col_dict = {"Districts":"District","Cases till Date":"Confirmed",
+    "Treated/ Cured till Date":"Recovered",
+    "Deaths":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
     # "Cumulative Samples Tested":"Tested"
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
