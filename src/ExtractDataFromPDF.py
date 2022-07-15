@@ -727,13 +727,13 @@ def getUKData(file_path,date,StateCode):
     
     index_of_USnagar= df_tests[df_tests['Districts'] == 'US Nagar'].index[0]
     df_tests.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
-
-    # col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
-    # "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
-    # "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
-    col_dict = {"Districts":"District","Cases till Date":"Confirmed",
-    "Treated/ Cured till Date":"Recovered",
-    "Deaths":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
+    print(df_districts.columns)
+    col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
+    "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
+    "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
+    # col_dict = {"Districts":"District","Cases till Date":"Confirmed",
+    # "Treated/ Cured till Date":"Recovered",
+    # "Deaths":"Deceased","Migrated/ Others":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
     # "Cumulative Samples Tested":"Tested"
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
@@ -753,7 +753,7 @@ def getUKData(file_path,date,StateCode):
 
     for index, row in df_base_csv.iterrows():
         District_base_col = row['District']
-
+        
         if District_base_col != "Total" :
             filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
             
@@ -836,7 +836,7 @@ def getUKData(file_path,date,StateCode):
     
     df_districts['notesForDistrict'] = df_districts['Other'].astype(str) + " cases were recorded as Migrated / Others"
     df_summary['notesForState'] = df_summary['Other'].astype(str) + " cases were recorded as Migrated / Others"
-    
+    print('df_districts',df_districts, 'df_summary',df_summary)
     return df_summary,df_districts
 
 
@@ -1339,6 +1339,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-07-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-07-13")
+
 
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
