@@ -388,6 +388,17 @@ def getHRData(file_path,date,StateCode):
     print('HR districts data:',df_districts)
 
     df_districts.columns = df_districts.columns.str.replace("\n","")
+    
+    df_districts['Sr No'] = df_districts['Sr No'] + ' '
+    df_districts['Name of District'] = df_districts[['Sr No','Name of District']].fillna(' ').sum(axis=1)
+    df_districts['Name of District'] = df_districts['Name of District'].str.split(' ')
+    for i in range(0,10):
+        for idx in df_districts.index:
+            try:
+                df_districts['Name of District'][idx].remove('')
+            except:
+                pass
+    df_districts['Name of District'] = df_districts["Name of District"].str[-1]
 
     
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),names = ["Details","Numbers"])  
@@ -422,7 +433,7 @@ def getHRData(file_path,date,StateCode):
     df_prevDay = pd.read_csv('../RAWCSV/{}/{}_raw.csv'.format(prevdate,StateCode))
     df_prevDay["cumulativeTestedNumberForState"] 
     print(int(df_tests.loc[3,"Numbers"]) , int(df_prevDay["cumulativeTestedNumberForState"][0]))
-    df_summary["Tested"] = int(df_tests.loc[0,"Numbers"]) + int(df_prevDay["cumulativeTestedNumberForState"][0])
+    df_summary["Tested"] = int(df_tests.loc[0,"Numbers"].replace(',','')) + int(df_prevDay["cumulativeTestedNumberForState"][0])
     # df_districts["Tested"] = df_summary["Tested"]
     print(df_districts)
     print(df_summary)
@@ -1304,10 +1315,10 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     except HTTPError:
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
     except FileNotFoundError:
-        # raise
+        raise
         StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
-        # raise
+        raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
@@ -1331,7 +1342,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "UT",Date = "2022-05-23")
+# ExtractFromPDF(StateCode = "HR",Date = "2022-06-11")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-01-10")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-04-29")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")
