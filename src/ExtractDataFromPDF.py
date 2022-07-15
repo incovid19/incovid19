@@ -753,6 +753,7 @@ def getUKData(file_path,date,StateCode):
 
     for index, row in df_base_csv.iterrows():
         District_base_col = row['District']
+        print(District_base_col)
         
         if District_base_col != "Total" :
             filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
@@ -1339,7 +1340,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-07-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-07-13")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-07-11")
 
 
 
