@@ -1315,10 +1315,10 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
     except HTTPError:
         StatusMsg(StateCode,Date,"ERR","Source URL Not Accessible/ has been changed","ExtractFromPDF")
     except FileNotFoundError:
-        raise
+        # raise
         StatusMsg(StateCode,Date,"ERR","Source PDF not present in input","ExtractFromPDF")
     except Exception:
-        raise
+        # raise
         StatusMsg(StateCode,Date,"ERR","Fatal error in main loop","ExtractFromPDF")
         
 
@@ -1342,7 +1342,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 
-# ExtractFromPDF(StateCode = "HR",Date = "2022-06-11")
+# ExtractFromPDF(StateCode = "HR",Date = "2022-07-15")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-01-10")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-04-29")
 # ExtractFromPDF(StateCode = "AP",Date = "2022-03-18")

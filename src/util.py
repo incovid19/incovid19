@@ -43,8 +43,9 @@ def portalUpdate_first(dateList,prevUpdate = False):
     print(df_fileStatus)
     for idx in df_fileStatus.index:
         if df_fileStatus["Input"][idx] == "No":
-            DownloadData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
-            ExtractData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
+            if df_fileStatus["State"][idx] != "WB":
+                DownloadData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
+                ExtractData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
         if df_fileStatus["Input"][idx] == "Yes" and df_fileStatus["Raw"][idx] == "No":
             ExtractData(df_fileStatus["State"][idx],date_range(df_fileStatus["Date"][idx],True))
             print(df_fileStatus["State"][idx])
