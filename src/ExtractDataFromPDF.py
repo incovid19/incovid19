@@ -15,6 +15,7 @@ import re
 import tabula
 from tabulate import tabulate
 import io
+from numpy.core._exceptions import UFuncTypeError
 # from datetime import datetime,timedelta
 #programe extracts the tabels from the PDF files.
 # Need some Preprocessing to convert to RawCSV
@@ -385,8 +386,8 @@ def getHRData(file_path,date,StateCode):
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
     # incase HR extraction not correct rename the table name and use this
     # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1_editTable.csv'.format(date,StateCode))
+    
     print('HR districts data:',df_districts)
-
     df_districts.columns = df_districts.columns.str.replace("\n","")
     
     df_districts['Sr No'] = df_districts['Sr No'] + ' '
@@ -399,7 +400,20 @@ def getHRData(file_path,date,StateCode):
             except:
                 pass
     df_districts['Name of District'] = df_districts["Name of District"].str[-1]
-
+    df_districts['Cumulative     Recovered/ Discharged Cases'] = df_districts['Cumulative     Recovered/ Discharged Cases'] + '['
+    df_districts['Cumulative     Recovered/ Discharged Cases'] = df_districts['Cumulative     Recovered/ Discharged Cases'].fillna('')
+    df_districts['Recovery Rate (%)'] = df_districts['Recovery Rate (%)'].astype(str)
+    df_districts['Cumulative     Recovered/ Discharged Cases'] = df_districts[['Cumulative     Recovered/ Discharged Cases','Recovery Rate (%)']].fillna(' ').sum(axis=1)
+    df_districts["Cumulative     Recovered/ Discharged Cases"] = df_districts["Cumulative     Recovered/ Discharged Cases"].str.split('[').str[0]
+    
+    try:
+        df_districts['No. of Deaths'] = '%' + df_districts['No. of Deaths']
+    except UFuncTypeError:
+        df_districts['No. of Deaths'] = '%' + df_districts['No. of Deaths'].astype(str)
+    df_districts['No. of Deaths'] = df_districts[['Recovery Rate (%)','No. of Deaths']].fillna(' ').sum(axis=1)
+    df_districts["No. of Deaths"] = df_districts["No. of Deaths"].str.split('%').str[-1]
+    
+    print('HR districts columns:',df_districts.columns)
     
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),names = ["Details","Numbers"])  
     
@@ -418,6 +432,9 @@ def getHRData(file_path,date,StateCode):
     df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("[").str[0]
     df_summary = df_districts
     df_districts = df_districts[:-1]
+    
+    print('HR districts data:',df_districts[["District","Confirmed","Recovered","Deceased"]])
+    print(25*"*")
     
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
@@ -1359,6 +1376,6 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-07-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-07-13")
+# ExtractFromPDF(StateCode = "HR",Date = "2022-07-17")
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
