@@ -720,7 +720,8 @@ def getUKData(file_path,date,StateCode):
         df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
         df_tests.columns = df_tests.columns.str.replace("\n","") 
     except FileNotFoundError:
-        table = camelot.read_pdf(file_path,'3')
+        # table = camelot.read_pdf(file_path,'3')
+        table = camelot.read_pdf(file_path,'4')
 
         if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
             os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
@@ -739,19 +740,24 @@ def getUKData(file_path,date,StateCode):
     index_of_USnagar= df_tests[df_tests['Districts'] == 'US Nagar'].index[0]
     df_tests.at[index_of_USnagar, 'Districts'] = 'Udham Singh Nagar'
     print(df_districts.columns)
-    col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
-    "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
-    "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
+    # col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
+    # "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
+    # "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
     # col_dict = {"Districts":"District","Cases till Date":"Confirmed",
     # "Treated/ Cured till Date":"Recovered",
     # "Deaths":"Deceased","Migrated/ Others":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
     # "Cumulative Samples Tested":"Tested"
+    col_dict = {"Districts":"District","No. of Positive Cases Since 01.01.2022":"Confirmed",
+    "No. of Positive Cases Treated/ Cured Since 01.01.2022":"Recovered",
+    "Deaths Since 01.01.2022":"Deceased","Migrated Positive Cases Since 01.01.2022":"Other","Cumulative Samples Tested Since 01.01.2022":"Tested"}
     df_districts.rename(columns=col_dict,inplace=True)
     df_tests.rename(columns=col_dict,inplace=True)
+    print('after columns changed',df_districts.columns)
     
     df_districts["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
     df_districts["Recovered"] = df_districts["Recovered"].astype(str).str.split("*").str[0].astype(int)
-    
+    df_districts["Deceased"] = df_districts["Deceased"].astype(str).str.split("*").str[0].astype(int)
+
 
     updated_data_frame = df_districts
     
@@ -763,11 +769,13 @@ def getUKData(file_path,date,StateCode):
     print('df districts data is', df_districts)
 
     for index, row in df_base_csv.iterrows():
+        print(index, row)
         District_base_col = row['District']
-        print(District_base_col)
+        print('District_base_col',District_base_col)
         
         if District_base_col != "Total" :
             filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
+            print('filtered_dataframe',filtered_dataframe)
             
             if not filtered_dataframe.empty:
                 # pdf data columns
@@ -1351,8 +1359,6 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-07-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-07-11")
-
-
+# ExtractFromPDF(StateCode = "UT",Date = "2022-07-13")
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
