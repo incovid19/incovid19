@@ -503,20 +503,20 @@ def getWBData(file_path,date,StateCode):
 
 
 def getMHData(file_path,date,StateCode):
-    # table = camelot.read_pdf(file_path,'1,2,3')
-    table = camelot.read_pdf(file_path,'2,3')
+    table = camelot.read_pdf(file_path,'1,2,3')
+    # table = camelot.read_pdf(file_path,'2,3')
 
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     # print(table)
     # table[5].to_excel('foo.xlsx')
-    # df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
+    df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
     df_districts_3 = pd.read_csv('../INPUT/{}/{}/foo-page-3-table-1.csv'.format(date,StateCode))
 
-    # frames = [df_districts_1,df_districts_2,df_districts_3]
-    frames = [df_districts_2,df_districts_3]
+    frames = [df_districts_1,df_districts_2,df_districts_3]
+    # frames = [df_districts_2,df_districts_3]
 
     df_districts = pd.concat(frames,ignore_index=True)
     df_districts.columns = df_districts.columns.str.replace("\n","")
@@ -737,8 +737,8 @@ def getUKData(file_path,date,StateCode):
         df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
         df_tests.columns = df_tests.columns.str.replace("\n","") 
     except FileNotFoundError:
-        # table = camelot.read_pdf(file_path,'3')
-        table = camelot.read_pdf(file_path,'4')
+        table = camelot.read_pdf(file_path,'3')
+        # table = camelot.read_pdf(file_path,'4')
 
         if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
             os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
@@ -1376,6 +1376,6 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-07-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
-# ExtractFromPDF(StateCode = "HR",Date = "2022-07-17")
+# ExtractFromPDF(StateCode = "HR",Date = "2022-06-30")
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
