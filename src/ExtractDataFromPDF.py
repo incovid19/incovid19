@@ -213,7 +213,6 @@ def getRJData(file_path,date,StateCode):
     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1-edit.csv'.format(date,StateCode))
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
 
-
     frames = [df_districts_1,df_districts_2]
     df_districts = pd.concat(frames,ignore_index=True)
     df_districts.columns = df_districts.columns.str.replace("\n","")
@@ -225,7 +224,7 @@ def getRJData(file_path,date,StateCode):
     print(df_districts.columns)
     # df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
     df_districts.dropna(how="all",inplace=True)
-    # print(df_districts)
+    print(df_districts)
     # a=b
     # df_summary = df_districts
     # df_districts = df_districts[:-1]
@@ -1374,7 +1373,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-07-13")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-07-20")
+# ExtractFromPDF(StateCode = "RJ",Date = "2022-07-21")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
 # ExtractFromPDF(StateCode = "HR",Date = "2022-06-30")
 
