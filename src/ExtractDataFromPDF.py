@@ -210,8 +210,8 @@ def getRJData(file_path,date,StateCode):
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
 
     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=0)
-    df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1-edit.csv'.format(date,StateCode))
-    # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+    # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1-edit.csv'.format(date,StateCode))
+    df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
 
     frames = [df_districts_1,df_districts_2]
     df_districts = pd.concat(frames,ignore_index=True)
