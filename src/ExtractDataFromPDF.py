@@ -217,7 +217,7 @@ def getRJData(file_path,date,StateCode):
     df_districts = pd.concat(frames,ignore_index=True)
     print('df_districts',df_districts)
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    print(df_districts.columns)
+    print('before change',df_districts.columns)
     
     #Cumulative Sample
     col_dict = {"Unnamed: 2":"Tested", "Cumulative Positive":"Confirmed", "Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased","CumulativePositive":"Confirmed",
@@ -226,7 +226,7 @@ def getRJData(file_path,date,StateCode):
     print(df_districts.columns)
     # df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
     df_districts.dropna(how="all",inplace=True)
-    print(df_districts)
+    # print(df_districts)
     # a=b
     # df_summary = df_districts
     # df_districts = df_districts[:-1]
@@ -234,8 +234,10 @@ def getRJData(file_path,date,StateCode):
     # print(df_districts)
     # a=b
     df_summary = df_districts
-    print(df_districts)
+    # print(df_districts)
     df_districts = df_districts[:-1]
+    print(df_districts)
+
     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
     # df = df[]
     df_districts['District'] = df_districts['District'].str.capitalize()
@@ -245,7 +247,7 @@ def getRJData(file_path,date,StateCode):
     df_districts['District'].replace(dist_map,inplace=True)
     
     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-    # print(df_summary)
+    print('df_summary',df_summary)
     # a=b
     return df_summary,df_districts
 
@@ -1375,7 +1377,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "KA",Date = "2022-04-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-07-13")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-07")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-07-23")
+# ExtractFromPDF(StateCode = "RJ",Date = "2022-07-03")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-05-24")
 # ExtractFromPDF(StateCode = "HR",Date = "2022-06-30")
 
