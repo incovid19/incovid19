@@ -180,7 +180,7 @@ dateList = date_range(start, end)
 
 # get_7dma_state('KL', '2022-07-09')
 # get_7dma_state('KL', '2022-07-10')
-# get_7dma_state('PB', '2022-07-06')
+# get_7dma_state('PB', '2022-07-24')
 # get_7dma_state('TN', '2022-07-07')
 # get_7dma_state('HR', '2022-06-29')
 # get_7dma_state('RJ', '2022-07-16')
