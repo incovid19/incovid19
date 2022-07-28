@@ -674,7 +674,8 @@ def getPBData(file_path,date,StateCode):
     df_tests["Confirmed"] = df_districts["Confirmed"].astype(str).str.split("*").str[0].astype(int)
     df_summary["Tested"] = df_tests.loc[1,"Numbers"]
     print(df_tests.loc[1,"Numbers"])
-
+    df_summary["notesForState"] = "India reports 20,557 cases of COVID-19 infection, 2,603 more deaths as Punjab adds 2,563 old deaths to its tally, Published on : 20 Jul, 2022, 1:33 pm, Business Standard, NetIndian News Network"
+    print(df_summary)
     return df_summary,df_districts
 
 # def getUKData(file_path,date,StateCode):
@@ -1275,9 +1276,12 @@ def GenerateRawCsv(StateCode,Date,df_districts,df_summary):
         df['cumulativeOtherNumberForDistrict'] = 0
     try:
         df['cumulativeOtherNumberForState'] = df_summary['Other']
-        df['notesForState'] = df_summary['notesForState']
     except:
         df['cumulativeOtherNumberForState'] = 0
+    try:
+        df['notesForState'] = df_summary['notesForState']
+    except:
+        pass
     
     IST = pytz.timezone('Asia/Kolkata')
     df['last_updated'] = utc_dt.astimezone(IST).isoformat()
