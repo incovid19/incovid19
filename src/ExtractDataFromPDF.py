@@ -474,35 +474,35 @@ def getWBData(file_path,date,StateCode):
 
     df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-2.csv'.format(date,StateCode))
     
-    # print(df_tests)
+    print(df_tests)
     # a=b
     
-#     col_dict = {"Total Cases":"Confirmed","Total Discharged":"Recovered","Total Deaths":"Deceased"}
-#     df_districts.rename(columns=col_dict,inplace=True)
-#     # df_districts.drop(columns=['S. No','Total Active Cases','Last Reported Case'],inplace=True)
-#     df_districts["Confirmed"] = df_districts["Confirmed"].str.split("+").str[0]
-#     df_districts["Recovered"] = df_districts["Recovered"].str.split("+").str[0]
-#     df_districts["Deceased"] = df_districts["Deceased"].str.split("+").str[0]
+    col_dict = {"Total Cases":"Confirmed","Total Discharged":"Recovered","Total Deaths":"Deceased"}
+    df_districts.rename(columns=col_dict,inplace=True)
+    # df_districts.drop(columns=['S. No','Total Active Cases','Last Reported Case'],inplace=True)
+    df_districts["Confirmed"] = df_districts["Confirmed"].str.split("+").str[0]
+    df_districts["Recovered"] = df_districts["Recovered"].str.split("+").str[0]
+    df_districts["Deceased"] = df_districts["Deceased"].str.split("+").str[0]
 
-#     df_districts["Confirmed"] = df_districts["Confirmed"].str.replace(",","")
-#     df_districts["Recovered"] = df_districts["Recovered"].str.replace(",","")
-#     df_districts["Deceased"] = df_districts["Deceased"].str.replace(",","")
+    df_districts["Confirmed"] = df_districts["Confirmed"].str.replace(",","")
+    df_districts["Recovered"] = df_districts["Recovered"].str.replace(",","")
+    df_districts["Deceased"] = df_districts["Deceased"].str.replace(",","")
     
-#     df_summary = df_districts
-#     df_districts = df_districts[:-1]
-#     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
-#     # df = df[]
-#     df_json = pd.read_json("../DistrictMappingMaster.json")
-#     dist_map = df_json['West Bengal'].to_dict()
-#     df_districts['District'].replace(dist_map,inplace=True)
-#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-#     df_summary["Tested"] = df_tests.loc[1,"Number"]
-#     # print(df_summary)
-#     df_summary["Tested"]  = int(df_summary["Tested"].replace(',', '')) #.astype(int)
-#     # df_districts["Tested"] = df_summary["Tested"]
-#     # print(df_summary)
-#     # a=b
-#     return df_summary,df_districts
+    df_summary = df_districts
+    df_districts = df_districts[:-1]
+    # df_districts.drop(labels=[0,1],axis=0,inplace=True)
+    # df = df[]
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['West Bengal'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
+    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+    df_summary["Tested"] = df_tests.loc[1,"Number"]
+    # print(df_summary)
+    df_summary["Tested"]  = int(df_summary["Tested"].replace(',', '')) #.astype(int)
+    # df_districts["Tested"] = df_summary["Tested"]
+    # print(df_summary)
+    # a=b
+    # return df_summary,df_districts
 
 
 def getMHData(file_path,date,StateCode):
@@ -1373,7 +1373,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     print(date)
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
-# ExtractFromPDF(StateCode = "HR",Date = "2022-07-15")
+# ExtractFromPDF(StateCode = "WB",Date = "2022-08-04")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-07-26")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-07-30")
 # ExtractFromPDF(StateCode = "PB",Date = "2022-07-30")
