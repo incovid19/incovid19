@@ -208,6 +208,7 @@ def getRJData(file_path,date,StateCode):
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+    print(table)
 
     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=0)
     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1-edit.csv'.format(date,StateCode))
@@ -1374,9 +1375,9 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 # ExtractFromPDF(StateCode = "WB",Date = "2022-08-04")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-07-26")
+# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-06")
-# ExtractFromPDF(StateCode = "PB",Date = "2022-08-04")
+# ExtractFromPDF(StateCode = "PB",Date = "2022-08-09")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 
 
