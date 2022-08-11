@@ -203,6 +203,55 @@ def getAPData(file_path, date, StateCode):
         # print(e)
 
 
+# def getRJData(file_path,date,StateCode):
+#     table = camelot.read_pdf(file_path,pages='1,2')
+#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+#     print(table)
+
+#     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=0)
+#     # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1-edit.csv'.format(date,StateCode))
+#     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+
+#     frames = [df_districts_1,df_districts_2]
+#     df_districts = pd.concat(frames,ignore_index=True)
+#     print('df_districts',df_districts)
+#     df_districts.columns = df_districts.columns.str.replace("\n","")
+#     print('before change',df_districts.columns)
+    
+#     #Cumulative Sample
+#     col_dict = {"Unnamed: 2":"Tested", "Cumulative Positive":"Confirmed", "Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased","CumulativePositive":"Confirmed",
+#                 "CumulativeDeath":"Deceased","CumulativeRecovered/ Discharged":"Recovered"}
+#     df_districts.rename(columns=col_dict,inplace=True)
+#     print(df_districts.columns)
+#     # df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
+#     df_districts.dropna(how="all",inplace=True)
+#     # print(df_districts)
+#     # a=b
+#     # df_summary = df_districts
+#     # df_districts = df_districts[:-1]
+#     # df_districts = df_districts[:-4]
+#     # print(df_districts)
+#     # a=b
+#     df_summary = df_districts
+#     # print(df_districts)
+#     df_districts = df_districts[:-1]
+#     print(df_districts)
+
+#     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
+#     # df = df[]
+#     df_districts['District'] = df_districts['District'].str.capitalize()
+
+#     df_json = pd.read_json("../DistrictMappingMaster.json")
+#     dist_map = df_json['Rajasthan'].to_dict()
+#     df_districts['District'].replace(dist_map,inplace=True)
+    
+#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+#     print('df_summary',df_summary)
+#     # a=b
+#     return df_summary,df_districts
+
 def getRJData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,pages='1,2')
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
@@ -211,46 +260,126 @@ def getRJData(file_path,date,StateCode):
     print(table)
 
     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=0)
-    # df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1-edit.csv'.format(date,StateCode))
     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
 
     frames = [df_districts_1,df_districts_2]
     df_districts = pd.concat(frames,ignore_index=True)
-    print('df_districts',df_districts)
+    # print('df_districts',df_districts)
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    print('before change',df_districts.columns)
-    
-    #Cumulative Sample
-    col_dict = {"Unnamed: 2":"Tested", "Cumulative Positive":"Confirmed", "Cumulative Recovered/Discharged":"Recovered","Cumulative Death":"Deceased","CumulativePositive":"Confirmed",
-                "CumulativeDeath":"Deceased","CumulativeRecovered/ Discharged":"Recovered"}
+    # print('before change',df_districts.columns)
+    col_dict = {"District": "District", "Today's Samples":"tested", "Today's Positive":"Confirmed","Today's Death":"Deceased","Today's  Recovered/Discharged":"Recovered"}
     df_districts.rename(columns=col_dict,inplace=True)
     print(df_districts.columns)
-    # df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
-    df_districts.dropna(how="all",inplace=True)
-    # print(df_districts)
-    # a=b
-    # df_summary = df_districts
-    # df_districts = df_districts[:-1]
-    # df_districts = df_districts[:-4]
-    # print(df_districts)
-    # a=b
-    df_summary = df_districts
-    # print(df_districts)
-    df_districts = df_districts[:-1]
     print(df_districts)
+    df_districts = df_districts[:-1]
 
-    # df_districts.drop(labels=[0,1],axis=0,inplace=True)
-    # df = df[]
-    df_districts['District'] = df_districts['District'].str.capitalize()
+    df_districts.drop(columns=['tested','Active  case'],inplace=True)
+    df_districts.dropna(how="all",inplace=True)
+        # print(df_districts)
 
-    df_json = pd.read_json("../DistrictMappingMaster.json")
-    dist_map = df_json['Rajasthan'].to_dict()
-    df_districts['District'].replace(dist_map,inplace=True)
+#     # df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
+#     df_districts.dropna(how="all",inplace=True)
+#     # print(df_districts)
+
+    prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
+    prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/RJ_final.csv")
+    # print(df_districts.columns)
+    # print(prev_df.columns)
+    # print(prev_df)
+    df_districts['District'] = df_districts['District'].str.title()
+    print(df_districts)
+    index_of_BSF_Camp = prev_df[prev_df['District'] == 'BSF Camp'].index[0]
+    index_of_Evacuees = prev_df[prev_df['District'] == 'Evacuees'].index[0]
+    index_of_Italians = prev_df[prev_df['District'] == 'Italians'].index[0]
+    # index_of_Evacuees = prev_df[prev_df['District'] == 'Evacuees'].index[0]
     
-    df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-    print('df_summary',df_summary)
-    # a=b
-    return df_summary,df_districts
+    # print('index_of_BSF_Camp',index_of_BSF_Camp)
+    updated_data_frame = df_districts
+    for index, row in prev_df.iterrows():
+        # print(index, row)
+        District_base_col = row['District']
+        print('District_base_col',District_base_col)
+        # index_of_BSF_Camp = [District_base_col == 'BSF Camp'].index[0]
+
+        if District_base_col != "Other state/" :
+            # print('District_base_col',District_base_col)    
+            filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
+            print('filtered_dataframe',filtered_dataframe)
+
+            if not filtered_dataframe.empty:
+    #                 # pdf data columns
+                confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
+                Recovered_col =filtered_dataframe['Recovered'].iloc[0]
+                Deaths_col = filtered_dataframe['Deceased'].iloc[0]
+                print(confirmed_col,Recovered_col,Deaths_col)
+
+                # base data columns
+                confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
+                Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
+                Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
+
+                print('confirmed_base_col:',confirmed_base_col,Recovered_base_col,Deaths_base_col)
+
+                # addition
+                confirmed_col = confirmed_col + confirmed_base_col
+                Recovered_col = Recovered_col + Recovered_base_col
+                Deaths_col = Deaths_col + Deaths_base_col
+                print('confirmed_col',confirmed_col,Recovered_col,Deaths_col)
+
+
+                # updating dataframe column values with additional values
+                updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
+                updated_data_frame.loc[index, 'Recovered'] = Recovered_col
+                updated_data_frame.loc[index, 'Deceased'] = Deaths_col
+    print('updated data frame is', updated_data_frame)   
+
+            # updated_data_frame['Confirmed'] = confirmed_col
+            # print('updated data frame is', updated_data_frame)   
+
+
+#     index_of_total = updated_data_frame[updated_data_frame['District'] == 'Total'].index[0]
+#     print('index of total', index_of_total)
+
+#     # set the total row values to zero
+#     updated_data_frame.at[index_of_total, 'Confirmed'] = 0
+#     updated_data_frame.at[index_of_total, 'Recovered'] = 0
+#     updated_data_frame.at[index_of_total, 'Deceased'] = 0
+#     # updated_data_frame.at[index_of_total, 'Tested'] = 0
+#     # updated_data_frame.at[index_of_total, 'Other'] = 0
+    
+#     # summing of all the Confirmed, Recovered, Deceased and Other Column values 
+#     Confirmed_Sumvalue = updated_data_frame['Confirmed'].sum()
+#     Recovered_Sumvalue = updated_data_frame['Recovered'].sum()
+#     Deceased_Sumvalue = updated_data_frame['Deceased'].sum()
+#     # Tested_Sumvalue = updated_data_frame['Tested'].sum()
+#     # Other_Sumvalue = updated_data_frame['Other'].sum()
+     # print('updated data frame is', updated_data_frame)   
+
+
+#     # a=b
+#     # df_summary = df_districts
+#     # df_districts = df_districts[:-1]
+#     # df_districts = df_districts[:-4]
+#     # print(df_districts)
+#     # a=b
+#     df_summary = df_districts
+#     # print(df_districts)
+#     df_districts = df_districts[:-1]
+#     print(df_districts)
+
+#     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
+#     # df = df[]
+#     df_districts['District'] = df_districts['District'].str.capitalize()
+
+#     df_json = pd.read_json("../DistrictMappingMaster.json")
+#     dist_map = df_json['Rajasthan'].to_dict()
+#     df_districts['District'].replace(dist_map,inplace=True)
+    
+#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
+#     print('df_summary',df_summary)
+#     # a=b
+#     return df_summary,df_districts
+
 
 def getKAData(file_path,date,StateCode):
     table = camelot.read_pdf(file_path,pages='1,5')
