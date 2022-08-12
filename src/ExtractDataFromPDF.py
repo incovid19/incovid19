@@ -277,29 +277,17 @@ def getRJData(file_path,date,StateCode):
     df_districts.dropna(how="all",inplace=True)
         # print(df_districts)
 
-#     # df_districts.drop(columns=['S.No','Today\'s Positive','Today\'sDeath','Today\'sRecovered/ Discharged', 'Active Case'],inplace=True)
-#     df_districts.dropna(how="all",inplace=True)
-#     # print(df_districts)
-
     prevdate = str((datetime.strptime(date,"%Y-%m-%d")- timedelta(days=1)).date())
-    prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/RJ_final.csv")
-    # print(df_districts.columns)
-    # print(prev_df.columns)
-    # print(prev_df)
+    prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/RJ_raw.csv")
+   
     df_districts['District'] = df_districts['District'].str.title()
     print(df_districts)
-    index_of_BSF_Camp = prev_df[prev_df['District'] == 'BSF Camp'].index[0]
-    index_of_Evacuees = prev_df[prev_df['District'] == 'Evacuees'].index[0]
-    index_of_Italians = prev_df[prev_df['District'] == 'Italians'].index[0]
-    # index_of_Evacuees = prev_df[prev_df['District'] == 'Evacuees'].index[0]
     
-    # print('index_of_BSF_Camp',index_of_BSF_Camp)
     updated_data_frame = df_districts
     for index, row in prev_df.iterrows():
         # print(index, row)
         District_base_col = row['District']
         print('District_base_col',District_base_col)
-        # index_of_BSF_Camp = [District_base_col == 'BSF Camp'].index[0]
 
         if District_base_col != "Other state/" :
             # print('District_base_col',District_base_col)    
@@ -318,43 +306,25 @@ def getRJData(file_path,date,StateCode):
                 Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
                 Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
 
-                print('confirmed_base_col:',confirmed_base_col,Recovered_base_col,Deaths_base_col)
+                # print('confirmed_base_col:',confirmed_base_col,Recovered_base_col,Deaths_base_col)
 
                 # addition
                 confirmed_col = confirmed_col + confirmed_base_col
                 Recovered_col = Recovered_col + Recovered_base_col
                 Deaths_col = Deaths_col + Deaths_base_col
-                print('confirmed_col',confirmed_col,Recovered_col,Deaths_col)
+                # print('confirmed_col',confirmed_col,Recovered_col,Deaths_col)
 
 
                 # updating dataframe column values with additional values
+                updated_data_frame['Date'] = prevdate
                 updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
                 updated_data_frame.loc[index, 'Recovered'] = Recovered_col
                 updated_data_frame.loc[index, 'Deceased'] = Deaths_col
+                updated_data_frame['cumulativeConfirmedNumberForState'] = updated_data_frame['Confirmed'].sum()
+                updated_data_frame['cumulativeRecoveredNumberForState'] = updated_data_frame['Recovered'].sum()
+                updated_data_frame['cumulativeDeceasedNumberForState'] = updated_data_frame['Deceased'].sum()
+                
     print('updated data frame is', updated_data_frame)   
-
-            # updated_data_frame['Confirmed'] = confirmed_col
-            # print('updated data frame is', updated_data_frame)   
-
-
-#     index_of_total = updated_data_frame[updated_data_frame['District'] == 'Total'].index[0]
-#     print('index of total', index_of_total)
-
-#     # set the total row values to zero
-#     updated_data_frame.at[index_of_total, 'Confirmed'] = 0
-#     updated_data_frame.at[index_of_total, 'Recovered'] = 0
-#     updated_data_frame.at[index_of_total, 'Deceased'] = 0
-#     # updated_data_frame.at[index_of_total, 'Tested'] = 0
-#     # updated_data_frame.at[index_of_total, 'Other'] = 0
-    
-#     # summing of all the Confirmed, Recovered, Deceased and Other Column values 
-#     Confirmed_Sumvalue = updated_data_frame['Confirmed'].sum()
-#     Recovered_Sumvalue = updated_data_frame['Recovered'].sum()
-#     Deceased_Sumvalue = updated_data_frame['Deceased'].sum()
-#     # Tested_Sumvalue = updated_data_frame['Tested'].sum()
-#     # Other_Sumvalue = updated_data_frame['Other'].sum()
-     # print('updated data frame is', updated_data_frame)   
-
 
 #     # a=b
 #     # df_summary = df_districts
@@ -362,7 +332,7 @@ def getRJData(file_path,date,StateCode):
 #     # df_districts = df_districts[:-4]
 #     # print(df_districts)
 #     # a=b
-#     df_summary = df_districts
+    # df_summary = df_districts
 #     # print(df_districts)
 #     df_districts = df_districts[:-1]
 #     print(df_districts)
@@ -371,14 +341,25 @@ def getRJData(file_path,date,StateCode):
 #     # df = df[]
 #     df_districts['District'] = df_districts['District'].str.capitalize()
 
-#     df_json = pd.read_json("../DistrictMappingMaster.json")
-#     dist_map = df_json['Rajasthan'].to_dict()
-#     df_districts['District'].replace(dist_map,inplace=True)
+    
+    df_districts = updated_data_frame
+    df_summary = df_districts
+    # df_districts = df_districts[:-1]
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Rajasthan'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
+    
+    # updated_data_frame.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, StateCode))
+        # return df_summary, df_districts
+        
+    # except Exception as e:
+    #     raise
+        # print(e)
     
 #     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
 #     print('df_summary',df_summary)
 #     # a=b
-#     return df_summary,df_districts
+    return df_summary,df_districts
 
 
 def getKAData(file_path,date,StateCode):
@@ -1504,7 +1485,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 # ExtractFromPDF(StateCode = "WB",Date = "2022-08-04")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-09")
+# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-11")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-06")
 # ExtractFromPDF(StateCode = "PB",Date = "2022-08-09")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
