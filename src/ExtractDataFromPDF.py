@@ -325,22 +325,6 @@ def getRJData(file_path,date,StateCode):
                 updated_data_frame['cumulativeDeceasedNumberForState'] = updated_data_frame['Deceased'].sum()
                 
     print('updated data frame is', updated_data_frame)   
-
-#     # a=b
-#     # df_summary = df_districts
-#     # df_districts = df_districts[:-1]
-#     # df_districts = df_districts[:-4]
-#     # print(df_districts)
-#     # a=b
-    # df_summary = df_districts
-#     # print(df_districts)
-#     df_districts = df_districts[:-1]
-#     print(df_districts)
-
-#     # df_districts.drop(labels=[0,1],axis=0,inplace=True)
-#     # df = df[]
-#     df_districts['District'] = df_districts['District'].str.capitalize()
-
     
     df_districts = updated_data_frame
     df_summary = df_districts
@@ -352,13 +336,6 @@ def getRJData(file_path,date,StateCode):
     # updated_data_frame.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, StateCode))
         # return df_summary, df_districts
         
-    # except Exception as e:
-    #     raise
-        # print(e)
-    
-#     df_summary = df_summary.iloc[-1,:] #testcode needs to be updated later
-#     print('df_summary',df_summary)
-#     # a=b
     return df_summary,df_districts
 
 
