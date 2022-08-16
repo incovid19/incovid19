@@ -257,23 +257,24 @@ def getRJData(file_path,date,StateCode):
     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    print(table)
+    # print(table)
 
     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode),header=0)
     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode))
+    # df_districts_3 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-2.csv'.format(date,StateCode))
 
     frames = [df_districts_1,df_districts_2]
     df_districts = pd.concat(frames,ignore_index=True)
     # print('df_districts',df_districts)
     df_districts.columns = df_districts.columns.str.replace("\n","")
     # print('before change',df_districts.columns)
-    col_dict = {"District": "District", "Today's Samples":"tested", "Today's Positive":"Confirmed","Today's Death":"Deceased","Today's  Recovered/Discharged":"Recovered"}
+    col_dict = {"District": "District", "Today's Samples":"Tested", "Today's Positive":"Confirmed","Today's Death":"Deceased","Today's  Recovered/Discharged":"Recovered"}
     df_districts.rename(columns=col_dict,inplace=True)
-    print(df_districts.columns)
-    print(df_districts)
+    # print(df_districts.columns)
+    # print(df_districts)
     df_districts = df_districts[:-1]
 
-    df_districts.drop(columns=['tested','Active  case'],inplace=True)
+    df_districts.drop(columns=['Active  case'],inplace=True)
     df_districts.dropna(how="all",inplace=True)
         # print(df_districts)
 
@@ -281,58 +282,77 @@ def getRJData(file_path,date,StateCode):
     prev_df = pd.read_csv("../RAWCSV/"+prevdate+"/RJ_raw.csv")
    
     df_districts['District'] = df_districts['District'].str.title()
-    print(df_districts)
+    index_of_otherstate= df_districts[df_districts['District'] == 'Other State/'].index[0]
+    df_districts.at[index_of_otherstate, 'District'] = 'Other state/'
     
     updated_data_frame = df_districts
     for index, row in prev_df.iterrows():
-        # print(index, row)
         District_base_col = row['District']
-        print('District_base_col',District_base_col)
+        # print('District_base_col',District_base_col)
 
-        if District_base_col != "Other state/" :
+        # if District_base_col != "Other state/" :
             # print('District_base_col',District_base_col)    
-            filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
-            print('filtered_dataframe',filtered_dataframe)
+        filtered_dataframe= df_districts[df_districts['District'] == District_base_col]
+        print('filtered_dataframe',filtered_dataframe)
 
-            if not filtered_dataframe.empty:
-    #                 # pdf data columns
-                confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
-                Recovered_col =filtered_dataframe['Recovered'].iloc[0]
-                Deaths_col = filtered_dataframe['Deceased'].iloc[0]
-                print(confirmed_col,Recovered_col,Deaths_col)
+        if not filtered_dataframe.empty:
+            # pdf data columns
+            confirmed_col= filtered_dataframe['Confirmed'].iloc[0]
+            Recovered_col =filtered_dataframe['Recovered'].iloc[0]
+            Deaths_col = filtered_dataframe['Deceased'].iloc[0]
+            Tested_col = filtered_dataframe['Tested'].iloc[0]
+            # print(confirmed_col,Recovered_col,Deaths_col,Tested_col)
 
-                # base data columns
-                confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
-                Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
-                Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
+            # base data columns
+            confirmed_base_col = row['cumulativeConfirmedNumberForDistrict']
+            Recovered_base_col = row['cumulativeRecoveredNumberForDistrict']
+            Deaths_base_col = row['cumulativeDeceasedNumberForDistrict']
+            Tested_base_col = row['cumulativeTestedNumberForDistrict']
 
-                # print('confirmed_base_col:',confirmed_base_col,Recovered_base_col,Deaths_base_col)
+            # print('confirmed_base_col:',confirmed_base_col,Recovered_base_col,Deaths_base_col,Tested_base_col)
 
-                # addition
-                confirmed_col = confirmed_col + confirmed_base_col
-                Recovered_col = Recovered_col + Recovered_base_col
-                Deaths_col = Deaths_col + Deaths_base_col
-                # print('confirmed_col',confirmed_col,Recovered_col,Deaths_col)
+            # addition
+            confirmed_col = confirmed_col + confirmed_base_col
+            Recovered_col = Recovered_col + Recovered_base_col
+            Deaths_col = Deaths_col + Deaths_base_col
+            Tested_result_col = Tested_col + Tested_base_col
+            print('confirmed_col',confirmed_col,Recovered_col,Deaths_col,Tested_result_col)
 
 
-                # updating dataframe column values with additional values
-                updated_data_frame['Date'] = prevdate
-                updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
-                updated_data_frame.loc[index, 'Recovered'] = Recovered_col
-                updated_data_frame.loc[index, 'Deceased'] = Deaths_col
-                updated_data_frame['cumulativeConfirmedNumberForState'] = updated_data_frame['Confirmed'].sum()
-                updated_data_frame['cumulativeRecoveredNumberForState'] = updated_data_frame['Recovered'].sum()
-                updated_data_frame['cumulativeDeceasedNumberForState'] = updated_data_frame['Deceased'].sum()
-                
+            # updating dataframe column values with additional values
+            # updated_data_frame['Date'] = prevdate
+            updated_data_frame.loc[index, 'Confirmed'] = confirmed_col
+            updated_data_frame.loc[index, 'Recovered'] = Recovered_col
+            updated_data_frame.loc[index, 'Deceased'] = Deaths_col
+            updated_data_frame.loc[index, 'Tested'] = Tested_result_col
+
+    confirmed_sum_value = updated_data_frame['Confirmed'].sum()
+    print('confirmed_sum_value is:',confirmed_sum_value)
+    recovered_sum_value = updated_data_frame['Recovered'].sum()
+    print('recovered_sum_value is:',recovered_sum_value)
+    deceased_sum_value = updated_data_frame['Deceased'].sum()
+    print('deceased_sum_value is:',deceased_sum_value)
+    tested_sum_value = updated_data_frame['Tested'].sum()
+    print('tested_sum_value is:',tested_sum_value)
     print('updated data frame is', updated_data_frame)   
     
     df_districts = updated_data_frame
     df_summary = df_districts
     # df_districts = df_districts[:-1]
+    
+    print('df_summary',df_summary)
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Rajasthan'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     
+    df_summary['cumulativeConfirmedNumberForState'] = confirmed_sum_value
+    df_summary['cumulativeRecoveredNumberForState'] = recovered_sum_value
+    df_summary['cumulativeDeceasedNumberForState'] = deceased_sum_value
+    df_summary['cumulativeTestedNumberForState'] = tested_sum_value
+    print('df_summary',df_summary)
+
+    # df_summary.to_csv("../RAWCSV/{}/{}_raw1.csv".format(date, StateCode))
+
     # updated_data_frame.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, StateCode))
         # return df_summary, df_districts
         
@@ -1462,7 +1482,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 # ExtractFromPDF(StateCode = "WB",Date = "2022-08-04")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-11")
+ExtractFromPDF(StateCode = "RJ",Date = "2022-08-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-06")
 # ExtractFromPDF(StateCode = "PB",Date = "2022-08-09")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
