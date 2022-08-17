@@ -176,6 +176,10 @@ def vaccination_numbers_api(state_name,Date):
     api_url_state="https://api.cowin.gov.in/api/v1/reports/v2/getPublicReports?state_id="+str(cowin_state_code)+"&date="+Date
     api_data_state=requests.get(api_url_state)
     
+    while api_data_state.status_code != 200:
+        api_data_state=requests.get(api_url_state)
+        print("retry")
+    
     state_cumulative_vaccinated1=api_data_state.json()["topBlock"]["vaccination"]["tot_dose_1"]
     state_cumulative_vaccinated2=api_data_state.json()["topBlock"]["vaccination"]["tot_dose_2"]
     try:
