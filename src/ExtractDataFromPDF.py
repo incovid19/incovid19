@@ -1481,8 +1481,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     print(date)
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
-# ExtractFromPDF(StateCode = "WB",Date = "2022-08-04")
-ExtractFromPDF(StateCode = "RJ",Date = "2022-08-09")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-08-16")
+# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-09")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-06")
 # ExtractFromPDF(StateCode = "PB",Date = "2022-08-09")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
