@@ -182,7 +182,7 @@ def getSources(source, date):
                             "%d-%m-%Y") + '.pdf'
                         downloadFile(str(date), source["StateCode"][idx], url)
                     elif source["StateCode"][idx] == "TN":
-                        url = 'https://stopcorona.tn.gov.in/wp-content/uploads/2022/08/Media-Bulletin-' + date.strftime(
+                        url = 'https://stopcorona.tn.gov.in/wp-content/uploads/2020/03/Media-Bulletin-' + date.strftime(
                             "%d-%m-%y") + '-COVID-19.pdf'
                         downloadFile(str(date), source["StateCode"][idx], url)
                     # elif source["StateCode"][idx] == "UK":
