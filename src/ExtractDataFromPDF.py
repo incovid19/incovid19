@@ -749,10 +749,10 @@ def getPBData(file_path,date,StateCode):
     df_tests.drop(df_tests.columns[cols], axis=1, inplace=True)
     col_dict = {0:"S.No",1:"Description",3:"Numbers"}
     df_tests.rename(columns=col_dict,inplace=True)
-    # print(df_tests)
+    print(df_tests)
      
     df_districts.columns = df_districts.columns.str.replace("\n","")
-    # print(df_districts.columns)
+    print(df_districts.columns)
     
     col_dict = {"District":"District",
     "Unnamed: 3":"Confirmed",
@@ -1482,9 +1482,9 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-16")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-09")
+# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-16")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-06")
-# ExtractFromPDF(StateCode = "PB",Date = "2022-08-09")
+# ExtractFromPDF(StateCode = "PB",Date = "2022-08-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 
 
