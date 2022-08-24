@@ -664,7 +664,7 @@ def getMLData(file_path,date,StateCode):
         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))#,header=0)
-    # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1_edit.csv'.format(date,StateCode))#,header=0)
+    # df_districts = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1-edit.csv'.format(date,StateCode))#,header=0)
     # index_of_Rhio= df_districts[df_districts['Districts'] == 'RI-BHOI'].index[0]
     # print('index_of_Rhio',index_of_Rhio)
     # df_districts.at[index_of_Rhio, 'Districts'] = 'Ri-Bhoi'
@@ -1483,7 +1483,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 
 # ExtractFromPDF(StateCode = "UT",Date = "2022-08-22")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-08-22")
-# ExtractFromPDF(StateCode = "ML",Date = "2022-08-06")
+# ExtractFromPDF(StateCode = "ML",Date = "2022-08-22")
 # ExtractFromPDF(StateCode = "PB",Date = "2022-08-13")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 
