@@ -340,15 +340,22 @@ def getRJData(file_path,date,StateCode):
     df_summary = df_districts
     # df_districts = df_districts[:-1]
     
-    print('df_summary',df_summary)
+    # print('df_summary',df_summary)
     df_json = pd.read_json("../DistrictMappingMaster.json")
     dist_map = df_json['Rajasthan'].to_dict()
     df_districts['District'].replace(dist_map,inplace=True)
     
-    df_summary['cumulativeConfirmedNumberForState'] = confirmed_sum_value
-    df_summary['cumulativeRecoveredNumberForState'] = recovered_sum_value
-    df_summary['cumulativeDeceasedNumberForState'] = deceased_sum_value
-    df_summary['cumulativeTestedNumberForState'] = tested_sum_value
+    # df_summary['cumulativeConfirmedNumberForState'] = confirmed_sum_value
+    # df_summary['cumulativeRecoveredNumberForState'] = recovered_sum_value
+    # df_summary['cumulativeDeceasedNumberForState'] = deceased_sum_value
+    # df_summary['cumulativeTestedNumberForState'] = tested_sum_value
+    # 
+    
+    df_summary = df_summary.iloc[-1,:]
+    df_summary['Confirmed'] = confirmed_sum_value
+    df_summary['Recovered'] = recovered_sum_value
+    df_summary['Deceased'] = deceased_sum_value
+    df_summary['Tested'] = tested_sum_value
     print('df_summary',df_summary)
 
     # df_summary.to_csv("../RAWCSV/{}/{}_raw1.csv".format(date, StateCode))
@@ -1483,9 +1490,9 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 #     ExtractFromPDF(StateCode = "NL",Date = str(date.date()))
 
 # ExtractFromPDF(StateCode = "UT",Date = "2022-08-22")
-# ExtractFromPDF(StateCode = "RJ",Date = "2022-08-22")
+ExtractFromPDF(StateCode = "RJ",Date = "2022-08-29")
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-22")
-# ExtractFromPDF(StateCode = "PB",Date = "2022-08-19")
+# ExtractFromPDF(StateCode = "PB",Date = "2022-08-22")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2022-08-22")
 

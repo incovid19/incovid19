@@ -101,6 +101,7 @@ def getTT():
     pDate = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
     cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days=2)).date()
     TT_df = india("TT",str(today))
+    # TT_df = pd.read_csv("../RAWCSV/2022-08-30/TT_raw.csv")
 
     if not os.path.isdir(os.path.join("..","RAWCSV",str(pDate),"myGov")):
         os.mkdir(os.path.join("..","RAWCSV",str(pDate),"myGov"))
