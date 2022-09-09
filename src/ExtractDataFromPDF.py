@@ -1107,11 +1107,16 @@ def getMZData(file_path,date,StateCode):
 
 def getUPData(file_path,date,StateCode):
     print(file_path)
-    table = camelot.read_pdf(file_path,'1,2')
-    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
-        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
-    table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-    print(table)
+    # tables = tabula.read_pdf(file_path, pages="all")
+    # print(tables)
+    # folder_name = '../INPUT/{}/{}/{}_table.csv'.format(date,StateCode,StateCode)
+    # if not os.path.isdir(folder_name):
+    #     os.mkdir(folder_name)
+    # for i, table in enumerate(tables, start=1):
+    #     print(table)
+        # expor = table.to_excel(os.path.join(folder_name, f"table_{i}.xlsx"), index=False)
+        # print(expor)
+   
     
     # folder_name = '../INPUT/{}/{}/{}_table.csv'.format(date,StateCode,StateCode)
     # print(folder_name)
@@ -1495,7 +1500,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "PB",Date = "2022-09-05")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2022-08-22")
-
+# ExtractFromPDF(StateCode = "UP",Date = "2022-12-25")
+# ExtractFromPDF(StateCode = "TN",Date = "2022-09-07")
 
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
