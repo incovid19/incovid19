@@ -856,6 +856,8 @@ def getUKData(file_path,date,StateCode):
 
         df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
         df_tests.columns = df_tests.columns.str.replace("\n","") 
+    # except Exception as e:
+    #     print(e)
     except FileNotFoundError:
         table = camelot.read_pdf(file_path,'3')
         # table = camelot.read_pdf(file_path,'4')
@@ -1105,18 +1107,41 @@ def getMZData(file_path,date,StateCode):
     return df_summary,df_districts
 
 
-def getUPData(file_path,date,StateCode):
-    print(file_path)
-    # tables = tabula.read_pdf(file_path, pages="all")
-    # print(tables)
-    # folder_name = '../INPUT/{}/{}/{}_table.csv'.format(date,StateCode,StateCode)
-    # if not os.path.isdir(folder_name):
-    #     os.mkdir(folder_name)
-    # for i, table in enumerate(tables, start=1):
-    #     print(table)
-        # expor = table.to_excel(os.path.join(folder_name, f"table_{i}.xlsx"), index=False)
-        # print(expor)
+# def getUPData(file_path,date,StateCode):
+#     print(file_path)    
+#     folder_name = '../INPUT/{}/{}/'.format(date,StateCode)
+#     if not os.path.isdir(folder_name):
+#         os.mkdir(folder_name)
+        
+#     table = camelot.read_pdf(file_path, pages = '1')
+#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+#     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
    
+#     # tabula code
+#     tables = tabula.read_pdf(file_path, pages = "2")
+#     # print(tables)
+#     folder_path = '../INPUT/{}/{}/foo_table_2.csv'.format(date,StateCode)
+#     # print(len(tables))
+#     tables[0].to_csv(folder_path)
+#     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1_old.csv'.format(date,StateCode))
+#     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo_table_2.csv'.format(date,StateCode))
+#     print(df_districts_1)
+
+    
+    # for i in range(len(tables)):
+    #     # print('exporting .....')
+    #     tables[i].to_csv(os.path.join(folder_name, f"foo_table_{i}.csv"), index=False)
+        # print('exported .....')
+#     print('reading csv .....')
+#     df_districts_1 = pd.read_csv('../INPUT/2021-12-25/UP/foo_table_0.csv',sep='\t',
+#                   lineterminator='\r',error_bad_lines=False)
+    
+#     # INPUT/2021-12-25/UP/foo_table_0.csv
+
+#     # df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo_table_0.csv'.format(date,StateCode))
+    # print(df_districts_1)
+
     
     # folder_name = '../INPUT/{}/{}/{}_table.csv'.format(date,StateCode,StateCode)
     # print(folder_name)
@@ -1499,8 +1524,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "ML",Date = "2022-08-22")
 # ExtractFromPDF(StateCode = "PB",Date = "2022-09-05")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-08-22")
-# ExtractFromPDF(StateCode = "UP",Date = "2022-12-25")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-09-12")
+# ExtractFromPDF(StateCode = "UP",Date = "2021-12-25")
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-11")
 
 
