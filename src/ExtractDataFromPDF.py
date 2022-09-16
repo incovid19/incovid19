@@ -1526,7 +1526,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2022-09-12")
 # ExtractFromPDF(StateCode = "UP",Date = "2021-12-25")
-# ExtractFromPDF(StateCode = "TN",Date = "2022-09-11")
+# ExtractFromPDF(StateCode = "TN",Date = "2022-09-14")
 
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
