@@ -1113,14 +1113,15 @@ def getMZData(file_path,date,StateCode):
 #     if not os.path.isdir(folder_name):
 #         os.mkdir(folder_name)
         
-#     table = camelot.read_pdf(file_path, pages = '1')
+    # table = camelot.read_pdf(file_path, pages = 'all')
+    # print(table)
 #     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
 #         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
 #     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
    
 #     # tabula code
-#     tables = tabula.read_pdf(file_path, pages = "2")
-#     # print(tables)
+    # tables = tabula.read_pdf(file_path, pages = "all")
+    # print(tables)
 #     folder_path = '../INPUT/{}/{}/foo_table_2.csv'.format(date,StateCode)
 #     # print(len(tables))
 #     tables[0].to_csv(folder_path)
@@ -1525,7 +1526,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "PB",Date = "2022-09-05")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2022-09-12")
-# ExtractFromPDF(StateCode = "UP",Date = "2021-12-25")
+# ExtractFromPDF(StateCode = "UP",Date = "2021-11-16")
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-14")
 
 
