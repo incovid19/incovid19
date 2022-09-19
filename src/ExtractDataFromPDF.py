@@ -1106,7 +1106,31 @@ def getMZData(file_path,date,StateCode):
     df_summary = df_districts #testcode needs to be updated later
     return df_summary,df_districts
 
+def getUPData(file_path,date,StateCode):
+    print(file_path)
+    input_folder = '../INPUT/{}/{}/{}_data.csv'.format(date,StateCode,StateCode)
+    # print(input_folder)
+    df_districts = pd.read_csv(input_folder)
+    # print(df_districts)
+    df_districts['Confirmed'] = df_districts['Recovered']+df_districts['Deceased']+df_districts['Active']
+    print(df_districts['Confirmed'])
+    df_districts.drop('Active', inplace=True, axis=1)
+    df_summary = df_districts
 
+    df_json = pd.read_json("../DistrictMappingMaster.json")
+    dist_map = df_json['Uttar Pradesh'].to_dict()
+    df_districts['District'].replace(dist_map,inplace=True)
+    # df_summary = df_districts 
+    df_summary = df_summary.iloc[-1,:]
+    df_summary['Confirmed'] = df_districts['Confirmed'].sum()
+    df_summary['Recovered'] = df_districts['Recovered'].sum()
+    df_summary['Deceased'] = df_districts['Deceased'].sum()
+
+    # print(df_districts)
+
+    return df_summary,df_districts
+    
+    
 # def getUPData(file_path,date,StateCode):
 #     print(file_path)    
 #     folder_name = '../INPUT/{}/{}/'.format(date,StateCode)
@@ -1522,11 +1546,11 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 
 # ExtractFromPDF(StateCode = "UT",Date = "2022-08-22")
 # ExtractFromPDF(StateCode = "RJ",Date = "2022-08-29")
-# ExtractFromPDF(StateCode = "ML",Date = "2022-08-22")
-# ExtractFromPDF(StateCode = "PB",Date = "2022-09-05")
+# ExtractFromPDF(StateCode = "TN",Date = "2022-09-17")
+# ExtractFromPDF(StateCode = "PB",Date = "2022-09-17")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2022-09-12")
-# ExtractFromPDF(StateCode = "UP",Date = "2021-11-16")
+# ExtractFromPDF(StateCode = "UP",Date = "2021-12-04")
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-14")
 
 
