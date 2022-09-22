@@ -1106,51 +1106,82 @@ def getMZData(file_path,date,StateCode):
     df_summary = df_districts #testcode needs to be updated later
     return df_summary,df_districts
 
-def getUPData(file_path,date,StateCode):
-    print(file_path)
-    input_folder = '../INPUT/{}/{}/{}_data.csv'.format(date,StateCode,StateCode)
-    # print(input_folder)
-    df_districts = pd.read_csv(input_folder)
-    # print(df_districts)
-    df_districts['Confirmed'] = df_districts['Recovered']+df_districts['Deceased']+df_districts['Active']
-    print(df_districts['Confirmed'])
-    df_districts.drop('Active', inplace=True, axis=1)
-    df_summary = df_districts
-
-    df_json = pd.read_json("../DistrictMappingMaster.json")
-    dist_map = df_json['Uttar Pradesh'].to_dict()
-    df_districts['District'].replace(dist_map,inplace=True)
-    # df_summary = df_districts 
-    df_summary = df_summary.iloc[-1,:]
-    df_summary['Confirmed'] = df_districts['Confirmed'].sum()
-    df_summary['Recovered'] = df_districts['Recovered'].sum()
-    df_summary['Deceased'] = df_districts['Deceased'].sum()
-
-    # print(df_districts)
-
-    return df_summary,df_districts
-    
-    
 # def getUPData(file_path,date,StateCode):
-#     print(file_path)    
-#     folder_name = '../INPUT/{}/{}/'.format(date,StateCode)
-#     if not os.path.isdir(folder_name):
-#         os.mkdir(folder_name)
+#     print(file_path)
+#     input_folder = '../INPUT/{}/{}/{}_data.csv'.format(date,StateCode,StateCode)
+#     # print(input_folder)
+#     df_districts = pd.read_csv(input_folder)
+#     # print(df_districts)
+#     df_districts['Confirmed'] = df_districts['Recovered']+df_districts['Deceased']+df_districts['Active']
+#     print(df_districts['Confirmed'])
+#     df_districts.drop('Active', inplace=True, axis=1)
+#     df_summary = df_districts
+
+#     df_json = pd.read_json("../DistrictMappingMaster.json")
+#     dist_map = df_json['Uttar Pradesh'].to_dict()
+#     df_districts['District'].replace(dist_map,inplace=True)
+#     # df_summary = df_districts 
+#     df_summary = df_summary.iloc[-1,:]
+#     df_summary['Confirmed'] = df_districts['Confirmed'].sum()
+#     df_summary['Recovered'] = df_districts['Recovered'].sum()
+#     df_summary['Deceased'] = df_districts['Deceased'].sum()
+
+#     # print(df_districts)
+
+#     return df_summary,df_districts
+
+# def getUPData(file_path,date,StateCode):
+#     tables = tabula.read_pdf(file_path, pages = "all")
+#     # print(tables)
+#     folder_path_1 = '../INPUT/{}/{}/table_data_1.csv'.format(date,StateCode)
+#     print(len(tables))
+#     tables[0].to_csv(folder_path_1)
+#     folder_path_2 = '../INPUT/{}/{}/table_data_2.csv'.format(date,StateCode)
+#     tables[1].to_csv(folder_path_2)
+#     df_districts_1 = pd.read_csv('../INPUT/{}/{}/table_data_1_new.csv'.format(date,StateCode))
+#     # print(df_districts_1)
+#     df_districts_2 = pd.read_csv('../INPUT/{}/{}/table_data_2_new.csv'.format(date,StateCode),header = None)
+#     # print(df_districts_2)
+    
+#     try:
+#         df_districts = pd.concat([df_districts_1,df_districts_2],ignore_index = True, axis = 0)
+
+#         # df_districts = pd.concat([df_districts_1,df_districts_2],axis = 0, join = 'inner',ignore_index = True)
+#         print(df_districts)
+#         df_districts.to_csv('../INPUT/{}/{}/example.csv'.format(date,StateCode))
+#     except Exception as e:
+#         print(e)
+
+    # try:
+    #     df_districts_1 = pd.read_csv('../INPUT/{}/{}/table_data_1.csv'.format(date,StateCode),)
+    #     print(df_districts_1)
+    # except Exception as e:
+    #     print(e)
+    # print('reading csv .....')   
+
+
+
+# def getUPData(file_path,date,StateCode):
         
-    # table = camelot.read_pdf(file_path, pages = 'all')
-    # print(table)
+#     table = camelot.read_pdf(file_path, pages = '2')
+#     # print(table)
 #     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
 #         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
 #     table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-   
-#     # tabula code
-    # tables = tabula.read_pdf(file_path, pages = "all")
-    # print(tables)
-#     folder_path = '../INPUT/{}/{}/foo_table_2.csv'.format(date,StateCode)
+    
+#     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode), header = None)
+#     # print(df_districts_2)
+#     df_districts_2.to_csv("../INPUT/{}/{}/Example.csv".format(date, StateCode))
+
+    
+#     # tabula code to read first page table
+#     tables = tabula.read_pdf(file_path, pages = "1")
+#     # print(tables)
+#     folder_path = '../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode)
 #     # print(len(tables))
 #     tables[0].to_csv(folder_path)
-#     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1_old.csv'.format(date,StateCode))
-#     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo_table_2.csv'.format(date,StateCode))
+#     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo-page-1-table-1.csv'.format(date,StateCode))
+# #     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo_table_2.csv'.format(date,StateCode))
 #     print(df_districts_1)
 
     
@@ -1551,7 +1582,9 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
 # ExtractFromPDF(StateCode = "UT",Date = "2022-09-12")
 # ExtractFromPDF(StateCode = "UP",Date = "2021-12-17")
-# ExtractFromPDF(StateCode = "TN",Date = "2022-09-14")
+# ExtractFromPDF(StateCode = "TN",Date = "2022-09-20")
+# ExtractFromPDF(StateCode = "UP",Date = "2022-01-01")
+
 
 
 # GenerateRawCsv(AP,"2022-04-06",df_districts,df_summary)
