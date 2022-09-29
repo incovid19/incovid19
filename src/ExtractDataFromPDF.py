@@ -858,8 +858,8 @@ def getUKData(file_path,date,StateCode):
 
         df_tests = pd.read_csv('../INPUT/{}/{}/foo-page-2-table-1.csv'.format(date,StateCode)) 
         df_tests.columns = df_tests.columns.str.replace("\n","") 
-    except Exception as e:
-        print(e)
+    # except Exception as e:
+    #     print(e)
     except FileNotFoundError:
         table = camelot.read_pdf(file_path,'3')
         # table = camelot.read_pdf(file_path,'4')
@@ -1131,63 +1131,63 @@ def getMZData(file_path,date,StateCode):
 
 #     return df_summary,df_districts
 
-# def hindi_to_english(state):
-#     hindi_dist = json.load(io.open("../DistrictMatchingHindi.json", encoding="utf8"))
-#     # print(hindi_dist)
-#     district_data = hindi_dist.get(state)
-#     return district_data 
+def hindi_to_english(state):
+    hindi_dist = json.load(io.open("../DistrictMatchingHindi.json", encoding="utf8"))
+    # print(hindi_dist)
+    district_data = hindi_dist.get(state)
+    return district_data 
     
 
-# def getUPData(file_path,date,StateCode):
-#     tables = tabula.read_pdf(file_path, pages = "all")
-#     # print(tables)
-#     folder_path_1 = '../INPUT/{}/{}/table_data_1.csv'.format(date,StateCode)
-#     folder_path_2 = '../INPUT/{}/{}/table_data_2.csv'.format(date,StateCode)
+def getUPData(file_path,date,StateCode):
+    tables = tabula.read_pdf(file_path, pages = "all")
+    # print(tables)
+    folder_path_1 = '../INPUT/{}/{}/table_data_1.csv'.format(date,StateCode)
+    folder_path_2 = '../INPUT/{}/{}/table_data_2.csv'.format(date,StateCode)
 
-#     print(len(tables))
-#     if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
-#         os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
-#     # table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
-#     tables[0].to_csv(folder_path_1)
-#     tables[1].to_csv(folder_path_2)
+    print(len(tables))
+    if not os.path.isdir('../INPUT/{}/{}/'.format(date,StateCode)):
+        os.mkdir('../INPUT/{}/{}/'.format(date,StateCode))
+    # table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
+    tables[0].to_csv(folder_path_1)
+    tables[1].to_csv(folder_path_2)
     
-#     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo_page_1_table_1.csv'.format(date,StateCode))
-#     df_districts_1.reset_index(drop=True, inplace=True)
-# #     print(df_districts_1)
+    df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo_page_1_table_1.csv'.format(date,StateCode))
+    df_districts_1.reset_index(drop=True, inplace=True)
+#     print(df_districts_1)
     
-#     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo_page_2_table_1.csv'.format(date,StateCode))
-#     df_districts_2.reset_index(drop=True, inplace=True)
-# #     print(df_districts_2)
-#     try:
-#         district_dict = hindi_to_english('Uttar Pradesh')
-#         # print(district_dict)
-#         df_districts = pd.concat([df_districts_1,df_districts_2], ignore_index = True, axis = 0)
-#         # print(df_districts)
-#         for index, row in df_districts.iterrows():
-#             hindi_district_name = row['District']
-#             english_district_name = district_dict.get(hindi_district_name)
-#             # print(hindi_district_name,english_district_name)
-#             df_districts['District'] =df_districts['District'].replace(hindi_district_name,english_district_name)
-#         df_districts['Confirmed'] = df_districts['Recovered']+df_districts['Deceased']+df_districts['Active']
-#         # print(df_districts['Confirmed'])
-#         df_districts.drop('Active', inplace=True, axis=1)
-#         df_summary = df_districts
+    df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo_page_2_table_1.csv'.format(date,StateCode))
+    df_districts_2.reset_index(drop=True, inplace=True)
+#     print(df_districts_2)
+    try:
+        district_dict = hindi_to_english('Uttar Pradesh')
+        # print(district_dict)
+        df_districts = pd.concat([df_districts_1,df_districts_2], ignore_index = True, axis = 0)
+        # print(df_districts)
+        for index, row in df_districts.iterrows():
+            hindi_district_name = row['District']
+            english_district_name = district_dict.get(hindi_district_name)
+            # print(hindi_district_name,english_district_name)
+            df_districts['District'] =df_districts['District'].replace(hindi_district_name,english_district_name)
+        df_districts['Confirmed'] = df_districts['Recovered']+df_districts['Deceased']+df_districts['Active']
+        # print(df_districts['Confirmed'])
+        df_districts.drop('Active', inplace=True, axis=1)
+        df_summary = df_districts
 
-#         df_json = pd.read_json("../DistrictMappingMaster.json")
-#         dist_map = df_json['Uttar Pradesh'].to_dict()
-#         df_districts['District'].replace(dist_map,inplace=True)
-#         df_summary = df_summary.iloc[-1,:]
-#         df_summary['Confirmed'] = df_districts['Confirmed'].sum()
-#         df_summary['Recovered'] = df_districts['Recovered'].sum()
-#         df_summary['Deceased'] = df_districts['Deceased'].sum()
+        df_json = pd.read_json("../DistrictMappingMaster.json")
+        dist_map = df_json['Uttar Pradesh'].to_dict()
+        df_districts['District'].replace(dist_map,inplace=True)
+        df_summary = df_summary.iloc[-1,:]
+        df_summary['Confirmed'] = df_districts['Confirmed'].sum()
+        df_summary['Recovered'] = df_districts['Recovered'].sum()
+        df_summary['Deceased'] = df_districts['Deceased'].sum()
 
-#         print(df_districts)
+        print(df_districts)
 
-#         # df_districts.to_csv('../INPUT/{}/{}/example.csv'.format(date,StateCode))
+        # df_districts.to_csv('../INPUT/{}/{}/example.csv'.format(date,StateCode))
        
-#     except Exception as e:
-#         print(e)
-#     return df_summary,df_districts
+    except Exception as e:
+        print(e)
+    return df_summary,df_districts
 
 
 # def getKLData(file_path,date,StateCode):
@@ -1562,12 +1562,13 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-17")
 # ExtractFromPDF(StateCode = "PB",Date = "2022-09-26")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-08-04")
-# ExtractFromPDF(StateCode = "UT",Date = "2022-09-26")
+# ExtractFromPDF(StateCode = "UT",Date = "2022-09-27")
 # ExtractFromPDF(StateCode = "UP",Date = "2021-12-17")
 # ExtractFromPDF(StateCode = "UP",Date = "2022-01-05")
 
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-22")
-# ExtractFromPDF(StateCode = "UP",Date = "2022-01-09")
+# ExtractFromPDF(StateCode = "UP",Date = "2022-01-14")
+# upto 14th
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-24")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-09-26")
 
