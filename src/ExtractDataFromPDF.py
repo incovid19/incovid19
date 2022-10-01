@@ -1567,7 +1567,7 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "UP",Date = "2022-01-05")
 
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-28")
-# ExtractFromPDF(StateCode = "UP",Date = "2022-01-25")
+# ExtractFromPDF(StateCode = "UP",Date = "2022-01-27")
 # upto 14th
 # ExtractFromPDF(StateCode = "TN",Date = "2022-09-24")
 # ExtractFromPDF(StateCode = "MH",Date = "2022-09-26")
