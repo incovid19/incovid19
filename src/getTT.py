@@ -133,7 +133,7 @@ def getTT():
                 temp_df["Date"] = pDate
                 temp_df.to_csv(os.path.join("..","RAWCSV",str(pDate),"myGov",source["StateCode"][idx]+"_raw.csv"))
     except ValueError:
-        print("Tetsed Values missing for DL/WB for the Date:"+ str(pDate))
+        print("Tested Values missing for DL/WB for the Date:"+ str(pDate))
         raise
 
     TT_df = TT_df.dropna(1)
