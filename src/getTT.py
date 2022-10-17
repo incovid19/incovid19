@@ -17,6 +17,10 @@ def india(state,date):
     sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
     
     date = sum_soup.find('div', { "class" : "updated-date"}).text.split(':')[1].split(',')[0]
+    print(date)
+    # date = sum_soup.find('div', { "class" : "updated-date"}).find_all('span')[0].text
+
+    print(date)
     if datetime.datetime.strptime(date," %d %b %Y").date() != datetime.datetime.today().date():
         raise TTNotUpdated("TT Not Update Please run the main.py")
         
@@ -259,3 +263,5 @@ def getTT():
 
     TT_df.to_csv('../RAWCSV/'+str(pDate)+'/TT_final.csv')
     get_7dma_state('TT', str(pDate))
+    
+# india('Kerala','2022-10-17')
