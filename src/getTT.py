@@ -132,6 +132,7 @@ def getTT():
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
                         df_addTest = pd.read_csv("../INPUT/WB_Tested.csv")
                         temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
+                        # print(temp_df['cumulativeTestedNumberForState'])
                     else:
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
                 temp_df["Date"] = pDate
@@ -265,3 +266,5 @@ def getTT():
     get_7dma_state('TT', str(pDate))
     
 # india('Kerala','2022-10-17')
+
+# getTT()
