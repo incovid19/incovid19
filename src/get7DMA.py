@@ -150,3 +150,5 @@ dateList = date_range(start, end)
 # get_7dma_state('TN', '2022-10-24')
 # get_7dma_state('BR', '2022-10-08')
 # get_7dma_state('PB', '2022-10-18')
+# get_7dma_state('RJ', '2022-10-29')
+
