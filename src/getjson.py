@@ -377,8 +377,8 @@ def date_range(start, end):
     
 if __name__ == "__main__":
     print("Running Main")
-    # path = "Test/"  #Staging path
-    path = "/home/swiadmin/test/v4/min/"    #production path
+    path = "Test/"  #Staging path
+    # path = "/home/swiadmin/test/v4/min/"    #production path
     start_date = "2022-10-15"
     end_date = "2022-10-29"
     end = datetime.strptime(end_date, '%Y-%m-%d')

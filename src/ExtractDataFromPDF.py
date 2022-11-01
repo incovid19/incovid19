@@ -1150,10 +1150,12 @@ def getUPData(file_path,date,StateCode):
     # table.export('../INPUT/{}/{}/foo.csv'.format(date,StateCode), f='csv')
     tables[0].to_csv(folder_path_1)
     tables[1].to_csv(folder_path_2)
+    # print('CSV ARE LOADED')
     
     df_districts_1 = pd.read_csv('../INPUT/{}/{}/foo_page_1_table_1.csv'.format(date,StateCode))
+    # print('Reading csv')
     df_districts_1.reset_index(drop=True, inplace=True)
-#     print(df_districts_1)
+    # print(df_districts_1)
     
     df_districts_2 = pd.read_csv('../INPUT/{}/{}/foo_page_2_table_1.csv'.format(date,StateCode))
     df_districts_2.reset_index(drop=True, inplace=True)
@@ -1569,6 +1571,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "TN",Date = "2022-10-15")
 # ExtractFromPDF(StateCode = "UP",Date = "2022-01-27")
 # ExtractFromPDF(StateCode = "UP",Date = "2022-02-14")
+# ExtractFromPDF(StateCode = "UP",Date = "2022-03-11")
+
 
 # upto 14th
 # ExtractFromPDF(StateCode = "TN",Date = "2022-10-19")
