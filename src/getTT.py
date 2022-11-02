@@ -121,7 +121,7 @@ def getTT():
                     if source["StateCode"][idx] == "DL":
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
                         df_addTest = pd.read_csv("../INPUT/DL_Tested.csv")
-                        temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
+                        temp_df['cumulativeTestedNumberForState'] = 39999533
                     elif source["StateCode"][idx] == "AS":
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today))
                         temp_df['cumulativeOtherNumberForState'] = 0
@@ -131,11 +131,12 @@ def getTT():
                     if source["StateCode"][idx] == "WB":
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
                         df_addTest = pd.read_csv("../INPUT/WB_Tested.csv")
-                        temp_df['cumulativeTestedNumberForState'] = df_addTest[df_addTest["Date"] == str(pDate)]["Cumulative_Tested"].item()
+                        temp_df['cumulativeTestedNumberForState'] = 26679487
                         # print(temp_df['cumulativeTestedNumberForState'])
                     else:
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
                 temp_df["Date"] = pDate
+                temp_df["notesForState"] = "As of 1st November 2022, this site will reflect the National and State level data as published by MoHFW. The district level data will not be updated beyond 31st October 2022."
                 temp_df.to_csv(os.path.join("..","RAWCSV",str(pDate),"myGov",source["StateCode"][idx]+"_raw.csv"))
     except ValueError:
         print("Tested Values missing for DL/WB for the Date:"+ str(pDate))

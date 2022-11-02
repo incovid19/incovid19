@@ -24,8 +24,9 @@ except IndexError:
     
 dateList = date_range(str(sys.argv[1]),endDate)
 
-portalUpdate_first(dateList,prevUpdate)
-resp1 = input("Would you like to proceed with the update(Yes/No):")
+# portalUpdate_first(dateList,prevUpdate)
+# resp1 = input("Would you like to proceed with the update(Yes/No):")
+resp1 = "Yes"
 if resp1 == "Yes":
     commitMessage = portalUpdate_second(dateList,prevUpdate)
     resp3 = input("Would you like to proceed with the update(Yes/No):")
@@ -55,17 +56,17 @@ else:
 
 
 
-resp_incovid = input("Would you like to update and push the RDF CSV's?(Yes/No):")
-if resp_incovid == "Yes":
-    print("Updating RDF CSV's....")
-    sys.path.insert(1, '../rdf')
-    from csvvacc import main as csvmain
-    from rdfgeneration import main as rdfmain
-    csvmain()
-    rdfmain()
-    os.system("cd /home/swiadmin/Incovid19/rdf/ && scp *.csv swiadmin@captain.internal.semanticwebindia.in:/home/swiadmin/files/")
-else:
-    pass
+# resp_incovid = input("Would you like to update and push the RDF CSV's?(Yes/No):")
+# if resp_incovid == "Yes":
+#     print("Updating RDF CSV's....")
+#     sys.path.insert(1, '../rdf')
+#     from csvvacc import main as csvmain
+#     from rdfgeneration import main as rdfmain
+#     csvmain()
+#     rdfmain()
+#     os.system("cd /home/swiadmin/Incovid19/rdf/ && scp *.csv swiadmin@captain.internal.semanticwebindia.in:/home/swiadmin/files/")
+# else:
+#     pass
 
 
 

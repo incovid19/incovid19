@@ -272,9 +272,9 @@ def updateDerivedValues(StateCode,Date):
         previous_state_raw_csv=pd.read_csv(f"../RAWCSV/{prev_date_str}/{StateCode}_raw.csv")
     except:
         previous_state_raw_csv=pd.read_csv(f"../RAWCSV/{prev_date_str}/myGov/{StateCode}_raw.csv")
-        if (sources[sources["StateCode"] == StateCode]["myGov"] != "yes").item():
-            last_published_date = getLastDate(StateCode,prev_date)
-            state_raw_csv["notesForState"] = "There could be a spike in the Delta Values as the last published data at the district level for {} is {}".format((sources[sources["StateCode"] == StateCode]["StateName"]).item(),last_published_date.date())
+        # if (sources[sources["StateCode"] == StateCode]["myGov"] != "yes").item():
+        #     last_published_date = getLastDate(StateCode,prev_date)
+        #     state_raw_csv["notesForState"] = "There could be a spike in the Delta Values as the last published data at the district level for {} is {}".format((sources[sources["StateCode"] == StateCode]["StateName"]).item(),last_published_date.date())
     
     vaccination_numbers_yesterday=vaccination_numbers_api(state_name,prev_date_str)
     
