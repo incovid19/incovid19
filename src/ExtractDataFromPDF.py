@@ -1573,6 +1573,8 @@ def ExtractFromPDF(StateCode = "KA",Date = "2021-11-22"):
 # ExtractFromPDF(StateCode = "UP",Date = "2022-02-14")
 # ExtractFromPDF(StateCode = "UP",Date = "2022-05-27")
 # ExtractFromPDF(StateCode = "UP",Date = "2022-07-05")
+# ExtractFromPDF(StateCode = "UP",Date = "2022-02-16")
+
 
 
 
