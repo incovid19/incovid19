@@ -35,7 +35,8 @@ for idx in source.index:
     print("State:" + source["StateName"][idx])
     if source["StateDataSourceType"][idx] == "Image(Twitter)":
         if "{}_raw.csv".format(source["StateCode"][idx]) not in os.listdir("../RAWCSV/"+str(today)+"/"):
-            ExtractDataFromImage(source["StateCode"][idx], str(today), source['Twitter Handle'][idx], source['Twitter Search Term'][idx])
+            pass
+            # ExtractDataFromImage(source["StateCode"][idx], str(today), source['Twitter Handle'][idx], source['Twitter Search Term'][idx])
     elif source["StateDataSourceType"][idx] in ["html","json"]:
         if source["myGov"][idx] != "yes":
             fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+ "." + source["StateDataSourceType"][idx]))
@@ -43,14 +44,16 @@ for idx in source.index:
                 # ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
                 pass
             else:
+                # if source["StateDataSourceType"][idx] == "TT":
                 ExtractFromHTML(source["StateCode"][idx],str(today))
         else:
             pass
-            # ExtractStateMyGov(source["StateCode"][idx],str(today))
+            ExtractStateMyGov(source["StateCode"][idx],str(today))
     elif source["StateDataSourceType"][idx] == "pdf":
         fileStatus = os.path.isfile(os.path.join("../INPUT",str(today),source["StateCode"][idx]+".pdf"))
         if not(fileStatus):
             # ExtractStateMyGov(source["StateCode"][idx],str(today),no_source= not(fileStatus))
             pass
         else:
-            ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
+            pass
+            # ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
