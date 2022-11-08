@@ -8,13 +8,122 @@ import datetime
 import timedelta
 import urllib.request, json 
 from get7DMA import get_7dma_state
+import requests
 
 class TTNotUpdated(Exception):
     pass
 
+
+def MOHFW_data(today):
+    MOHFW_site_url = "https://www.mohfw.gov.in/"
+    MOHFW_page = urllib.request.urlopen(MOHFW_site_url)
+    applySoup = BeautifulSoup(MOHFW_page,"lxml")
+
+    # state data json file 
+    json_url = "https://www.mohfw.gov.in/data/datanew.json"
+    json_data = requests.get(json_url).json()
+
+    # tested data from ICMR 
+    icmr_tested_data = "https://www.icmr.gov.in/"
+    tested_page = urllib.request.urlopen(icmr_tested_data)
+    applySoup_for_test_page = BeautifulSoup(tested_page, 'html.parser')
+
+    date = applySoup.find('div', {"class":"col-xs-2"}).find_all('span')[0].text
+    date = date.split(':')[1].split(',')[0]
+    
+    print("DateFormatted")
+    print(datetime.datetime.strptime(date," %d %B %Y").date())
+    
+    if datetime.datetime.strptime(date," %d %B %Y").date() != datetime.datetime.today().date():
+        raise TTNotUpdated("TT Not Update Please run the main.py")
+
+    date_state = applySoup.find('div', {"class":"data-table table-responsive"}).find_all('span')[0].text
+    date_state = date_state.split(':')[1].split(',')[0]
+    # print(date_state)
+
+    if datetime.datetime.strptime(date_state," %d %B %Y").date() != datetime.datetime.today().date():
+        raise TTNotUpdated("TT_State Not Update Please run the main.py")
+
+    # ICMR date 
+    # using previous date as they are mentioning 
+    pDate = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
+
+    date_tested = applySoup_for_test_page.find('div', attrs={'class':'single-cool-fact d-flex align-items-center mb-100'}).find_all('p')[0].text
+    date_tested = date_tested.split('to')[2].split('(')[0].replace(",","")  
+    # print(date_tested)
+
+    if datetime.datetime.strptime(date_tested," %B %d %Y").date() !=pDate:
+        raise TTNotUpdated("ICMR not updated the tested values")
+
+    tested_data = applySoup_for_test_page.find('div', attrs={'class':'single-cool-fact d-flex align-items-center mb-100'}).find_all('h2')[0].text
+    tested_value =int("".join(i for i in tested_data if i.isdecimal()))
+    
+    # values at India level     
+    Active_value = applySoup.find('li', attrs = {'class' : 'bg-blue'}).findAll("strong")[1].text
+    Recovered_value = applySoup.find('li', attrs = {'class' : 'bg-green'}).findAll("strong")[1].text
+    Deaths_value = applySoup.find('li', attrs = {'class' : 'bg-red'}).findAll("strong")[1].text
+    cumulativeConfirmedNumberForState = int(Active_value) + int(Recovered_value) + int(Deaths_value)
+
+    # Vaccinated data from MOHFW
+    vaccinated_value = applySoup.find('div', {"class":"col-xs-8 site-stats-count sitetotal"}).find_all('span', {'class':"coviddata"})[0].text.replace(",","")
+    # print(vaccinated_value)
+    
+    # json_data = requests.get(json_url).json()
+    states_data = pd.DataFrame(json_data)
+    states_data = states_data.drop(columns=['sno','active', 'positive','cured','death','new_active','death_reconsille','total','state_code','actualdeath24hrs'])
+    # print(states_data)
+
+    states_data.drop(states_data.tail(1).index, inplace = True)
+    final_df_col = [
+        'Date', 'State/UTCode', 'District', 'tested_last_updated_district', 'tested_source_district',
+        'notesForDistrict', 'cumulativeConfirmedNumberForDistrict', 'cumulativeDeceasedNumberForDistrict',
+        'cumulativeRecoveredNumberForDistrict', 'cumulativeTestedNumberForDistrict',
+        'cumulativeVaccinatedNumberForDistrict', 'last_updated', 'tested_last_updated_state', 'tested_source_state',
+        'notesForState', 'cumulativeConfirmedNumberForState', 'cumulativeDeceasedNumberForState',
+        'cumulativeRecoveredNumberForState', 'cumulativeTestedNumberForState', 'cumulativeVaccinatedNumberForState'
+    ]
+
+    renaming_columns_dict = {'state_name': 'District',
+        'new_positive':'cumulativeConfirmedNumberForDistrict',
+        'new_death':'cumulativeDeceasedNumberForDistrict',
+        'new_cured':'cumulativeRecoveredNumberForDistrict'}
+ 
+    # column rename 
+    states_data.rename(columns=renaming_columns_dict, inplace=True)
+    
+    states_data[['District']] = states_data[['District']].replace({'\*': ''}, regex=True)
+
+    print(states_data['District'])
+
+    states_data["Date"] = datetime.datetime.strptime(date," %d %B %Y").date()
+
+    states_data["State/UTCode"] = 'TT'
+
+    states_data['cumulativeConfirmedNumberForState'] = cumulativeConfirmedNumberForState
+
+    states_data['cumulativeDeceasedNumberForState'] = int(Deaths_value)
+
+    states_data['cumulativeRecoveredNumberForState'] = int(Recovered_value)
+
+    states_data["last_updated"] = str(datetime.datetime.now())
+    
+    states_data["tested_last_updated_state"] = str(datetime.datetime.now())
+
+    states_data['cumulativeTestedNumberForState'] = tested_value
+
+    states_data['cumulativeVaccinatedNumberForState'] = vaccinated_value
+    
+    # print(states_data)
+    print("Running MOHFW...")
+    states_data.to_csv('../RAWCSV/'+str(today)+'/TT_raw.csv')
+    return states_data
+
 def india(state,date):
-    soup = BeautifulSoup(open("../INPUT/"+date+"/TT_State.html", encoding="utf8"), "html.parser")
-    sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
+    try:
+        soup = BeautifulSoup(open("../INPUT/"+date+"/TT_State.html", encoding="utf8"), "html.parser")
+        sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
+    except:
+        return MOHFW_data(date)
     
     date = sum_soup.find('div', { "class" : "updated-date"}).text.split(':')[1].split(',')[0]
     print(date)
@@ -22,10 +131,12 @@ def india(state,date):
 
     print(date)
     if datetime.datetime.strptime(date," %d %b %Y").date() != datetime.datetime.today().date():
+        # return MOHFW_data()
         raise TTNotUpdated("TT Not Update Please run the main.py")
         
     date_state = soup.find('div',{"class": "field-item even"}).text.split(",")[0]
     if datetime.datetime.strptime(date_state,"%d %b %Y").date() != datetime.datetime.today().date():
+        # return MOHFW_data()
         raise TTNotUpdated("TT_State Not Update Please run the main.py")
     
     STATES = soup.find_all("div", {"class": "field field-name-field-select-state field-type-list-text field-label-above"})
@@ -176,8 +287,11 @@ def getTT():
     TT_df = TT_df.merge(VAC_df,how="left",on="District")
 
     TT_df["tested_source_state"] = "https://www.icmr.gov.in/"
-
-    TT_df["tested_last_updated_state"] = str(datetime.datetime.strptime(TT_df["tested_last_updated_state"][0] , '%b %d, %Y'))
+    
+    try:
+        TT_df["tested_last_updated_state"] = str(datetime.datetime.strptime(TT_df["tested_last_updated_state"][0] , '%b %d, %Y'))
+    except:
+        pass
 
 
     delta_date = str(pDate)
