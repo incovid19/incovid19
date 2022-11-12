@@ -574,13 +574,13 @@ def GenerateRawCsv(state, date, df_districts):
 def ExtractFromHTML(state, date):
     path = "../INPUT/{0}/{1}.html".format(date, state)
     states = {
-        'AP': andhra_pradesh,
-        'GJ': gujarat,
-        'OR': odisha,
-        'TR': tripura,
-        'KL': kerala,
+        # 'AP': andhra_pradesh,
+        # 'GJ': gujarat,
+        # 'OR': odisha,
+        # 'TR': tripura,
+        # 'KL': kerala,
         'TT': india,
-        'MH': maharashtra,
+        # 'MH': maharashtra,
     }
     try:
         states[state](state, date, path)
