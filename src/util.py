@@ -74,7 +74,8 @@ def portalUpdate_second(dateList, prevUpdate):
             for key,val in tqdm(STATE_NAMES.items()):
                 print(key)
                 updateDerivedValues(key,runDate)
-            resp_updateJson = input("Would you like to generate JSON(Yes/No):")
+            # resp_updateJson = input("Would you like to generate JSON(Yes/No):")
+            resp_updateJson = "Yes"
             if resp_updateJson == "Yes":
                 updateAll(date,log=True,OverWrite=False)
                 df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
