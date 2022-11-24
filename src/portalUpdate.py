@@ -29,16 +29,18 @@ dateList = date_range(str(sys.argv[1]),endDate)
 resp1 = "Yes"
 if resp1 == "Yes":
     commitMessage = portalUpdate_second(dateList,prevUpdate)
-    resp3 = input("Would you like to proceed with the update(Yes/No):")
+    # resp3 = input("Would you like to proceed with the update(Yes/No):")
+    resp3 = "Yes"
     if resp3 == "Yes":
         UpadteCSV(dateList)
-        print("Commit Message")
+        print("Commit Message:")
         if commitMessage == None or prevUpdate:
             commitMessage = input("Please Enter the commit Message:")
             git_push(commitMessage)
         else: 
             print(commitMessage)
-            resp2 = input("Would you like to proceed with the above message?(Yes/No):")
+            # resp2 = input("Would you like to proceed with the above message?(Yes/No):")
+            resp2 = "Yes"
             if resp2 == "Yes":
                 git_push(commitMessage)
             elif resp2 == "No":
@@ -48,7 +50,8 @@ if resp1 == "Yes":
 else:
     pass
 
-resp_incovid = input("Would you like to push the incovid Repo?(Yes/No):")
+# resp_incovid = input("Would you like to push the incovid Repo?(Yes/No):")
+resp_incovid = "Yes"
 if resp_incovid == "Yes":
     git_push_incovid("Update Until" + str(datetime.now()))
 else:

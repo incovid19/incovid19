@@ -79,9 +79,10 @@ def portalUpdate_second(dateList, prevUpdate):
             if resp_updateJson == "Yes":
                 updateAll(date,log=True,OverWrite=False)
                 df_fileStatus = GetFileStatus(dateList,False)[GetFileStatus(dateList,False)["Raw"] == "No"]
-                print(df_fileStatus)
+                # print(df_fileStatus)
                 if len(df_fileStatus) > 0:
-                    return "Portal Update for "+ runDate +" Without "+",".join(df_fileStatus["State"].to_list())
+                    # return "Portal Update for "+ runDate +" Without "+",".join(df_fileStatus["State"].to_list())
+                    return "Portal Auto Update for "+ runDate
                 else:
                     return "Portal Update for "+ runDate
         else:
