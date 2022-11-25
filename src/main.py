@@ -4,6 +4,7 @@ import timedelta
 import os
 
 today = (datetime.datetime.now() - timedelta.Timedelta(days=0)).date()
+yesterday = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
 # present = datetime.datetime.now().date()
 
 folders = ["INPUT","RAWCSV","LOG"]
@@ -57,3 +58,6 @@ for idx in source.index:
         else:
             pass
             # ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
+
+            
+os.system("python portalUpdate.py "+ str(yesterday))

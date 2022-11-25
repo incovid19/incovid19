@@ -123,7 +123,8 @@ def india(state,date):
         soup = BeautifulSoup(open("../INPUT/"+date+"/TT_State.html", encoding="utf8"), "html.parser")
         sum_soup = BeautifulSoup(open("../INPUT/"+date+"/TT.html", encoding="utf8"), "html.parser")
     except:
-        return MOHFW_data(date)
+        if datetime.datetime.now().hour > 16:
+            return MOHFW_data(date)
     
     date = sum_soup.find('div', { "class" : "updated-date"}).text.split(':')[1].split(',')[0]
     print(date)
