@@ -60,4 +60,4 @@ for idx in source.index:
             # ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
 
             
-os.system("python portalUpdate.py "+ str(yesterday))
+os.system("python /home/swiadmin/Incovid19/incovid19/src/portalUpdate.py "+ str(yesterday))
