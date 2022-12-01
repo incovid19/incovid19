@@ -2,6 +2,7 @@ import os
 import datetime
 import timedelta
 import os
+from StatusMsg import StatusMsg
 
 today = (datetime.datetime.now() - timedelta.Timedelta(days=0)).date()
 yesterday = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
@@ -60,4 +61,10 @@ for idx in source.index:
             # ExtractFromPDF(StateCode = source["StateCode"][idx],Date = str(today))
 
             
-os.system("python /home/swiadmin/Incovid19/incovid19/src/portalUpdate.py "+ str(yesterday))
+
+try:
+    os.system("python /home/swiadmin/Incovid19/incovid19/src/portalUpdate.py "+ str(yesterday))
+    StatusMsg("TT", str(today), "OK", "COMPLETED", "PortalAutoUpdate")
+except Exception as e:
+    print(e)
+    StatusMsg("TT", str(today),"ERR", e, "PortalAutoUpdate")          

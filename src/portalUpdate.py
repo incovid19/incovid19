@@ -5,16 +5,17 @@ from util import date_range, GetFileStatus, ExtractData, DownloadData, portalUpd
 from getTT import getTT
 from tqdm import tqdm
 from UpdateDerivedValues import STATE_NAMES,updateDerivedValues,removeLogging
-from StatusMsg import PortalStatusMsg
+from StatusMsg import PortalStatusMsg,StatusMsg
 from getjson import createDataMin,updateAll
 import warnings
 warnings.filterwarnings('ignore')
+
 import sys
-sys.path.insert(0, '../CSV_APIs_Code')
+sys.path.insert(0, '/home/swiadmin/Incovid19/incovid19/CSV_APIs_Code')
 from main_csv import UpadteCSV
+source = pd.read_csv("/home/swiadmin/Incovid19/incovid19/sources.csv")
 
 
-source = pd.read_csv("../sources.csv")
 try: 
     endDate = str(sys.argv[2])
     prevUpdate = True
