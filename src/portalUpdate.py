@@ -23,7 +23,9 @@ except IndexError:
     endDate = True
     prevUpdate = False
     
-dateList = date_range(str(sys.argv[1]),endDate)
+yesterday = (datetime.now() - timedelta(days=1)).date()
+    
+dateList = date_range(str(yesterday),True)
 
 today = (datetime.now() - timedelta(days=0)).date()
 if "TT_final.csv" not in os.listdir("../RAWCSV/"+str(today)+"/"):
