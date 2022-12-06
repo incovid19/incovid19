@@ -62,9 +62,9 @@ for idx in source.index:
 
             
 
-try:
-    os.system("python /home/swiadmin/Incovid19/incovid19/src/portalUpdate.py "+ str(yesterday))
-    StatusMsg("TT", str(today), "OK", "COMPLETED", "PortalAutoUpdate")
-except Exception as e:
-    print(e)
-    StatusMsg("TT", str(today),"ERR", e, "PortalAutoUpdate")          
+# try:
+#     os.system("python /home/swiadmin/Incovid19/incovid19/src/portalUpdate.py "+ str(yesterday))
+#     StatusMsg("TT", str(today), "OK", "COMPLETED", "PortalAutoUpdate")
+# except Exception as e:
+#     print(e)
+#     StatusMsg("TT", str(today),"ERR", e, "PortalAutoUpdate")          
