@@ -515,6 +515,8 @@ def india(state, date, path):
             states_data['cumulativeVaccinatedNumberForState'] = int(vcount.findAll("strong")[0].getText().replace(",", ""))
 
     states_data = states_data.reindex(columns=final_df_col)
+    # states_data = states_data.dropna(subset = ['District'])
+    # states_data = states_data[states_data['District'].notna()]
     states_data.to_csv("../RAWCSV/{}/{}_raw.csv".format(date, state))
 
 

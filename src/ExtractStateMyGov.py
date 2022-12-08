@@ -97,6 +97,7 @@ def ExtractStateMyGov(state, date, no_source=False):
             "last_updated",
         ]
     )
+    ind = ind.dropna(subset = ['District'])
 
     state_df = pd.DataFrame()
 
