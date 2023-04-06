@@ -133,14 +133,14 @@ def india(state,date):
     print(date)
     if datetime.datetime.strptime(date," %d %b %Y").date() != datetime.datetime.today().date():
         # return MOHFW_data()
-        # pass
-        raise TTNotUpdated("TT Not Update Please run the main.py")
+        pass
+        # raise TTNotUpdated("TT Not Update Please run the main.py")
         
     date_state = soup.find('div',{"class": "field-item even"}).text.split(",")[0]
     if datetime.datetime.strptime(date_state,"%d %b %Y").date() != datetime.datetime.today().date():
-        # pass
+        pass
         # return MOHFW_data()
-        raise TTNotUpdated("TT_State Not Update Please run the main.py")
+        # raise TTNotUpdated("TT_State Not Update Please run the main.py")
     
     STATES = soup.find_all("div", {"class": "field field-name-field-select-state field-type-list-text field-label-above"})
     CONFIRMED = soup.find_all("div", {"class": "field field-name-field-total-confirmed-indians field-type-number-integer field-label-above"})
@@ -215,9 +215,10 @@ def india(state,date):
     return states_data
 
 def getTT():
-    today = (datetime.datetime.now() - timedelta.Timedelta(days=0)).date()
-    pDate = (datetime.datetime.now() - timedelta.Timedelta(days=1)).date()
-    cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days=2)).date()
+    vishdays = 4
+    today = (datetime.datetime.now() - timedelta.Timedelta(days=vishdays + 0)).date()
+    pDate = (datetime.datetime.now() - timedelta.Timedelta(days=vishdays + 1)).date()
+    cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days=vishdays + 2)).date()
     TT_df = india("TT",str(today))
     # TT_df = pd.read_csv("../RAWCSV/2022-08-30/TT_raw.csv")
 
@@ -385,4 +386,4 @@ def getTT():
     
 # india('Kerala','2022-10-17')
 
-# getTT()
+getTT()
