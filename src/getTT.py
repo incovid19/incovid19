@@ -215,7 +215,7 @@ def india(state,date):
     return states_data
 
 def getTT():
-    vishdays = 4
+    vishdays = 3
     today = (datetime.datetime.now() - timedelta.Timedelta(days=vishdays + 0)).date()
     pDate = (datetime.datetime.now() - timedelta.Timedelta(days=vishdays + 1)).date()
     cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days=vishdays + 2)).date()
