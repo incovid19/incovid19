@@ -16,6 +16,7 @@ from main_csv import UpadteCSV
 source = pd.read_csv("/home/swiadmin/Incovid19/incovid19/sources.csv")
 
 
+
 try: 
     endDate = str(sys.argv[2])
     prevUpdate = True
@@ -23,7 +24,7 @@ except IndexError:
     endDate = True
     prevUpdate = False
     
-yesterday = (datetime.now() - timedelta(days=1)).date()
+yesterday = (datetime.now() - timedelta(days=5+1)).date()
     
 dateList = date_range(str(yesterday),True)
 

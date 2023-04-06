@@ -63,7 +63,7 @@ def portalUpdate_first(dateList,prevUpdate = False):
 
 
 def portalUpdate_second(dateList, prevUpdate):
-    today = (datetime.now() - timedelta(days=0)).date()
+    today = (datetime.now() - timedelta(days=1)).date()
     if "TT_final.csv" not in os.listdir("../RAWCSV/"+str(today)+"/"):
         getTT()
        
