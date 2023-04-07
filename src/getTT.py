@@ -133,14 +133,14 @@ def india(state,date):
     print(date)
     if datetime.datetime.strptime(date," %d %b %Y").date() != datetime.datetime.today().date():
         # return MOHFW_data()
-        pass
-        # raise TTNotUpdated("TT Not Update Please run the main.py")
+        # pass
+        raise TTNotUpdated("TT Not Update Please run the main.py")
         
     date_state = soup.find('div',{"class": "field-item even"}).text.split(",")[0]
     if datetime.datetime.strptime(date_state,"%d %b %Y").date() != datetime.datetime.today().date():
-        pass
+        # pass
         # return MOHFW_data()
-        # raise TTNotUpdated("TT_State Not Update Please run the main.py")
+        raise TTNotUpdated("TT_State Not Update Please run the main.py")
     
     STATES = soup.find_all("div", {"class": "field field-name-field-select-state field-type-list-text field-label-above"})
     CONFIRMED = soup.find_all("div", {"class": "field field-name-field-total-confirmed-indians field-type-number-integer field-label-above"})
