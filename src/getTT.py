@@ -215,9 +215,9 @@ def india(state,date):
     return states_data
 
 def getTT():
-    today = (datetime.datetime.now() - timedelta.Timedelta(days= 13 + 0)).date()
-    pDate = (datetime.datetime.now() - timedelta.Timedelta(days= 13 + 1)).date()
-    cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days= 13 + 2)).date()
+    today = (datetime.datetime.now() - timedelta.Timedelta(days= 28 + 0)).date()
+    pDate = (datetime.datetime.now() - timedelta.Timedelta(days= 28 + 1)).date()
+    cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days= 28 + 2)).date()
     TT_df = india("TT",str(today))
     # TT_df = pd.read_csv("../RAWCSV/2022-08-30/TT_raw.csv")
 
