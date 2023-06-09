@@ -24,7 +24,7 @@ except IndexError:
     endDate = True
     prevUpdate = False
     
-yesterday = (datetime.now() - timedelta(days= 19 + 1)).date()
+yesterday = (datetime.now() - timedelta(days= 18 + 1)).date()
     
 dateList = date_range(str(yesterday),True)
 
