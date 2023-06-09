@@ -250,7 +250,8 @@ def getTT():
                     else:
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
                 temp_df["Date"] = pDate
-                temp_df["notesForState"] = "As of 1st November 2022, this site will reflect the National and State level data as published by MoHFW. The district level data will not be updated beyond 31st October 2022."
+                # temp_df["notesForState"] = "As of 1st November 2022, this site will reflect the National and State level data as published by MoHFW. The district level data will not be updated beyond 31st October 2022."
+                temp_df["notesForState"] = "Since there are no updates for 12th May from MoHFW the portal reflects data of 11th May 2023"
                 temp_df.to_csv(os.path.join("..","RAWCSV",str(pDate),"myGov",source["StateCode"][idx]+"_raw.csv"))
     except ValueError:
         print("Tested Values missing for DL/WB for the Date:"+ str(pDate))
