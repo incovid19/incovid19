@@ -489,8 +489,8 @@ def india(state, date, path):
         columns={0: "District", 1: "cumulativeConfirmedNumberForDistrict", 2: "cumulativeRecoveredNumberForDistrict",
                  3: "cumulativeDeceasedNumberForDistrict"})
 
-    # states_data["Date"] = str(datetime.datetime.now().date())
-    states_data["Date"] = date
+    states_data["Date"] = str(datetime.datetime.now().date())
+    # states_data["Date"] = date
 
     states_data["State/UTCode"] = state
 
@@ -608,7 +608,7 @@ def ExtractFromHTML(state, date):
 #     # print(str(date.date()))
 #     ExtractFromHTML(state = "TR",date = str(date.date()))        
 
-ExtractFromHTML(state="TT", date="2023-06-08")
+# ExtractFromHTML(state="TT", date="2023-06-09")
 # ExtractFromHTML(state="AP", date="2022-01-29")
 # ExtractFromHTML(state="MH", date="2022-01-28")
 # ExtractFromHTML(state="TR", date="2022-01-24")
