@@ -489,8 +489,8 @@ def india(state, date, path):
         columns={0: "District", 1: "cumulativeConfirmedNumberForDistrict", 2: "cumulativeRecoveredNumberForDistrict",
                  3: "cumulativeDeceasedNumberForDistrict"})
 
-    states_data["Date"] = str(datetime.datetime.now().date())
-    # states_data["Date"] = date
+    # states_data["Date"] = str(datetime.datetime.now().date())
+    states_data["Date"] = date
 
     states_data["State/UTCode"] = state
 
