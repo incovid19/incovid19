@@ -608,7 +608,7 @@ def ExtractFromHTML(state, date):
 #     # print(str(date.date()))
 #     ExtractFromHTML(state = "TR",date = str(date.date()))        
 
-ExtractFromHTML(state="TT", date="2023-07-03")
+# ExtractFromHTML(state="TT", date="2023-07-03")
 
 # ExtractFromHTML(state="TT", date="2023-06-23")
 # ExtractFromHTML(state="AP", date="2022-01-29")
