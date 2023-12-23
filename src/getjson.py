@@ -368,6 +368,7 @@ def updateAll(date,log=False,OverWrite=False):
     createDataMin(str(date.date()),log)
     ts_json(path + "data-"+str(date.date())+".min.json")
     ts_state_all(path + "data-"+str(date.date())+".min.json")
+    print(date)
     renameToDataMin(OverWrite)
     
 def date_range(start, end):
