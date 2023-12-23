@@ -216,9 +216,9 @@ def india(state,date):
     return states_data
 
 def getTT():
-    today = (datetime.datetime.now() - timedelta.Timedelta(days= 141 + 0)).date()
-    pDate = (datetime.datetime.now() - timedelta.Timedelta(days= 141 + 1)).date()
-    cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days= 141 + 2)).date()
+    today = (datetime.datetime.now() - timedelta.Timedelta(days= 140 + 0)).date()
+    pDate = (datetime.datetime.now() - timedelta.Timedelta(days= 140 + 1)).date()
+    cowinDate = (datetime.datetime.now() - timedelta.Timedelta(days= 140 + 2)).date()
     TT_df = india("TT",str(today))
     # TT_df = pd.read_csv("../RAWCSV/2022-08-30/TT_raw.csv")
 
@@ -251,8 +251,8 @@ def getTT():
                     else:
                         temp_df = ExtractStateMyGov(source["StateCode"][idx],str(today), no_source = True)
                 temp_df["Date"] = pDate
-                temp_df["notesForState"] = "As of 1st November 2022, this site will reflect the National and State level data as published by MoHFW. The district level data will not be updated beyond 31st October 2022."
-                # temp_df["notesForState"] = "Since there are no updates for 2nd August from MoHFW the portal reflects data of 01st August 2023"
+                # temp_df["notesForState"] = "As of 1st November 2022, this site will reflect the National and State level data as published by MoHFW. The district level data will not be updated beyond 31st October 2022."
+                temp_df["notesForState"] = "Since there are no updates for 4th August from MoHFW the portal reflects data of 03rd August 2023"
                 temp_df.to_csv(os.path.join("..","RAWCSV",str(pDate),"myGov",source["StateCode"][idx]+"_raw.csv"))
     except ValueError:
         print("Tested Values missing for DL/WB for the Date:"+ str(pDate))
